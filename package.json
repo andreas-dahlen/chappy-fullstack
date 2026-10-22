@@ -1,0 +1,22 @@
+{
+  "name": "chappy-fullstack",
+  "version": "1.0.0",
+  "description": "fullstack chappy app",
+  "private": true,
+  "type": "module",
+  "keywords": [],
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "type": "npm run type --workspaces",
+    "restart-server": "npm run restart --workspace=backend",
+    "start": "npm run restart-server"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true
+  }
+}
