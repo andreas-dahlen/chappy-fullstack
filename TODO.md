@@ -40,10 +40,12 @@ spit balling:
 
 need a list of channels. something like this.. 
 ```js
-type channel = {
-  id: UUID
+type Channel = {
+  channelId: UUID
   name: string
   authRequired: boolean
+  createdBy: UUID
+  createdAt: string
 }
 ```
 
@@ -96,24 +98,25 @@ backend/src/
 database:
 
 ```dynamodb
-|     pk           |         sk          |     name     |  owner    | authRequired  | message     | timestamp   |    participants     | hashPassword | användarnamn
-|------------------|---------------------|--------------|-----------|---------------|-------------|-------------|---------------------|
-|       USER	     |    USER#123         |   Karlsson   |    x      |       x       |      x      |    x        |          x          |     ****     |    dfgdfg
-|       USER	     |    USER#789	       |     Anna	  	|    x      |       x       |      x      |    x        |          x          |     ****      |     dfgdfgfdgf
-|------------------|---------------------|--------------|-----------|---------------|-------------|-------------|---------------------|
-|     CHANNEL   	 |  CHANNEL#123	       |  spaceship	  | USER#123  |    boolean    |      x      |    x        |          x          |
-|     CHANNEL 	   |  CHANNEL#789	       |  anotherone	| USER#789  |    boolean    |      x      |    x        |          x          |
-|------------------|---------------------|--------------|-----------|---------------|-------------|-------------|---------------------|
-|  CHANNEL#123     | MSG#timestamp#..abc |      x       | USER#789  |       x       |  <string>   | <timestamp> |          x          |
-|  CHANNEL#123     | MSG#timestamp#..def |	    x       | USER#789  |       x       |  <string>   | <timestamp> |          x          |
-|  CHANNEL#789     | MSG#timestamp#..ghi |	    x       | USER#123  |       x       |  <string>   | <timestamp> |          x          |
-|------------------|---------------------|--------------|-----------|---------------|-------------|-------------|---------------------|
-|     USER#123	   |  CONVERSATION#123   |      x       |    x      |       x       |      x      |    x        |          x          |
-|     USER#789	   |  CONVERSATION#123   |      x  	  	|    x      |       x       |      x      |    x        |          x          |
-|------------------|---------------------|--------------|-----------|---------------|-------------|-------------|---------------------|
-| CONVERSATION#123 |    META             |      x       |    x      |       x       |     x       |      x      |[USER#123, USER#789] |
-| CONVERSATION#123 |    MSG#...          |      x       | USER#123  |       x       |  <string>   | <timestamp> |          x          |
-| CONVERSATION#123 |    MSG#...          |      x       | USER#123  |       x       |  <string>   | <timestamp> |          x          |
+|     pk           |         sk          |     name     | owner/id  |   message   | timestamp   | authRequired |     participants    | hashPassword | username    |      
+|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|---------------------|----------------------------|
+|       USER	     |    USER#username    |   Karlsson   | USER#123  |      x      |    x        |      x       |     x               |     ****     |    dfgdfg
+|       USER	     |    USER#username    |     Anna	  	| USER#789  |      x      |    x        |      x       |     x               |     ****     |  dfgdfgfdgf
+|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|
+|     CHANNEL   	 |  CHANNEL#123	       |  spaceship	  | USER#123  |      x      |    x        |  boolean     |
+|     CHANNEL 	   |  CHANNEL#789	       |  anotherone	| USER#789  |      x      |    x        |   boolean    |
+|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|
+|  CHANNEL#123     | MSG#timestamp#..abc |      x       | USER#789  |  <string>   | <timestamp> |      x       |
+|  CHANNEL#123     | MSG#timestamp#..def |	    x       | USER#789  |  <string>   | <timestamp> |      x       |
+|  CHANNEL#789     | MSG#timestamp#..ghi |	    x       | USER#123  |  <string>   | <timestamp> |      x       |
+|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|
+|     USER#123	   |  CONVERSATION#123   |      x       |    x      |      x      |    x        |      x       |
+|     USER#789	   |  CONVERSATION#123   |      x  	  	|    x      |      x      |    x        |      x       |
+|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|---------------------|
+| CONVERSATION#123 |    META             |      x       |    x      |     x       |      x      |      x       |[USER#123, USER#789] |
+|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|---------------------|
+| CONVERSATION#123 |    MSG#...          |      x       | USER#123  |  <string>   | <timestamp> |      x       |
+| CONVERSATION#123 |    MSG#...          |      x       | USER#123  |  <string>   | <timestamp> |      x       |
  
 ```
 
