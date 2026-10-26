@@ -4,7 +4,7 @@
   "description": "fullstack chappy app",
   "private": true,
   "type": "module",
-  "keywords": [ ],
+  "keywords": [],
   "workspaces": [
     "backend",
     "frontend",
@@ -19,5 +19,8 @@
   },
   "allowScripts": {
     "bcrypt@6.0.0": true
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "1.2.15"
   }
 }
