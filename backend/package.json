@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "type": "tsc --noEmit",
     "build": "tsc",
-    "start": "node --env-file-if-exists=.env dist/server.js",
+    "start": "node --env-file-if-exists=../.env dist/server.js",
     "restart": "npm run build && npm run start"
   },
   "dependencies": {
