@@ -21,6 +21,7 @@
     "bcrypt@6.0.0": true
   },
   "optionalDependencies": {
-    "@rolldown/binding-linux-x64-gnu": "1.2.15"
+    "@rolldown/binding-linux-x64-gnu": "1.2.15",
+    "lightningcss-linux-x64-gnu": "1.33.0"
   }
 }
