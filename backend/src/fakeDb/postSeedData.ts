@@ -26,7 +26,7 @@ export async function postSeedData() {
         if (unprocessedItems.length > 0) {
           await new Promise(resolve => setTimeout(resolve, 1000))
         }
-      } while (unprocessedItems.length > 0)
+      } while (unprocessedItems.length > 0) //TODO add max attempts
     }
 
     console.log('Seed data successfully written')

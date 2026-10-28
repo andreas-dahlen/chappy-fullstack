@@ -1,5 +1,6 @@
 import express, { type Express } from 'express'
 import path from 'node:path'
+import userRouter from './routers/userRouter.ts'
 
 const entry: Express = express()
 const distPath: string = path.resolve(import.meta.dirname, '../../frontend/dist')
@@ -15,7 +16,7 @@ const apiRouter = express.Router()
 entry.use('/api', apiRouter)
 
 
-// apiRouter.use('/api/???', productRouter)
+apiRouter.use('/users', userRouter)
 
 
 // Wildcard route: behövs för att React Router med BrowserRouter i frontend ska fungera!

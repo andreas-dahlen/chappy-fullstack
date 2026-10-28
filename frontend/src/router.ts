@@ -12,7 +12,7 @@ const routerConfig: RouteObject[] = [
     // children: [
     //   {
     //     path: '/',
-    //     Component: ProductView
+    //     Component: Home
     //   },
     //   {
     //     path: '/about',

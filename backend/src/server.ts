@@ -1,5 +1,5 @@
 import expressEntry from './expressEntry.ts'
-import { postSeedData } from './fakeDb/evaluateSeedArgs.ts'
+import { postSeedData } from './fakeDb/postSeedData.ts'
 import { getPort } from './getPort.ts'
 import { createServer } from 'node:http'
 // import { Server } from 'socket.io'
@@ -18,3 +18,19 @@ if (seedDataArg === 'seed') {
     console.log(`Server is listening on port ${port}. Stop it with Ctrl+C`)
   })
 }
+
+// entry.post<
+//   Params,
+//   ResBody,
+//   ReqBody,
+//   ReqQuery,
+//   Locals
+// >(
+//   '/whatever',
+//   middlewareA,
+//   middlewareB,
+//   middlewareC,
+//   (req, res) => {
+//     // handler
+//   }
+// );

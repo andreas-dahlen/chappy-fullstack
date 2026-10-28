@@ -1,0 +1,43 @@
+:root {
+  color-scheme: dark;
+
+  --bg: #18181b;
+  --surface: linear-gradient(#283d41, rgb(28, 51, 58));
+  --border: #2f2f59;
+
+  --text: #eeeeef;
+  --text-muted: #a1a1aa;
+
+  --accent: #818cf8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  background: var(--bg);
+  color: #e0e5cd;
+
+  font-family: system-ui, sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+#root {
+  min-height: 100vh;
+}
