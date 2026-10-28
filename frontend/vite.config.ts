@@ -6,7 +6,6 @@ import { resolve } from 'node:path'
 export default defineConfig(({ mode }) => {
   const envDir = resolve(import.meta.dirname, '..')
   const env = loadEnv(mode, envDir, '')
-
   return {
     envDir,
     plugins: [

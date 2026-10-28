@@ -1,13 +1,20 @@
 import expressEntry from './expressEntry.ts'
+import { postSeedData } from './fakeDb/evaluateSeedArgs.ts'
 import { getPort } from './getPort.ts'
 import { createServer } from 'node:http'
 // import { Server } from 'socket.io'
 
-const server = createServer(expressEntry)
-// const io = new Server(server)
+const seedDataArg = process.argv[2]
 
-const port = getPort()
+if (seedDataArg === 'seed') {
+  await postSeedData()
+} else {
+  const server = createServer(expressEntry)
+  // const io = new Server(server)
 
-server.listen(port, (): void => {
-  console.log(`Server is listening on port ${port}. Stop it with Ctrl+C`)
-})
+  const port = getPort()
+
+  server.listen(port, (): void => {
+    console.log(`Server is listening on port ${port}. Stop it with Ctrl+C`)
+  })
+}

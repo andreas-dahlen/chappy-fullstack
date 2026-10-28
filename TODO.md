@@ -97,28 +97,161 @@ backend/src/
 
 database:
 
-```dynamodb
-|     pk           |         sk          |     name     | owner/id  |   message   | timestamp   | authRequired |     participants    | hashPassword | username    |      
-|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|---------------------|----------------------------|
-|       USER	     |    USER#username    |   Karlsson   | USER#123  |      x      |    x        |      x       |     x               |     ****     |    dfgdfg
-|       USER	     |    USER#username    |     Anna	  	| USER#789  |      x      |    x        |      x       |     x               |     ****     |  dfgdfgfdgf
-|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|
-|     CHANNEL   	 |  CHANNEL#123	       |  spaceship	  | USER#123  |      x      |    x        |  boolean     |
-|     CHANNEL 	   |  CHANNEL#789	       |  anotherone	| USER#789  |      x      |    x        |   boolean    |
-|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|
-|  CHANNEL#123     | MSG#timestamp#..abc |      x       | USER#789  |  <string>   | <timestamp> |      x       |
-|  CHANNEL#123     | MSG#timestamp#..def |	    x       | USER#789  |  <string>   | <timestamp> |      x       |
-|  CHANNEL#789     | MSG#timestamp#..ghi |	    x       | USER#123  |  <string>   | <timestamp> |      x       |
-|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|
-|     USER#123	   |  CONVERSATION#123   |      x       |    x      |      x      |    x        |      x       |
-|     USER#789	   |  CONVERSATION#123   |      x  	  	|    x      |      x      |    x        |      x       |
-|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|---------------------|
-| CONVERSATION#123 |    META             |      x       |    x      |     x       |      x      |      x       |[USER#123, USER#789] |
-|------------------|---------------------|--------------|-----------|-------------|-------------|--------------|---------------------|
-| CONVERSATION#123 |    MSG#...          |      x       | USER#123  |  <string>   | <timestamp> |      x       |
-| CONVERSATION#123 |    MSG#...          |      x       | USER#123  |  <string>   | <timestamp> |      x       |
- 
+| pk                  | sk                 | name      | ownerId   | participants | message | messageId | timestamp  | authRequired | hashPassword |
+|---------------------|--------------------|-----------|-----------|--------------|---------|-----------|------------|--------------|--------------|
+| USER                | USER#username      | Karlsson  | user UUID | x            | x       | x         | x          | x            | ****         |
+| USER                | USER#username      | Anna      | user UUID | x            | x       | x         | x          | x            | ****         |
+| CHANNEL             | CHANNEL#123        | spaceship | user UUID | x            | x       | x         | timestamp  | boolean      | x            |
+| CHANNEL             | CHANNEL#789        | anotherone| user UUID | x            | x       | x         | timestamp  | boolean      | x            |
+| CHANNEL#123         | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
+| CHANNEL#123         | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
+| CHANNEL#789         | MSG#timestamp#ghi  | x         | user UUID | x            | string  | ghi       | timestamp  | x            | x            |
+| USER#123            | CONVERSATION#123   | x         | x         | x            | x       | x         | x          | x            | x            |
+| USER#789            | CONVERSATION#123   | x         | x         | x            | x       | x         | x          | x            | x            |
+| CONVERSATION#123    | META               | x         | x         | [UUID, UUID] | x       | x         | timestamp  | x            | x            |
+| CONVERSATION#123    | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
+| CONVERSATION#123    | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
+
+questions: who can create a public channel - a user becomes an owner....  can one simply English yes!
+
+
+GET /api/users (NO AUTH REQUIRED)
+no body needed, returns a list of all users. 
+sends:
+```js
+type User = {
+  name: string
+  userId: UUID
+}[]
+```
+
+POST /api/login (NO AUTH REQUIRED)
+BODY:
+```js
+type Login = {
+  username: string
+  password: string
+}
+```
+sends:
+```js
+type UserAuthed = User & {
+  token: string
+}
+```
+POST /api/register (NO AUTH REQUIRED)
+BODY:
+```js
+type Registration = Login & {
+  name: string
+}
+```
+sends:
+```js
+type UserAuthed = User & {
+  token: string
+}
+```
+
+//DELETE USER!?!?!??!?!
+
+DELETE /api/users/me (AUTH REQUIRED) no body... and statuscode...
+
+
+
+GET /api/channels (NO AUTH REQUIRED)
+sends:
+```js
+type channel = {
+  channelId: UUID
+  channelName: string
+  authRequired: boolean
+  createdBy: UUID
+  createdAt: string //channel creation timestamp
+}[]
+```
+
+GET /api/channels/:channelId/messages (BOTH AUTH AND NO AUTH) //returns a list of messages in the channel
+
+ //bearer token in header for auth, obviously error code if not Authed when auth is required...
+
+sends:
+```js
+type messageData = {
+    messageId: UUID
+    senderId: UUID
+    message: string
+    createdAt: string
+  }[] //obviously error code if not Authed...
 ```
 
 
-questions: who can create a public channel - a user becomes an owner....  can one simply English yes!
+POST /api/channels/ (AUTH REQUIRED) creates a new channel
+BODY:
+```js
+type channel = {
+  userId: UUID 
+  channelName: string
+  authRequired: boolean
+} //bearer token in header for auth, obviously error code if not Authed...
+```
+returns ok? potential timestamp maybe...
+
+
+POST /api/channels/:channelId/messages (BOTH AUTH AND NO AUTH) posts a message to a channel
+BODY:
+```js
+type channel = {
+  userId: UUID //wont exist if not authed...
+  message: string
+} //bearer token in header for auth, obviously error code if not Authed when auth is required...
+```
+sends:
+ok?
+<!-- ```js
+type messageData = {
+    messageId: UUID
+    senderId: UUID
+    message: string
+    createdAt: string //frontend or backend sends this? i am thinking backend API creates this...
+  }[] //obviously error code if not Authed... -->
+  
+
+//DELETE CHANNEL!?!?!??! if you're owner and authed....
+
+
+** all conversions are private between two users and requires authentication... no quests can write or read conversations.
+
+GET /api/conversations/:userId
+sends:
+```js
+type conversation = {
+  conversationId: UUID
+  participants: UUID[]
+}[]
+```
+
+POST /api/conversations //find or create a conversation (needs some infromation...)
+
+get /api/conversations/:conversationId
+sends:
+```js
+ type message = {
+    messageId: UUID
+    senderId: UUID
+    message: string
+    createdAt: string
+  }[]
+```
+
+POST /api/conversations/:conversationId
+BODY:
+```js 
+type conversation = {
+  userId: UUID //should we check the metadata that this userId has access to this conversation? yes, probably obviously...
+  message: string
+} //bearer token in header for auth, obviously error code if not Authed...
+```
+
+
+//can't delete conversation!? lolz...?

@@ -1,11 +1,9 @@
 import express, { type Express } from 'express'
 import path from 'node:path'
-import cors from 'cors'
 
 const entry: Express = express()
 const distPath: string = path.resolve(import.meta.dirname, '../../frontend/dist')
 
-entry.use(cors())
 entry.use(express.static(distPath))
 
 // Tala om för Chrome att den här webbservern inte stöder tekniken Workspaces i DevTools
@@ -28,9 +26,5 @@ entry.use((_, res) => {
   // Win: C:\a\b\c
   // Mac/Linux: /usr/a/b/c
 })
-
-
-
-
 
 export default entry
