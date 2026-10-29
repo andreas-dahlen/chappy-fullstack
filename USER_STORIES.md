@@ -42,21 +42,21 @@ As a visitor, I want to open Chappy through a public URL so that I can access th
 
 **Acceptance criteria**
 
-- [ ] A minimal version of the application is accessible through a public Render URL.
-- [ ] The Express backend serves the built frontend in production.
-- [ ] The project can be built and started using the repository's documented scripts.
-- [ ] Environment-specific configuration is supplied through environment variables.
-- [ ] Secrets are not committed to the repository.
-- [ ] The application can be redeployed from `main` as development continues.
+- [x] A minimal version of the application is accessible through a public Render URL.
+- [x] The Express backend serves the built frontend in production.
+- [x] The project can be built and started using the repository's documented scripts.
+- [x] Environment-specific configuration is supplied through environment variables.
+- [x] Secrets are not committed to the repository.
+- [x] The application can be redeployed from `main` as development continues.
 
 **Implementation tasks**
 
-- [ ] Review the existing root, backend, frontend, and shared package scripts.
-- [ ] Confirm the production build output and how Express serves it.
-- [ ] Configure the Render service and start/build commands.
-- [ ] Configure required environment variables in Render.
-- [ ] Deploy a minimal shell and verify the public URL.
-- [ ] Document any deployment-specific setup.
+- [x] Review the existing root, backend, frontend, and shared package scripts.
+- [x] Confirm the production build output and how Express serves it.
+- [x] Configure the Render service and start/build commands.
+- [x] Configure required environment variables in Render.
+- [x] Deploy a minimal shell and verify the public URL.
+- [x] Document any deployment-specific setup.
 
 **Notes**
 
@@ -77,20 +77,20 @@ As a visitor, I want to see a list of registered users so that I can discover wh
 
 **Acceptance criteria**
 
-- [ ] The frontend displays users retrieved from the backend.
-- [ ] Each user has a stable identifier internally and a suitable public display name.
-- [ ] Public user data does not expose passwords, password hashes, tokens, or other private authentication data.
-- [ ] Loading, empty, and error states are handled.
-- [ ] The endpoint is available to guests and authenticated users.
+- [x] The frontend displays users retrieved from the backend.
+- [x] Each user has a stable identifier internally and a suitable public display name.
+- [x] Public user data does not expose passwords, password hashes, tokens, or other private authentication data.
+- [x] Loading, empty, and error states are handled.
+- [x] The endpoint is available to guests and authenticated users.
 
 **Implementation tasks**
 
-- [ ] Agree on the public user response shape and shared Zod schema, if appropriate.
-- [ ] Implement the backend route and service/repository flow.
-- [ ] Query users from DynamoDB.
-- [ ] Fetch and render users in the frontend.
-- [ ] Style the user list.
-- [ ] Test the response shape and ensure sensitive fields are never returned.
+- [x] Agree on the public user response shape and shared Zod schema, if appropriate.
+- [x] Implement the backend route and service/repository flow.
+- [x] Query users from DynamoDB.
+- [x] Fetch and render users in the frontend.
+- [x] Style the user list.
+- [x] Test the response shape and ensure sensitive fields are never returned.
 
 **Notes**
 
@@ -110,20 +110,20 @@ As a visitor, I want to see all available channels so that I can discover conver
 
 **Acceptance criteria**
 
-- [ ] The frontend displays the channels retrieved from the backend.
-- [ ] Each channel displays its name.
-- [ ] Open and locked channels are visually distinguishable.
-- [ ] Both open and locked channels appear in the list, including for guests.
-- [ ] Loading, empty, and error states are handled.
-- [ ] The endpoint is available to guests and authenticated users.
+- [x] The frontend displays the channels retrieved from the backend.
+- [x] Each channel displays its name.
+- [x] Open and locked channels are visually distinguishable.
+- [x] Both open and locked channels appear in the list, including for guests.
+- [x] Loading, empty, and error states are handled.
+- [x] The endpoint is available to guests and authenticated users.
 
 **Implementation tasks**
 
-- [ ] Agree on the channel response shape and shared schema.
-- [ ] Implement the backend route and service/repository flow.
-- [ ] Query channels from DynamoDB.
-- [ ] Fetch and render the channel list in the frontend.
-- [ ] Style the list and distinguish open from locked channels.
+- [x] Agree on the channel response shape and shared schema.
+- [x] Implement the backend route and service/repository flow.
+- [x] Query channels from DynamoDB.
+- [x] Fetch and render the channel list in the frontend.
+- [x] Style the list and distinguish open from locked channels.
 - [ ] Test guest and authenticated access.
 
 **Notes**

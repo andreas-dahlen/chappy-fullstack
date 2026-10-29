@@ -4,7 +4,7 @@
   "description": "fullstack chappy app",
   "private": true,
   "type": "module",
-  "keywords": [ ],
+  "keywords": [],
   "workspaces": [
     "backend",
     "frontend",
@@ -16,13 +16,18 @@
     "restart-server": "npm run restart --workspace=backend",
     "start": "npm run start --workspace=backend",
     "dev": "npm run dev --workspace=frontend",
-    "seed": "npm run seed --workspace=backend"
+    "seed": "npm run seed --workspace=backend",
+    "lint": "oxlint --type-aware ."
   },
   "allowScripts": {
     "bcrypt@6.0.0": true
   },
   "optionalDependencies": {
     "@rolldown/binding-linux-x64-gnu": "1.2.15",
-    "lightningcss-linux-x64-gnu": "1.33.0"
+    "lightningcss-linux-x64-gnu": "1.33.0",
+    "oxlint": "^1.88.0"
+  },
+  "devDependencies": {
+    "oxlint-tsgolint": "^7.0.2005"
   }
 }

@@ -2,13 +2,20 @@
   color-scheme: dark;
 
   --bg: #18181b;
-  --surface: linear-gradient(#283d41, rgb(28, 51, 58));
-  --border: #2f2f59;
+  --aside-surface: linear-gradient(#4b3d59, rgb(42, 38, 56));
+  --border-col: #5b5c54;
 
-  --text: #eeeeef;
-  --text-muted: #a1a1aa;
+  /* --text: #15155e;
+  --text-muted: #2222cd; */
 
-  --accent: #818cf8;
+  --icon-text-col: #e0e5cd;
+
+  --focus-col: #818cf8;
+  --hover-col: #818df875;
+
+  --dark-col: rgb(42, 38, 56);
+
+  --border: 2px solid var(--border-col);
 }
 
 * {
@@ -21,7 +28,7 @@ body {
   min-height: 100vh;
 
   background: var(--bg);
-  color: #e0e5cd;
+  color: var(--icon-text-col);
 
   font-family: system-ui, sans-serif;
 }

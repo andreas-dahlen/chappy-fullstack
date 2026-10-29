@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ControlPanel from '../LeftSideBar/ControlPanel.tsx'
 import UserConversations from '../LeftSideBar/UserConversations.tsx'
+import Channels from '../LeftSideBar/Channels.tsx'
 
 export type Section = 'conversations' | 'groups' | 'settings'
 
@@ -11,11 +12,11 @@ export default function LeftSideBar() {
     <aside className="sidebar">
       <ControlPanel onSelect={setSection} selected={section} />
 
-      <div className="sidebar-content">
+      <section className="sidebar-content">
         {section === 'conversations' && <UserConversations />}
-        {section === 'groups' && <div>groups</div>}
+        {section === 'groups' && <Channels />}
         {section === 'settings' && <div>Settings</div>}
-      </div>
+      </section>
     </aside>
   )
 }

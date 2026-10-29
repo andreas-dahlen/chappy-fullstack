@@ -1,0 +1,61 @@
+
+.sidebar,
+.ai-sidebar {
+  background: var(--aside-surface);
+  overflow-y: auto;
+  /* min-width: 300px; */
+  /* view need to change on 580px to single page view */
+}
+
+.sidebar {
+  position: relative;
+  border-right: var(--border);
+}
+
+.ai-sidebar {
+  border-left: var(--border);
+}
+
+.control-panel-fixed {
+  position: sticky;
+   top: 0;
+  padding: 1rem;
+}
+
+.control-panel {
+  display: flex;
+  justify-content: space-around;
+}
+
+.ctrl-button {
+  outline: 2px solid transparent;
+  border-radius: 5px;
+  padding: 5px 7px 1px;
+  background-color: transparent;
+  transition:
+    outline-color 150ms ease-in-out,
+    filter 150ms ease-in-out;
+    background-color: 150ms ease-in-out;
+
+    & .icon {
+      color:var(--icon-text-col);
+    }
+
+    &.active {
+      outline-color: var(--icon-text-col);
+    }
+  &:focus-visible {
+    outline-color: var(--focus-col);
+  }
+
+  &:hover {
+    background-color: var(--hover-col);
+    /* filter: drop-shadow(0 0 1px rgb(225, 227, 216)); */
+  }
+}
+
+
+
+/* .sidebar-content {
+} */
+

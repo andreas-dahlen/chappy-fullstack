@@ -10,9 +10,13 @@ export const dbUserSchema = z.object({
 }).strict()
 export const dbUserArraySchema = z.array(dbUserSchema)
 
-export const userSchema = z.object({
+export const dbChannelSchema = z.object({
+  pk: z.string(),
+  sk: z.string(),
   name: z.string(),
-  userId: z.uuid()
-})
+  ownerId: z.uuid(),
+  authRequired: z.boolean(),
+  timestamp: z.iso.datetime()
+}).strict()
 
-export const userArraySchema = z.array(userSchema)
+export const dbChannelArraySchema = z.array(dbChannelSchema)

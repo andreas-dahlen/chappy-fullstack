@@ -1,7 +1,6 @@
 import { MessagesCircle, Settings, UserRoundGroup } from 'lucide-react'
 import type { Section } from '../layout/LeftSideBar.tsx'
-import '../styles/aside.css'
-import { useAppStore } from '../stores/appStore.ts'
+import '../styles/aside/aside.css'
 
 type ControlPanelProps = {
   onSelect: (section: Section) => void
@@ -12,8 +11,6 @@ export default function ControlPanel({
   selected
 }: ControlPanelProps) {
 
-  const color = useAppStore(s => s.iconColor)
-
   return (
     <nav aria-label="control panel" className='control-panel-fixed'>
       <div className="control-panel">
@@ -23,7 +20,7 @@ export default function ControlPanel({
           onClick={() => onSelect('conversations')}
           className={`ctrl-button ${selected === 'conversations' ? 'active' : ''}`}
         >
-          <MessagesCircle size={33} color={color} />
+          <MessagesCircle size={33} className="icon" />
         </button>
         <button
           type="button"
@@ -31,7 +28,7 @@ export default function ControlPanel({
           onClick={() => onSelect('groups')}
           className={`ctrl-button ${selected === 'groups' ? 'active' : ''}`}
         >
-          <UserRoundGroup size={33} color={color} />
+          <UserRoundGroup size={33} className="icon" />
         </button>
         <button
           type="button"
@@ -39,7 +36,7 @@ export default function ControlPanel({
           onClick={() => onSelect('settings')}
           className={`ctrl-button ${selected === 'settings' ? 'active' : ''}`}
         >
-          <Settings size={33} color={color} />
+          <Settings size={33} className="icon" />
         </button>
       </div>
     </nav>

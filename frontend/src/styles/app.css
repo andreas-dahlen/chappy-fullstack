@@ -13,8 +13,8 @@ header {
 
   padding: 0 1rem;
 
-  background: var(--header);
-  border-bottom: 2px solid var(--border);
+  background: var(--dark-col);
+  border-bottom: var(--border);
 }
 
 main {
