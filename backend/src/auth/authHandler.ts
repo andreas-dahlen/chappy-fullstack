@@ -3,7 +3,7 @@ import { getJwtSecret } from '../envGetters/getJwtSecret.ts'
 
 const { verify } = jwt
 
-type AuthResult =
+export type AuthResult =
   | { success: true; userId: string }
   | { success: false; reason: 'missing-token' | 'invalid-token' | 'expired-token' | 'invalid-payload' }
   | { success: false; reason: 'internal-error' }

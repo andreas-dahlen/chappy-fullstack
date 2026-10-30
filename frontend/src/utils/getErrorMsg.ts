@@ -4,7 +4,7 @@ export function getHttpErrorMessage(status: number): string {
       return 'Invalid request. Please check your input.'
 
     case 401:
-      return 'Please log in to continue.'
+      return 'Invalid username or password.'
 
     case 403:
       return "You don't have permission to perform this action."
@@ -15,18 +15,26 @@ export function getHttpErrorMessage(status: number): string {
     case 409:
       return 'This request conflicts with existing data.'
 
+    case 422:
+      return 'Some of the provided information is invalid.'
+
+    case 429:
+      return 'Too many requests. Please wait a moment and try again.'
+
     case 500:
       return 'Something went wrong on our server. Please try again later.'
 
+    case 502:
     case 503:
+    case 504:
       return 'The service is temporarily unavailable. Please try again later.'
 
     default:
-      if (status > 500) {
+      if (status >= 500) {
         return 'A server error occurred. Please try again later.'
       }
 
-      if (status > 400) {
+      if (status >= 400) {
         return 'The request failed. Please try again.'
       }
 

@@ -1,9 +1,9 @@
 import { genSalt, hash } from 'bcrypt'
 import type { DbCredentials } from '../types/db.types.ts'
-import type { Credentials } from '@chappy/shared'
+import type { RegCredentials } from '@chappy/shared'
 
 export async function createUser(
-  signInData: Credentials
+  signInData: RegCredentials
 ): Promise<DbCredentials> {
   const salt = await genSalt(10)
   const hashed = await hash(signInData.password, salt)

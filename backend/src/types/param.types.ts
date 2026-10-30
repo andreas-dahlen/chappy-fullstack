@@ -1,3 +1,0 @@
-type JwtResponse = {
-  jwt: string;
-}

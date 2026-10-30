@@ -1,7 +1,7 @@
 import type { UUID } from '@chappy/shared';
 
 export type JwtResponse = {
-  jwt: string
+  token: string
   userId: UUID
   name: string
 }

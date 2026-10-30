@@ -9,21 +9,36 @@ export function usePostAuthNavigation() {
     const state = location.state as AuthNavigationState | null
 
     if (!state) {
-      navigate('/home')
+      navigate('/home', { replace: true })
       return
     }
 
     switch (state.reason) {
+      case 'return-to':
+        if (isValidReturnPath(state.pathname)) {
+          navigate(state.pathname, { replace: true })
+        } else {
+          navigate('/home', { replace: true })
+        }
+        break
+
       case 'enter-channel':
-        navigate(`/channels/${state.channelId}`)
+        navigate(`/channels/${state.channelId}`, { replace: true })
         break
 
       case 'start-conversation':
-        // TODO: Retrieve/create conversation using state.userId
-        // Then navigate to the conversation.
+        // Retrieve/create conversation, then navigate.
         break
     }
   }
 
   return navigateAfterAuth
+}
+
+function isValidReturnPath(path: unknown): path is string {
+  return (
+    typeof path === 'string' &&
+    path.startsWith('/') &&
+    !path.startsWith('//')
+  )
 }

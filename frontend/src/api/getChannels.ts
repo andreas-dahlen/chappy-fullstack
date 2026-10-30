@@ -3,14 +3,15 @@ import type { ChannelReturn } from '../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../utils/getErrorMsg.ts'
 
 export async function dbGetChannels(): Promise<ChannelReturn> {
-
+  let status: number | null = null
   try {
     const response = await fetch(`/api/channels`)
-
+    status = response.status
     if (!response.ok) {
       return {
         state: 'failed',
-        message: getHttpErrorMessage(response.status)
+        message: getHttpErrorMessage(response.status),
+        status
       }
     }
 
@@ -22,7 +23,8 @@ export async function dbGetChannels(): Promise<ChannelReturn> {
 
       return {
         state: 'failed',
-        message: 'Received invalid data from the server.'
+        message: 'Received invalid data from the server.',
+        status
       }
     }
     return {
@@ -40,7 +42,8 @@ export async function dbGetChannels(): Promise<ChannelReturn> {
 
     return {
       state: 'failed',
-      message
+      message,
+      status
     }
   }
 }

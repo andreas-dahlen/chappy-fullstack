@@ -3,13 +3,14 @@ import { useUsersStore } from '../stores/usersStore.ts'
 import '../styles/aside/conversation.css'
 import type { User } from '@chappy/shared'
 import { useNavigate } from 'react-router'
+import { useCredentialStore } from '../stores/credentialStore.ts'
 
 export default function UserConversations() {
   const users = useUsersStore(s => s.activeUsers)
   const loading = useUsersStore(s => s.loading)
   const error = useUsersStore(s => s.error)
   const fetchUsers = useUsersStore(s => s.fetchUsers)
-
+  const token = useCredentialStore(s => s.token)
   useEffect(() => {
     void fetchUsers()
   }, [fetchUsers])
@@ -22,22 +23,19 @@ export default function UserConversations() {
   //   location.pathname === `/conversations/${conversation.conversationId}`
 
   const handleUserClick = async (user: User) => {
-    // TODO: Fetch or create a conversation with this user. 
-    // 
-    // If unauthenticated, navigate to login. 
-    // 
-    // Preserve the intended recipient for after authentication. 
-    // // Otherwise, navigate to the conversation.
+    if (!token) {
+      void navigate('/sign-in', {
+        state: {
+          reason: 'start-conversation',
+          userId: user.userId
+        }
+      })
+      return
+    }
 
-    void navigate('/sign-in', {
-      state: {
-        reason: 'start-conversation',
-        userId: user.userId
-      }
-    })
+    // TODO: Fetch or create conversation.
+    // Then navigate to it.
   }
-
-
 
   if (loading && users.length === 0) {
     return <p>Loading users...</p>

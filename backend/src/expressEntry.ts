@@ -4,6 +4,7 @@ import userRouter from './routers/userRouter.ts'
 import channelRouter from './routers/channelRouter.ts'
 import { logger } from './middleware/express/logger.ts'
 import registerRouter from './routers/registerRouter.ts'
+import signInRouter from './routers/signInRouter.ts'
 
 const entry: Express = express()
 const distPath: string = path.resolve(import.meta.dirname, '../../frontend/dist')
@@ -22,6 +23,7 @@ apiRouter.use(logger)
 apiRouter.use('/users', userRouter)
 apiRouter.use('/channels', channelRouter)
 apiRouter.use('/register', registerRouter)
+apiRouter.use('/sign-in', signInRouter)
 
 
 // Wildcard route: behövs för att React Router med BrowserRouter i frontend ska fungera!

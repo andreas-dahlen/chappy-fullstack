@@ -1,7 +1,7 @@
 import express, { type Router } from 'express'
 import jwt from 'jsonwebtoken'
 import { getJwtSecret } from '../envGetters/getJwtSecret.ts'
-import { registerSchema, type Credentials } from '@chappy/shared'
+import { dbRegisterSchema, type RegCredentials } from '@chappy/shared'
 import type { JwtResponse } from '../types/response.types.ts'
 import { createUser } from '../auth/createUser.ts'
 import { PutCommand } from '@aws-sdk/lib-dynamodb'
@@ -12,8 +12,8 @@ const { sign } = jwt
 
 const router: Router = express.Router()
 
-router.post<{}, JwtResponse | void, Credentials>('/', express.json(), async (req, res) => {
-  const parsed = registerSchema.safeParse(req.body)
+router.post<{}, JwtResponse | void, RegCredentials>('/', express.json(), async (req, res) => {
+  const parsed = dbRegisterSchema.safeParse(req.body)
   if (parsed.error) {
     res.sendStatus(400)
     return
@@ -34,9 +34,9 @@ router.post<{}, JwtResponse | void, Credentials>('/', express.json(), async (req
       ConditionExpression: 'attribute_not_exists(pk)'
     }))
 
-    const jwt = sign({ uuid: user.ownerId }, getJwtSecret(), { expiresIn: '1h' })
+    const token = sign({ uuid: user.ownerId }, getJwtSecret(), { expiresIn: '1h' })
 
-    res.status(201).send({ jwt, userId: user.ownerId, name: user.name })
+    res.status(201).send({ token, userId: user.ownerId, name: user.name })
   } catch (error) {
     if (error instanceof ConditionalCheckFailedException) {
       res.sendStatus(409)

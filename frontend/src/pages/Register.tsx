@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import '../styles/pages/signIn.css'
+import '../styles/pages/form.css'
 import { useCredentialStore } from '../stores/credentialStore.ts'
 import { Loader } from 'lucide-react'
-import { NavLink } from 'react-router'
+import { NavLink, useLocation } from 'react-router'
 import { usePostAuthNavigation } from '../hooks/usePostAuthNavigation.ts'
+import { useAuthentication } from '../hooks/useAuthentication.ts'
 
 type Registration = {
   name: string
@@ -22,9 +23,11 @@ export default function Register() {
     }
   )
 
-  const registerUser = useCredentialStore(s => s.registerUser)
+  const { registerUser } = useAuthentication()
   const loading = useCredentialStore(s => s.loading)
   const error = useCredentialStore(s => s.error)
+
+  const location = useLocation()
 
   const navigateAfterAuth = usePostAuthNavigation()
 
@@ -80,17 +83,24 @@ export default function Register() {
         onChange={e => setInput(prev => ({ ...prev, confirmPassword: e.target.value }))}
       // placeholder="Password"
       />
-
-      {loading
-        ? <span role="status" aria-label="Register">
-          <Loader className="loader" />
-        </span>
-        : error && <p role="alert">{error}</p>
-      }
-      <button type="submit" disabled={loading} className='submit-button'>Register</button>
+      <div className='state-display'>
+        {loading
+          ? <span role="status" aria-label="Register">
+            <Loader className="loader" />
+          </span>
+          : error && <p role="alert">{error}</p>
+        }
+      </div>
+      <button type="submit"
+        disabled={loading}
+        className='submit-button'>
+        {loading ? 'Loading...' : 'Register'}
+      </button>
       <p>
-        Don't have an account?
-        <NavLink to="/register" className="register-nav"> Create one!</NavLink>
+        Already have an account?
+        <NavLink to="/sign-in" state={location.state}>
+          Sign in!
+        </NavLink>
       </p>
     </form>
   )

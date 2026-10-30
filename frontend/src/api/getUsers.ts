@@ -3,14 +3,15 @@ import type { UserReturn } from '../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../utils/getErrorMsg.ts'
 
 export async function dbGetUsers(): Promise<UserReturn> {
-
+  let status: number | null = null
   try {
     const response = await fetch(`/api/users`)
-
+    status = response.status
     if (!response.ok) {
       return {
         state: 'failed',
-        message: getHttpErrorMessage(response.status)
+        message: getHttpErrorMessage(response.status),
+        status
       }
     }
 
@@ -22,7 +23,8 @@ export async function dbGetUsers(): Promise<UserReturn> {
 
       return {
         state: 'failed',
-        message: 'Received invalid data from the server.'
+        message: 'Received invalid data from the server.',
+        status
       }
     }
     return {
@@ -40,7 +42,8 @@ export async function dbGetUsers(): Promise<UserReturn> {
 
     return {
       state: 'failed',
-      message
+      message,
+      status
     }
   }
 }

@@ -18,7 +18,7 @@ export const channelSchema = z.object({
 export const channelArraySchema = z.array(channelSchema)
 
 export const authResponseSchema = z.object({
-  jwt: z.string().min(1),
+  token: z.string().min(1),
   userId: z.uuid(),
   name: z.string()
 }).strict()

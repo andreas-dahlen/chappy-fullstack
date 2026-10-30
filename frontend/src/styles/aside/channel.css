@@ -1,3 +1,7 @@
+p {
+  margin: 1rem 1rem;
+}
+
 .channel-list {
   display: flex;
   flex-direction: column;

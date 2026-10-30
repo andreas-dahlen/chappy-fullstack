@@ -180,22 +180,22 @@ As a registered user, I want to log in so that Chappy can authenticate me and gr
 
 **Acceptance criteria**
 
-- [ ] A user can submit their login credentials.
-- [ ] The backend verifies the password against the stored hash.
-- [ ] Incorrect credentials produce a safe, useful error.
-- [ ] Successful login establishes an authenticated session/token using the agreed JWT/JWS approach.
-- [ ] The response does not expose password hashes or other sensitive data.
-- [ ] The frontend updates its authenticated state after success.
-- [ ] Authentication failures are handled without breaking the application.
+- [x] A user can submit their login credentials.
+- [x] The backend verifies the password against the stored hash.
+- [x] Incorrect credentials produce a safe, useful error.
+- [x] Successful login establishes an authenticated session/token using the agreed JWT/JWS approach.
+- [x] The response does not expose password hashes or other sensitive data.
+- [x] The frontend updates its authenticated state after success.
+- [x] Authentication failures are handled without breaking the application.
 
 **Implementation tasks**
 
-- [ ] Review the current authentication implementation and dependencies.
-- [ ] Confirm the intended token format, signing, verification, expiry, and secret configuration.
-- [ ] Implement or complete the login endpoint.
-- [ ] Build and style the login form.
-- [ ] Connect the form to the backend.
-- [ ] Handle loading, errors, and successful login.
+- [x] Review the current authentication implementation and dependencies.
+- [x] Confirm the intended token format, signing, verification, expiry, and secret configuration.
+- [x] Implement or complete the login endpoint.
+- [x] Build and style the login form.
+- [x] Connect the form to the backend.
+- [x] Handle loading, errors, and successful login.
 - [ ] Test correct credentials, incorrect credentials, and malformed requests.
 
 **Notes**

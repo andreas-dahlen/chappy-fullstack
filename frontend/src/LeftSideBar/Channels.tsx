@@ -4,12 +4,14 @@ import type { Channel } from '@chappy/shared'
 import { useLocation, useNavigate } from 'react-router'
 import { useChannelsStore } from '../stores/channelsStore.ts'
 import { Lock } from 'lucide-react'
+import { useCredentialStore } from '../stores/credentialStore.ts'
 
 export default function Channels() {
   const channels = useChannelsStore(s => s.activeChannels)
   const loading = useChannelsStore(s => s.loading)
   const error = useChannelsStore(s => s.error)
   const fetchChannels = useChannelsStore(s => s.fetchChannels)
+  const token = useCredentialStore(s => s.token)
 
   useEffect(() => {
     void fetchChannels()
@@ -24,11 +26,9 @@ export default function Channels() {
     }
     return ''
   }
-  // const isActive =
-  //   location.pathname === `/channels/${channels.channelId}`
 
   const handleChannelClick = (channel: Channel) => {
-    if (channel.authRequired) {
+    if (channel.authRequired && !token) {
       void navigate('/sign-in', {
         state: {
           reason: 'enter-channel',
@@ -39,8 +39,6 @@ export default function Channels() {
     }
     void navigate(`/channels/${channel.channelId}`)
   }
-
-
 
   if (loading && channels.length === 0) {
     return <p>Loading channels...</p>

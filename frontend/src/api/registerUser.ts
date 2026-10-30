@@ -1,9 +1,9 @@
-import { authResponseSchema, type Credentials } from '@chappy/shared'
-import type { JwtReturn } from '../types/apiData.types.ts'
+import { authResponseSchema, type RegCredentials } from '@chappy/shared'
+import type { AuthReturn } from '../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../utils/getErrorMsg.ts'
 
-export async function dbRegisterUser(cred: Credentials): Promise<JwtReturn> {
-
+export async function dbRegisterUser(cred: RegCredentials): Promise<AuthReturn> {
+  let status: number | null = null
   try {
     const response = await fetch(`/api/register`, {
       method: "POST",
@@ -11,13 +11,13 @@ export async function dbRegisterUser(cred: Credentials): Promise<JwtReturn> {
       body: JSON.stringify(cred)
     })
 
-    console.log(response.status, response.url)
-    console.log(response.headers.get('content-type'))
+    status = response.status
 
     if (!response.ok) {
       return {
         state: 'failed',
-        message: getHttpErrorMessage(response.status)
+        message: getHttpErrorMessage(response.status),
+        status
       }
     }
 
@@ -29,12 +29,13 @@ export async function dbRegisterUser(cred: Credentials): Promise<JwtReturn> {
 
       return {
         state: 'failed',
-        message: 'Received invalid data from the server.'
+        message: 'Received invalid data from the server.',
+        status
       }
     }
     return {
       state: 'success',
-      token: result.data.jwt,
+      token: result.data.token,
       userId: result.data.userId,
       name: result.data.name
     }
@@ -49,7 +50,8 @@ export async function dbRegisterUser(cred: Credentials): Promise<JwtReturn> {
 
     return {
       state: 'failed',
-      message
+      message,
+      status
     }
   }
 }

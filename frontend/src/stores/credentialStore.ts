@@ -1,7 +1,6 @@
-import type { Credentials } from '@chappy/shared'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { dbRegisterUser } from '../api/registerUser.ts'
+import type { AuthSuccess } from '../types/apiData.types.ts'
 
 type CredentialStore = {
   name: string | undefined
@@ -9,75 +8,47 @@ type CredentialStore = {
   userId: string | undefined
   loading: boolean
   error: string | null
-
+  setCredentials: (credentials: AuthSuccess) => void
+  setLoading: (loading: boolean) => void
+  setError: (error: string | null) => void
   signOut: () => void
-
-  registerUser: (cred: InputCredentials) => Promise<boolean>
-}
-type InputCredentials = Credentials & {
-  confirmPassword: string
 }
 
 export const useCredentialStore = create<CredentialStore>()(
-  immer((set, get) => ({
+  immer((set) => ({
     name: undefined,
     token: undefined,
     userId: undefined,
     loading: false,
     error: null,
 
+    setCredentials: credentials => {
+      set(s => {
+        s.name = credentials.name
+        s.token = credentials.token
+        s.userId = credentials.userId
+      })
+    },
+
+    setLoading: loading => {
+      set(s => {
+        s.loading = loading
+      })
+    },
+
+    setError: error => {
+      set(s => {
+        s.error = error
+      })
+    },
+
     signOut: () => {
       set(s => {
         s.name = undefined
         s.token = undefined
         s.userId = undefined
-      })
-    },
-
-    registerUser: async (cred) => {
-      if (get().token || get().loading) return false
-
-      if (cred.confirmPassword !== cred.password) {
-        set(s => {
-          s.error = 'Passwords do not match'
-        })
-        return false
-      }
-
-      set((s) => {
-        s.loading = true
         s.error = null
       })
-
-      try {
-        const { confirmPassword, ...data } = cred
-        const result = await dbRegisterUser(data)
-
-        if (result.state === 'failed') {
-          set((s) => {
-            s.error = result.message
-          })
-          return false
-        }
-
-        set((s) => {
-          s.token = result.token
-          s.userId = result.userId
-          s.name = result.name
-        })
-        return true
-      } catch (error) {
-        set((s) => {
-          s.error = error instanceof Error
-            ? error.message
-            : String(error)
-        })
-        return false
-      } finally {
-        set((s) => {
-          s.loading = false
-        })
-      }
     }
   }))
 )

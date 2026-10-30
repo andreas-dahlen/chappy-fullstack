@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import '../styles/pages/signIn.css'
+import '../styles/pages/form.css'
 import { useCredentialStore } from '../stores/credentialStore.ts'
 import { Loader } from 'lucide-react'
-import { NavLink } from 'react-router'
+import { NavLink, useLocation } from 'react-router'
 import { usePostAuthNavigation } from '../hooks/usePostAuthNavigation.ts'
+import { useAuthentication } from '../hooks/useAuthentication.ts'
 
 type SignIn = {
   username: string
@@ -14,9 +15,11 @@ export default function SignIn() {
 
   const [input, setInput] = useState<SignIn>({ username: '', password: '' })
 
-  const signIn = useCredentialStore(s => s.signIn)
+  const { signIn } = useAuthentication()
   const loading = useCredentialStore(s => s.loading)
   const error = useCredentialStore(s => s.error)
+
+  const location = useLocation()
 
   const navigateAfterAuth = usePostAuthNavigation()
 
@@ -56,17 +59,18 @@ export default function SignIn() {
         onChange={e => setInput(prev => ({ ...prev, password: e.target.value }))}
       // placeholder="Password"
       />
-
-      {loading
-        ? <span role="status" aria-label="Signing in">
-          <Loader className="loader" />
-        </span>
-        : error && <p role="alert">{error}</p>
-      }
+      <div className='state-display'>
+        {loading
+          ? <span role="status" aria-label="Signing in">
+            <Loader className="loader" />
+          </span>
+          : error && <p role="alert">{error}</p>
+        }
+      </div>
       <button type="submit"
         disabled={loading}
         className='submit-button'>
-        Sign in
+        {loading ? 'Loading...' : 'Sign in'}
       </button>
       <p>
         Don't have an account?
