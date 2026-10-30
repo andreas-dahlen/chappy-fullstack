@@ -1,0 +1,3 @@
+type JwtResponse = {
+  jwt: string;
+}

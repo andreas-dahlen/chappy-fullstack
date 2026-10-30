@@ -2,9 +2,10 @@ import type { RouteObject } from 'react-router'
 
 import App from './App.tsx'
 import Home from './pages/Home.tsx'
-import Login from './pages/Login.tsx'
+import SignIn from './pages/SignIn.tsx'
 import Conversation from './pages/Conversation.tsx'
 import Channel from './pages/Channel.tsx'
+import Register from './pages/Register.tsx'
 
 const routerConfig: RouteObject[] = [
   {
@@ -16,8 +17,12 @@ const routerConfig: RouteObject[] = [
         Component: Home
       },
       {
-        path: 'login',
-        Component: Login
+        path: 'sign-in',
+        Component: SignIn
+      },
+      {
+        path: 'register',
+        Component: Register
       },
       {
         path: 'conversations/:conversationId',

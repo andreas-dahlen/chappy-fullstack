@@ -29,7 +29,7 @@ export default function UserConversations() {
     // Preserve the intended recipient for after authentication. 
     // // Otherwise, navigate to the conversation.
 
-    void navigate('/login', {
+    void navigate('/sign-in', {
       state: {
         reason: 'start-conversation',
         userId: user.userId

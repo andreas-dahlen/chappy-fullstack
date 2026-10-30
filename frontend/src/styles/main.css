@@ -2,7 +2,9 @@
   color-scheme: dark;
 
   --bg: #18181b;
-  --aside-surface: linear-gradient(#4b3d59, rgb(42, 38, 56));
+  --aside-surface: linear-gradient(var(--surface-bright), var(--surface-dark));
+  --surface-bright: oklch(38.638% 0.04976 306.99);
+  --surface-dark: oklch(28.119% 0.03309 294.353);
   --border-col: #5b5c54;
 
   /* --text: #15155e;

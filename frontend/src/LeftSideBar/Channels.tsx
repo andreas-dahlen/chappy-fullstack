@@ -29,7 +29,7 @@ export default function Channels() {
 
   const handleChannelClick = (channel: Channel) => {
     if (channel.authRequired) {
-      void navigate('/login', {
+      void navigate('/sign-in', {
         state: {
           reason: 'enter-channel'
         }

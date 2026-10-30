@@ -21,11 +21,17 @@ main {
   min-width: 0;
   min-height: 0;
   overflow-y: auto;
+  margin: 0 auto;
 }
 
 .layout {
   display: grid;
-  grid-template-columns: 16rem minmax(0, 1fr) 20rem;
-
+  grid-template-columns: 16rem minmax(0, 1fr);
   min-height: 0;
 }
+
+.layout.ai-displayed {
+  grid-template-columns: 16rem minmax(0, 1fr) minmax(12rem, 20rem);
+}
+
+/* aim to breakpoint at 567 */

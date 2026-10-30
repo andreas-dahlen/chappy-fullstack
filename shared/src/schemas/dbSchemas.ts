@@ -20,3 +20,9 @@ export const dbChannelSchema = z.object({
 }).strict()
 
 export const dbChannelArraySchema = z.array(dbChannelSchema)
+
+export const registerSchema = z.object({
+  name: z.string(),
+  username: z.string(),
+  password: z.string()
+}).strict()

@@ -2,6 +2,8 @@ import express, { type Express } from 'express'
 import path from 'node:path'
 import userRouter from './routers/userRouter.ts'
 import channelRouter from './routers/channelRouter.ts'
+import { logger } from './middleware/express/logger.ts'
+import registerRouter from './routers/registerRouter.ts'
 
 const entry: Express = express()
 const distPath: string = path.resolve(import.meta.dirname, '../../frontend/dist')
@@ -16,9 +18,10 @@ entry.get('/.well-known/appspecific/com.chrome.devtools.json', (_, res) => {
 const apiRouter = express.Router()
 entry.use('/api', apiRouter)
 
-
+apiRouter.use(logger)
 apiRouter.use('/users', userRouter)
 apiRouter.use('/channels', channelRouter)
+apiRouter.use('/register', registerRouter)
 
 
 // Wildcard route: behövs för att React Router med BrowserRouter i frontend ska fungera!

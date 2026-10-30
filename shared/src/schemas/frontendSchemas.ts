@@ -13,6 +13,12 @@ export const channelSchema = z.object({
   createdBy: z.uuid(),
   authRequired: z.boolean(),
   createdAt: z.iso.datetime()
-})
+}).strict()
 
 export const channelArraySchema = z.array(channelSchema)
+
+export const authResponseSchema = z.object({
+  jwt: z.string().min(1),
+  userId: z.uuid(),
+  name: z.string()
+}).strict()

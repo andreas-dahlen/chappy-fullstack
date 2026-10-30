@@ -18,3 +18,14 @@ export type ChannelReturn =
     state: 'failed'
     message: string
   }
+
+export type JwtReturn =
+  | {
+    state: 'success'
+    token: string
+    userId: string
+    name: string
+  } | {
+    state: 'failed'
+    message: string
+  }

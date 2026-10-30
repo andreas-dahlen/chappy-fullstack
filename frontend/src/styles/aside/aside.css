@@ -20,6 +20,16 @@
   position: sticky;
    top: 0;
   padding: 1rem;
+  z-index: 1;
+}
+.control-panel-fixed::before{
+  inset: 0;
+  z-index: -1;
+  position: absolute;
+  content: "";
+  /* background-color: var(--surface-bright); */
+  background: var(--surface-bright);
+  filter: blur(5px);
 }
 
 .control-panel {
@@ -34,8 +44,8 @@
   background-color: transparent;
   transition:
     outline-color 150ms ease-in-out,
-    filter 150ms ease-in-out;
-    background-color: 150ms ease-in-out;
+    filter 150ms ease-in-out,
+    background 100ms ease-in-out;
 
     & .icon {
       color:var(--icon-text-col);
@@ -49,7 +59,7 @@
   }
 
   &:hover {
-    background-color: var(--hover-col);
+    background: var(--hover-col);
     /* filter: drop-shadow(0 0 1px rgb(225, 227, 216)); */
   }
 }
