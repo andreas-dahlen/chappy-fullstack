@@ -3,6 +3,7 @@ import '../styles/pages/signIn.css'
 import { useCredentialStore } from '../stores/credentialStore.ts'
 import { Loader } from 'lucide-react'
 import { NavLink } from 'react-router'
+import { usePostAuthNavigation } from '../hooks/usePostAuthNavigation.ts'
 
 type SignIn = {
   username: string
@@ -17,12 +18,21 @@ export default function SignIn() {
   const loading = useCredentialStore(s => s.loading)
   const error = useCredentialStore(s => s.error)
 
+  const navigateAfterAuth = usePostAuthNavigation()
+
+  const handleSignIn = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const success = await signIn(input)
+    if (!success) return
+
+    navigateAfterAuth()
+  }
+
+
   return (
     <form className='form'
-      onSubmit={e => {
-        e.preventDefault()
-        void signIn(input)
-      }}
+      onSubmit={handleSignIn}
     >
 
       <label htmlFor="username">Username</label>
@@ -53,10 +63,18 @@ export default function SignIn() {
         </span>
         : error && <p role="alert">{error}</p>
       }
-      <button type="submit" disabled={loading} className='submit-button'>Sign in</button>
+      <button type="submit"
+        disabled={loading}
+        className='submit-button'>
+        Sign in
+      </button>
       <p>
         Don't have an account?
-        <NavLink to="/register" className="register-nav"> Create one!</NavLink>
+        <NavLink
+          to="/register"
+          className="register-nav"
+          state={location.state}
+        > Create one!</NavLink>
       </p>
     </form>
   )

@@ -3,6 +3,7 @@ import '../styles/pages/signIn.css'
 import { useCredentialStore } from '../stores/credentialStore.ts'
 import { Loader } from 'lucide-react'
 import { NavLink } from 'react-router'
+import { usePostAuthNavigation } from '../hooks/usePostAuthNavigation.ts'
 
 type Registration = {
   name: string
@@ -25,12 +26,21 @@ export default function Register() {
   const loading = useCredentialStore(s => s.loading)
   const error = useCredentialStore(s => s.error)
 
+  const navigateAfterAuth = usePostAuthNavigation()
+
+  const handleSignIn = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const success = await registerUser(input)
+    if (!success) return
+
+    navigateAfterAuth()
+  }
+
+
   return (
     <form className='form'
-      onSubmit={e => {
-        e.preventDefault()
-        void registerUser(input)
-      }}
+      onSubmit={handleSignIn}
     >
 
       <label htmlFor="displayName">Display Name *</label>

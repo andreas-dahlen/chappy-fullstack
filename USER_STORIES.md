@@ -144,23 +144,23 @@ As a guest, I want to register an account so that I can use features reserved fo
 
 **Acceptance criteria**
 
-- [ ] A guest can access and submit a registration form.
-- [ ] The backend validates registration input.
-- [ ] Invalid input and duplicate usernames are handled with useful errors.
-- [ ] Passwords are hashed before they are stored.
-- [ ] A successful registration creates a user in DynamoDB.
-- [ ] The response does not expose the password or password hash.
-- [ ] The frontend communicates success and failure clearly.
+- [x] A guest can access and submit a registration form.
+- [x] The backend validates registration input.
+- [x] Invalid input and duplicate usernames are handled with useful errors.
+- [x] Passwords are hashed before they are stored.
+- [x] A successful registration creates a user in DynamoDB.
+- [x] The response does not expose the password or password hash.
+- [x] The frontend communicates success and failure clearly.
 
 **Implementation tasks**
 
-- [ ] Agree on registration fields and validation rules.
-- [ ] Define/reuse the shared validation schema where suitable.
-- [ ] Implement the registration endpoint and backend logic.
-- [ ] Store the user using the repository layer.
-- [ ] Build and style the registration form.
-- [ ] Handle loading, validation, success, and error states.
-- [ ] Test valid registration, invalid input, and duplicate usernames.
+- [x] Agree on registration fields and validation rules.
+- [x] Define/reuse the shared validation schema where suitable.
+- [x] Implement the registration endpoint and backend logic.
+- [x] Store the user using the repository layer.
+- [x] Build and style the registration form.
+- [x] Handle loading, validation, success, and error states.
+- [x] Test valid registration, invalid input, and duplicate usernames.
 
 **Notes**
 

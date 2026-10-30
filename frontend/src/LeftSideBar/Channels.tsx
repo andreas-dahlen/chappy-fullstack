@@ -31,7 +31,8 @@ export default function Channels() {
     if (channel.authRequired) {
       void navigate('/sign-in', {
         state: {
-          reason: 'enter-channel'
+          reason: 'enter-channel',
+          channelId: channel.channelId
         }
       })
       return

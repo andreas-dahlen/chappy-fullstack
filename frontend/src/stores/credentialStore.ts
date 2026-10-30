@@ -10,7 +10,9 @@ type CredentialStore = {
   loading: boolean
   error: string | null
 
-  registerUser: (cred: InputCredentials) => Promise<void>
+  signOut: () => void
+
+  registerUser: (cred: InputCredentials) => Promise<boolean>
 }
 type InputCredentials = Credentials & {
   confirmPassword: string
@@ -24,10 +26,23 @@ export const useCredentialStore = create<CredentialStore>()(
     loading: false,
     error: null,
 
-    registerUser: async (cred) => {
-      if (get().token || get().loading) return
+    signOut: () => {
+      set(s => {
+        s.name = undefined
+        s.token = undefined
+        s.userId = undefined
+      })
+    },
 
-      if (cred.confirmPassword !== cred.password) return
+    registerUser: async (cred) => {
+      if (get().token || get().loading) return false
+
+      if (cred.confirmPassword !== cred.password) {
+        set(s => {
+          s.error = 'Passwords do not match'
+        })
+        return false
+      }
 
       set((s) => {
         s.loading = true
@@ -42,7 +57,7 @@ export const useCredentialStore = create<CredentialStore>()(
           set((s) => {
             s.error = result.message
           })
-          return
+          return false
         }
 
         set((s) => {
@@ -50,12 +65,14 @@ export const useCredentialStore = create<CredentialStore>()(
           s.userId = result.userId
           s.name = result.name
         })
+        return true
       } catch (error) {
         set((s) => {
           s.error = error instanceof Error
             ? error.message
             : String(error)
         })
+        return false
       } finally {
         set((s) => {
           s.loading = false

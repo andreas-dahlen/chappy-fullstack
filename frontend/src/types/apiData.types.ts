@@ -29,3 +29,13 @@ export type JwtReturn =
     state: 'failed'
     message: string
   }
+
+export type AuthNavigationState =
+  | {
+    reason: 'start-conversation'
+    userId: string
+  }
+  | {
+    reason: 'enter-channel'
+    channelId: string
+  }
