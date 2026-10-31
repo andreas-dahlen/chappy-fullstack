@@ -1,6 +1,6 @@
 import { NavLink, useParams } from 'react-router'
 import { useChannelsStore } from '../stores/channelsStore.ts'
-import { useEffect } from 'react'
+// import { useEffect } from 'react'
 
 export default function Channel() {
 
