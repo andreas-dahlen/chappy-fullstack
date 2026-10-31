@@ -9,7 +9,7 @@ export function usePostAuthNavigation() {
     const state = location.state as AuthNavigationState | null
 
     if (!state) {
-      navigate('/home', { replace: true })
+      navigate('/', { replace: true })
       return
     }
 
@@ -18,7 +18,7 @@ export function usePostAuthNavigation() {
         if (isValidReturnPath(state.pathname)) {
           navigate(state.pathname, { replace: true })
         } else {
-          navigate('/home', { replace: true })
+          navigate('/', { replace: true })
         }
         break
 

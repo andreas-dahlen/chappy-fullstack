@@ -52,18 +52,19 @@ export default function Channels() {
   return (
     <ul className="channel-list">
       {channels.map((channel) => (
-        <li key={channel.channelId} className={`channel-list-item ${resolveActive(channel.channelId)}`}>
+        <li key={channel.channelId} className='channel-list-item'>
           <button
             type="button"
-            className="channel-button"
+            className={`channel-button ${resolveActive(channel.channelId)}`}
             onClick={() => handleChannelClick(channel)}
           >
             <span className="channel-avatar"
               aria-hidden="true">
               {channel.channelName.charAt(0).toUpperCase()}
-              {channel.authRequired && <div className='lock-box'>
-                <Lock className={"lock"} size={17} />
-              </div>}
+              {!token && channel.authRequired &&
+                <div className='lock-box'>
+                  <Lock size={17} />
+                </div>}
             </span>
 
             <span className="channel-info">

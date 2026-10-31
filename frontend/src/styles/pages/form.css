@@ -32,6 +32,10 @@
       outline: 2px solid var(--focus-col);
       outline-offset: 2px;
     }
+
+      &:active {
+    background: var(--focus-col);
+  }
   }
 }
 
@@ -48,10 +52,8 @@
   align-items: center;
 
   .loader {
-
     animation: spin 2s linear infinite;
   }
-
 }
 
 @keyframes spin {
@@ -81,6 +83,9 @@
   &:disabled {
     cursor: not-allowed;
     opacity: 0.6;
+  }
+  &:not(:disabled):active {
+    background: var(--focus-col);
   }
 }
 

@@ -1,5 +1,6 @@
-import { useParams } from 'react-router'
+import { NavLink, useParams } from 'react-router'
 import { useChannelsStore } from '../stores/channelsStore.ts'
+import { useEffect } from 'react'
 
 export default function Channel() {
 
@@ -8,8 +9,20 @@ export default function Channel() {
   const channel = useChannelsStore(s =>
     s.activeChannels.find(channel => channel.channelId === channelId)
   )
+  // useEffect(() => {
+  //a handler that handles fetching messages and meta data... and authed...
+  // }[])
 
-  return (
-    <div>{channel?.channelName}</div>
+  if (!channel) return (
+    <div>
+      <p>Ooops! Could not load the channel</p>
+      <NavLink to="/">Home</NavLink>
+    </div>
   )
+
+  if (channel.authRequired)
+
+    return (
+      <div>{channel.channelName}</div>
+    )
 }

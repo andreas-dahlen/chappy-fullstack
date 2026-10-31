@@ -35,24 +35,27 @@ p {
   background: transparent;
   border: 0;
   border-radius: 0.5rem;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
 
   cursor: pointer;
-  transition: background-color 150ms ease;
+  transition: 
+  background-color 150ms ease;
 
-      &.active {
-      outline-color: var(--icon-text-col);
-    }
-
+  &.active {
+    outline-color: var(--icon-text-col);
+    pointer-events: none;
+    cursor: default;
+  }
   &:focus-visible {
     outline: 2px solid var(--focus-col);
-    outline-offset: -2px;
   }
-
-    &:hover {
+  &:hover {
     background-color: var(--hover-col);
-    /* filter: drop-shadow(0 0 1px rgb(225, 227, 216)); */
   }
-  
+  &:active {
+    background: var(--focus-col);
+  }
 }
 
 .channel-avatar {

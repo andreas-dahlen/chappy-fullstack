@@ -217,7 +217,7 @@ As an authenticated user, I want to log out so that my authenticated access is r
 
 **Acceptance criteria**
 
-- [ ] An authenticated user can trigger logout.
+- [x] An authenticated user can trigger logout.
 - [ ] The client clears its authentication state and any stored credentials/token according to the chosen design.
 - [ ] The UI returns to its guest state.
 - [ ] Restricted UI is no longer presented as available.

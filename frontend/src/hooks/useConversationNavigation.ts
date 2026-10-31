@@ -19,6 +19,7 @@
 //     const result = await getOrCreateConversation(userId)
 
 //     if (result.state === 'failed') {
+//handle 401 auto loggout?
 //       return false
 //     }
 

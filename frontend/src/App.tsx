@@ -11,7 +11,7 @@ export default function App() {
   return (
     <div className="app">
 
-      <Header toggleAi={setIsAiDisplayed} />
+      <Header toggleAi={setIsAiDisplayed} isAiDisplayed={isAiDisplayed} />
 
       <div className={`layout ${isAiDisplayed ? 'ai-displayed' : ''}`}>
         <LeftSideBar />

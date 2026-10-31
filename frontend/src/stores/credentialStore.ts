@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { AuthSuccess } from '../types/apiData.types.ts'
 
 type CredentialStore = {
@@ -15,40 +16,54 @@ type CredentialStore = {
 }
 
 export const useCredentialStore = create<CredentialStore>()(
-  immer((set) => ({
-    name: undefined,
-    token: undefined,
-    userId: undefined,
-    loading: false,
-    error: null,
+  persist(
+    immer((set) => ({
+      name: undefined,
+      token: undefined,
+      userId: undefined,
+      loading: false,
+      error: null,
 
-    setCredentials: credentials => {
-      set(s => {
-        s.name = credentials.name
-        s.token = credentials.token
-        s.userId = credentials.userId
-      })
-    },
+      setCredentials: credentials => {
+        set(s => {
+          s.name = credentials.name
+          s.token = credentials.token
+          s.userId = credentials.userId
+          s.error = null
+        })
+      },
 
-    setLoading: loading => {
-      set(s => {
-        s.loading = loading
-      })
-    },
+      setLoading: loading => {
+        set(s => {
+          s.loading = loading
+        })
+      },
 
-    setError: error => {
-      set(s => {
-        s.error = error
-      })
-    },
+      setError: error => {
+        set(s => {
+          s.error = error
+        })
+      },
 
-    signOut: () => {
-      set(s => {
-        s.name = undefined
-        s.token = undefined
-        s.userId = undefined
-        s.error = null
+      signOut: () => {
+        set(s => {
+          s.name = undefined
+          s.token = undefined
+          s.userId = undefined
+          s.loading = false
+          s.error = null
+        })
+      }
+    })),
+    {
+      name: 'chappy-credentials',
+      storage: createJSONStorage(() => localStorage),
+
+      partialize: state => ({
+        name: state.name,
+        token: state.token,
+        userId: state.userId
       })
     }
-  }))
+  )
 )

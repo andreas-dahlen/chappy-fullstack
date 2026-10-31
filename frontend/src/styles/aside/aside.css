@@ -43,25 +43,27 @@
   padding: 5px 7px 1px;
   background-color: transparent;
   transition:
-    outline-color 150ms ease-in-out,
-    filter 150ms ease-in-out,
     background 100ms ease-in-out;
 
+    
     & .icon {
       color:var(--icon-text-col);
     }
-
+    
     &.active {
       outline-color: var(--icon-text-col);
+      pointer-events: none;
+      cursor: default;
     }
-  &:focus-visible {
-    outline-color: var(--focus-col);
-  }
-
-  &:hover {
-    background: var(--hover-col);
-    /* filter: drop-shadow(0 0 1px rgb(225, 227, 216)); */
-  }
+    &:focus-visible {
+      outline-color: var(--focus-col);
+    }   
+    &:hover {
+      background: var(--hover-col);
+    }
+    &:active {
+      background: var(--focus-col);
+    }
 }
 
 
