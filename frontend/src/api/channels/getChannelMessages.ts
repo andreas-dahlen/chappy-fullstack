@@ -1,7 +1,7 @@
 import { channelMsgArraySchema, type UUID } from '@chappy/shared'
-import type { ChannelMsgReturn } from '../types/apiData.types.ts'
-import { getHttpErrorMessage } from '../utils/getErrorMsg.ts'
-import { handleAuthResult } from './utils/handleAuthResult.ts'
+import type { ChannelMsgReturn } from '../../types/apiData.types.ts'
+import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
+import { handleAuthResult } from '../utils/handleAuthResult.ts'
 
 export async function dbGetChannelMessages(channelId: UUID, token: string | null): Promise<ChannelMsgReturn> {
   let status: number | null = null
@@ -18,14 +18,14 @@ export async function dbGetChannelMessages(channelId: UUID, token: string | null
         : undefined
     )
 
-    handleAuthResult(response.status, token)
 
     status = response.status
+    handleAuthResult(status, token)
 
     if (!response.ok) {
       return {
         state: 'failed',
-        message: getHttpErrorMessage(response.status),
+        message: getHttpErrorMessage(status),
         status
       }
     }
@@ -44,7 +44,7 @@ export async function dbGetChannelMessages(channelId: UUID, token: string | null
     }
     return {
       state: 'success',
-      ChannelMsgData: messages.data
+      channelMsgData: messages.data
     }
 
   } catch (error) {

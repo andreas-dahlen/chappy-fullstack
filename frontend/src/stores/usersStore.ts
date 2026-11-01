@@ -1,7 +1,7 @@
 import type { User } from '@chappy/shared'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { dbGetUsers } from '../api/getUsers.ts'
+import { dbGetUsers } from '../api/account/getUsers.ts'
 
 type UsersStore = {
   activeUsers: User[]

@@ -1,18 +1,12 @@
-import { authResponseSchema, type RegCredentials } from '@chappy/shared'
-import type { AuthReturn } from '../types/apiData.types.ts'
-import { getHttpErrorMessage } from '../utils/getErrorMsg.ts'
+import { userArraySchema } from '@chappy/shared'
+import type { UserReturn } from '../../types/apiData.types.ts'
+import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 
-export async function dbRegisterUser(cred: RegCredentials): Promise<AuthReturn> {
+export async function dbGetUsers(): Promise<UserReturn> {
   let status: number | null = null
   try {
-    const response = await fetch(`/api/register`, {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(cred)
-    })
-
+    const response = await fetch(`/api/users`)
     status = response.status
-
     if (!response.ok) {
       return {
         state: 'failed',
@@ -22,10 +16,10 @@ export async function dbRegisterUser(cred: RegCredentials): Promise<AuthReturn> 
     }
 
     const rawData: unknown = await response.json()
-    const result = authResponseSchema.safeParse(rawData)
+    const users = userArraySchema.safeParse(rawData)
 
-    if (!result.success) {
-      console.error('Invalid register response:', result.error)
+    if (!users.success) {
+      console.error('Invalid users response:', users.error)
 
       return {
         state: 'failed',
@@ -35,11 +29,11 @@ export async function dbRegisterUser(cred: RegCredentials): Promise<AuthReturn> 
     }
     return {
       state: 'success',
-      authData: result.data
+      users: users.data
     }
 
   } catch (error) {
-    console.error('Failed to register user:', error)
+    console.error('Failed to fetch users:', error)
 
     const message =
       error instanceof SyntaxError

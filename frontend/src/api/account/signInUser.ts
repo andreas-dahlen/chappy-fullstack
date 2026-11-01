@@ -1,11 +1,16 @@
-import { channelArraySchema } from '@chappy/shared'
-import type { ChannelReturn } from '../types/apiData.types.ts'
-import { getHttpErrorMessage } from '../utils/getErrorMsg.ts'
+import { authResponseSchema, type Credentials } from '@chappy/shared'
+import type { AuthReturn } from '../../types/apiData.types.ts'
+import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 
-export async function dbGetChannels(): Promise<ChannelReturn> {
+export async function dbSignInUser(cred: Credentials): Promise<AuthReturn> {
   let status: number | null = null
+
   try {
-    const response = await fetch(`/api/channels`)
+    const response = await fetch(`/api/sign-in`, {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(cred)
+    })
     status = response.status
     if (!response.ok) {
       return {
@@ -16,10 +21,10 @@ export async function dbGetChannels(): Promise<ChannelReturn> {
     }
 
     const rawData: unknown = await response.json()
-    const channels = channelArraySchema.safeParse(rawData)
+    const result = authResponseSchema.safeParse(rawData)
 
-    if (!channels.success) {
-      console.error('Invalid channels response:', channels.error)
+    if (!result.success) {
+      console.error('Invalid signIn response:', result.error)
 
       return {
         state: 'failed',
@@ -29,11 +34,11 @@ export async function dbGetChannels(): Promise<ChannelReturn> {
     }
     return {
       state: 'success',
-      channels: channels.data
+      authData: result.data
     }
 
   } catch (error) {
-    console.error('Failed to fetch channels:', error)
+    console.error('Failed to sign in user:', error)
 
     const message =
       error instanceof SyntaxError

@@ -1,19 +1,17 @@
-import type { UUID } from '@chappy/shared'
-import { dbGetChannelMessages } from '../api/getChannelMessages.ts'
+import { useCallback } from 'react'
+import type { MessageData, UUID } from '@chappy/shared'
 import { useChannelsStore } from '../stores/channelsStore.ts'
 import { useCredentialStore } from '../stores/credentialStore.ts'
+import { dbGetChannelMessages } from '../api/channels/getChannelMessages.ts'
 
 export function useChannelMessages() {
   const token = useCredentialStore(s => s.token)
-
-  const channels = useChannelsStore(s => s.activeChannels)
-  const channelMsgData = useChannelsStore(s => s.channelMsgData)
   const setChannelMsgData = useChannelsStore(s => s.setChannelMsgData)
 
-  const fetchChannelMessages = async (channelId: UUID) => {
+  const fetchChannelMessages = useCallback(async (channelId: UUID) => {
+    const { activeChannels, channelMsgData } = useChannelsStore.getState()
 
-    const channel = channels.find(c => c.channelId === channelId)
-
+    const channel = activeChannels.find(c => c.channelId === channelId)
     if (!channel) return
 
     const msgData = channelMsgData.get(channelId)
@@ -34,8 +32,14 @@ export function useChannelMessages() {
         return
       }
 
+      const messageData = new Map<UUID, MessageData>()
+
+      result.channelMsgData.forEach(message => {
+        messageData.set(message.messageId, message)
+      })
+
       setChannelMsgData(channelId, {
-        messageData: result.ChannelMsgData,
+        messageData: messageData,
         hasFetchedMsgs: true
       })
     } catch (error) {
@@ -45,7 +49,8 @@ export function useChannelMessages() {
     } finally {
       setChannelMsgData(channelId, { loading: false })
     }
-  }
+
+  }, [token, setChannelMsgData])
 
   return { fetchChannelMessages }
 }

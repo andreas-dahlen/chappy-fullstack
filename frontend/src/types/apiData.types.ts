@@ -26,7 +26,13 @@ export type AuthReturn =
 export type ChannelMsgReturn =
   | {
     state: 'success'
-    ChannelMsgData: MessageData[]
+    channelMsgData: MessageData[]
+  } | ApiFailure
+
+export type ChannelMsgPostReturn =
+  | {
+    state: 'success'
+    messageData: MessageData
   } | ApiFailure
 
 export type AuthSuccess = Extract<AuthReturn, { state: 'success' }>

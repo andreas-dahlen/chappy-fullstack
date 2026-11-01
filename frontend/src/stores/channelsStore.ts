@@ -7,7 +7,7 @@ enableMapSet()
 
 export type ChannelMsgStoreData = {
   hasFetchedMsgs: boolean
-  messageData: MessageData[]
+  messageData: Map<UUID, MessageData>
   loading: boolean
   error: string | null
 }
@@ -28,6 +28,7 @@ type ChannelsStore = {
     channelId: UUID,
     data: Partial<ChannelMsgStoreData>
   ) => void
+  setChannelMsg: (channelId: UUID, message: MessageData) => void
 }
 
 export const useChannelsStore = create<ChannelsStore>()(
@@ -69,12 +70,22 @@ export const useChannelsStore = create<ChannelsStore>()(
 
         s.channelMsgData.set(channelId, {
           hasFetchedMsgs: false,
-          messageData: [],
+          messageData: new Map,
           loading: false,
           error: null,
           ...existing,
           ...data
         })
+      })
+    },
+
+    setChannelMsg: (channelId, channelMsg) => {
+      set(s => {
+        const existing = s.channelMsgData.get(channelId)
+
+        if (!existing) return
+
+        existing.messageData.set(channelMsg.messageId, channelMsg)
       })
     }
   }))

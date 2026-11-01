@@ -22,6 +22,6 @@ export const optionalAuth: RequestHandler = (req, res, next) => {
     return
   }
 
-  res.locals.authenticatedUser = result.userId
+  res.locals.authenticatedUserId = result.userId
   next()
 }

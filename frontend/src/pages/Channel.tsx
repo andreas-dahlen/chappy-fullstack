@@ -5,6 +5,7 @@ import { useCredentialStore } from '../stores/credentialStore.ts'
 import { useChannels } from '../hooks/useChannels.ts'
 import ChannelMessages from '../features/channel/ChannelMessages.tsx'
 import '../styles/pages/channel.css'
+import ChannelInput from '../features/channel/ChannelInput.tsx'
 
 export default function Channel() {
 
@@ -46,17 +47,16 @@ export default function Channel() {
   }
 
   return (
-    <div >
+    <div className='channel-page'>
       <div className='channel-header'>
         <p >
           {channel.channelName}
         </p>
       </div>
-
-      <ChannelMessages
-        channelId={channelId}
-      />
-
+      <div className="channel-view">
+        <ChannelMessages channelId={channelId} />
+        <ChannelInput channelId={channelId} />
+      </div>
 
     </div>
   )

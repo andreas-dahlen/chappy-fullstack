@@ -1,8 +1,8 @@
 import type { Credentials, RegCredentials } from '@chappy/shared'
 import { useCredentialStore } from '../stores/credentialStore.ts'
-import { dbRegisterUser } from '../api/registerUser.ts'
+import { dbRegisterUser } from '../api/account/registerUser.ts'
 import type { AuthReturn } from '../types/apiData.types.ts'
-import { dbSignInUser } from '../api/signInUser.ts'
+import { dbSignInUser } from '../api/account/signInUser.ts'
 
 type InputCredentials = RegCredentials & {
   confirmPassword: string

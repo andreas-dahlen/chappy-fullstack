@@ -1,31 +1,39 @@
-import { useEffect } from 'react'
 import { useChannelMessages } from '../../hooks/useChannelMessages.ts'
 import { useChannelsStore } from '../../stores/channelsStore.ts'
 import type { UUID } from '@chappy/shared'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 
 type MessageProps = {
   channelId: UUID
 }
-export default function ChannelMessages({
-  channelId
-}: MessageProps) {
+
+export default function ChannelMessages({ channelId }: MessageProps) {
+  const messageBoxRef = useRef<HTMLDivElement>(null)
 
   const { fetchChannelMessages } = useChannelMessages()
+
   useEffect(() => {
     void fetchChannelMessages(channelId)
   }, [channelId, fetchChannelMessages])
 
   const messages = useChannelsStore(s =>
-    channelId ? s.channelMsgData.get(channelId) : undefined
+    s.channelMsgData.get(channelId)?.messageData
   )
 
-  return (
-    <div>
+  const messageList = messages ? [...messages.values()] : []
 
-      {messages?.messageData.map(msg => {
-        return <p key={msg.messageId}>{msg.message}</p>
-      })
-      }
+  useLayoutEffect(() => {
+    const element = messageBoxRef.current
+    if (!element) return
+
+    element.scrollTop = element.scrollHeight
+  }, [messages])
+
+  return (
+    <div ref={messageBoxRef} className="channel-message-box">
+      {messageList.map(msg => (
+        <p key={msg.messageId}>{msg.message}</p>
+      ))}
     </div>
   )
 }

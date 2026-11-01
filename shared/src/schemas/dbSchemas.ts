@@ -44,3 +44,7 @@ export const dbChannelMsgSchema = z.object({
 export const dbChannelMsgArraySchema = z.array(dbChannelMsgSchema)
 
 export const idSchema = z.string()
+
+export const messageStringSchema = z.object({
+  message: z.string()
+})

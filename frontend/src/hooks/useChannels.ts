@@ -1,5 +1,6 @@
+import { useCallback } from 'react'
 import { useChannelsStore } from '../stores/channelsStore.ts'
-import { dbGetChannels } from '../api/getChannels.ts'
+import { dbGetChannels } from '../api/channels/getChannels.ts'
 
 export function useChannels() {
   const setChannels = useChannelsStore(s => s.setChannels)
@@ -7,7 +8,7 @@ export function useChannels() {
   const setLoading = useChannelsStore(s => s.setLoading)
   const setError = useChannelsStore(s => s.setError)
 
-  const fetchChannels = async (): Promise<boolean> => {
+  const fetchChannels = useCallback(async (): Promise<boolean> => {
     const hasFetched = useChannelsStore.getState().hasFetchedChannels
     const loading = useChannelsStore.getState().loading
 
@@ -34,7 +35,7 @@ export function useChannels() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [setChannels, setHasFetchedChannels, setLoading, setError])
 
   return { fetchChannels }
 }
