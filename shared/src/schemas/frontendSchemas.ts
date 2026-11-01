@@ -22,3 +22,12 @@ export const authResponseSchema = z.object({
   userId: z.uuid(),
   name: z.string()
 }).strict()
+
+export const channelMsgSchema = z.object({
+  createdBy: z.uuid(),
+  message: z.string(),
+  messageId: z.uuid(),
+  createdAt: z.iso.datetime()
+})
+
+export const channelMsgArraySchema = z.array(channelMsgSchema)

@@ -1,7 +1,7 @@
-import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { getJwtSecret } from '../envGetters/getJwtSecret.ts'
 
-const { verify } = jwt
+const { verify, JsonWebTokenError, TokenExpiredError } = jwt
 
 export type AuthResult =
   | { success: true; userId: string }

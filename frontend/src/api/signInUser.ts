@@ -34,9 +34,7 @@ export async function dbSignInUser(cred: Credentials): Promise<AuthReturn> {
     }
     return {
       state: 'success',
-      token: result.data.token,
-      userId: result.data.userId,
-      name: result.data.name
+      authData: result.data
     }
 
   } catch (error) {

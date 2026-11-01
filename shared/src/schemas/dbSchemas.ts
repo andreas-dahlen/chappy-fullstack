@@ -29,3 +29,18 @@ export const dbSignInSchema = z.object({
 export const dbRegisterSchema = dbSignInSchema.extend({
   name: z.string()
 }).strict()
+
+
+
+export const dbChannelMsgSchema = z.object({
+  pk: z.string(),
+  sk: z.string(),
+  ownerId: z.string(),
+  message: z.string(),
+  messageId: z.uuid(),
+  timestamp: z.iso.datetime()
+}).strict()
+
+export const dbChannelMsgArraySchema = z.array(dbChannelMsgSchema)
+
+export const idSchema = z.string()

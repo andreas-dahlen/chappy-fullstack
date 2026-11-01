@@ -34,52 +34,55 @@ export default function SignIn() {
 
 
   return (
-    <form className='form'
-      onSubmit={handleSignIn}
-    >
+    <div className='form-box'>
 
-      <label htmlFor="username">Username</label>
-      <input
-        id="username"
-        type="text"
-        autoComplete="username"
-        required
-        value={input.username}
-        onChange={e => setInput(prev => ({ ...prev, username: e.target.value }))}
-      // placeholder="Username"
-      />
+      <form className='form'
+        onSubmit={handleSignIn}
+      >
 
-      <label htmlFor="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        autoComplete="current-password"
-        required
-        value={input.password}
-        onChange={e => setInput(prev => ({ ...prev, password: e.target.value }))}
-      // placeholder="Password"
-      />
-      <div className='state-display'>
-        {loading
-          ? <span role="status" aria-label="Signing in">
-            <Loader className="loader" />
-          </span>
-          : error && <p role="alert">{error}</p>
-        }
-      </div>
-      <button type="submit"
-        disabled={loading}
-        className='submit-button'>
-        {loading ? 'Loading...' : 'Sign in'}
-      </button>
-      <p>
-        Don't have an account?
-        <NavLink
-          to="/register"
-          className="register-nav"
-          state={location.state}
-        > Create one!</NavLink>
-      </p>
-    </form>
+        <label htmlFor="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          autoComplete="username"
+          required
+          value={input.username}
+          onChange={e => setInput(prev => ({ ...prev, username: e.target.value }))}
+        // placeholder="Username"
+        />
+
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          autoComplete="current-password"
+          required
+          value={input.password}
+          onChange={e => setInput(prev => ({ ...prev, password: e.target.value }))}
+        // placeholder="Password"
+        />
+        <div className='state-display'>
+          {loading
+            ? <span role="status" aria-label="Signing in">
+              <Loader className="loader" />
+            </span>
+            : error && <p role="alert">{error}</p>
+          }
+        </div>
+        <button type="submit"
+          disabled={loading}
+          className='submit-button'>
+          {loading ? 'Loading...' : 'Sign in'}
+        </button>
+        <p>
+          Don't have an account?
+          <NavLink
+            to="/register"
+            className="register-nav"
+            state={location.state}
+          > Create one!</NavLink>
+        </p>
+      </form>
+    </div>
   )
 }

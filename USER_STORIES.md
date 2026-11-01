@@ -218,19 +218,19 @@ As an authenticated user, I want to log out so that my authenticated access is r
 **Acceptance criteria**
 
 - [x] An authenticated user can trigger logout.
-- [ ] The client clears its authentication state and any stored credentials/token according to the chosen design.
-- [ ] The UI returns to its guest state.
-- [ ] Restricted UI is no longer presented as available.
-- [ ] The user can still browse publicly available users and channels.
-- [ ] The behaviour is consistent after refreshing the page.
+- [x] The client clears its authentication state and any stored credentials/token according to the chosen design.
+- [x] The UI returns to its guest state.
+- [x] Restricted UI is no longer presented as available.
+- [x] The user can still browse publicly available users and channels.
+- [x] The behaviour is consistent after refreshing the page.
 
 **Implementation tasks**
 
-- [ ] Decide how authentication state is stored and cleared.
-- [ ] Implement the logout interaction.
-- [ ] Connect it to the authentication state management.
-- [ ] Style the relevant control and guest state.
-- [ ] Test logout and page refresh behaviour.
+- [x] Decide how authentication state is stored and cleared.
+- [x] Implement the logout interaction.
+- [x] Connect it to the authentication state management.
+- [x] Style the relevant control and guest state.
+- [x] Test logout and page refresh behaviour.
 
 **Notes**
 
@@ -249,14 +249,14 @@ As a visitor, I want to open an open channel and read its messages so that I can
 
 **Acceptance criteria**
 
-- [ ] A user can select an open channel from the channel list.
-- [ ] The frontend loads messages belonging to that channel.
-- [ ] Messages show their content and appropriate sender/time information.
-- [ ] Messages are displayed in a sensible order.
-- [ ] Guests and authenticated users can read messages in open channels.
-- [ ] A request for an unknown channel is handled safely.
+- [x] A user can select an open channel from the channel list.
+- [x] The frontend loads messages belonging to that channel.
+- [x] Messages show their content and appropriate sender/time information.
+- [x] Messages are displayed in a sensible order.
+- [x] Guests and authenticated users can read messages in open channels.
+- [x] A request for an unknown channel is handled safely.
 - [ ] Loading, empty, and error states are handled.
-- [ ] The backend does not return messages from other channels.
+- [x] The backend does not return messages from other channels.
 
 **Implementation tasks**
 

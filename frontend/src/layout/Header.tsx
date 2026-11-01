@@ -13,6 +13,7 @@ export default function Header(
   const name = useCredentialStore(s => s.name)
   const token = useCredentialStore(s => s.token)
   const signOut = useCredentialStore(s => s.signOut)
+
   return (
     <header>
       <div>Chappy</div>
@@ -27,7 +28,7 @@ export default function Header(
             <Bot size={35} />
           </button>
           {token
-            ? <button onClick={signOut} className='nav-button'>Sign out</button>
+            ? <button onClick={() => signOut('manual')} className='nav-button'>Sign out</button>
             : <NavLink to="sign-in" className='nav-button'>Sign in</NavLink>
           }
 

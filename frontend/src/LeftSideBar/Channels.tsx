@@ -5,12 +5,13 @@ import { useLocation, useNavigate } from 'react-router'
 import { useChannelsStore } from '../stores/channelsStore.ts'
 import { Lock } from 'lucide-react'
 import { useCredentialStore } from '../stores/credentialStore.ts'
+import { useChannels } from '../hooks/useChannels.ts'
 
 export default function Channels() {
   const channels = useChannelsStore(s => s.activeChannels)
   const loading = useChannelsStore(s => s.loading)
   const error = useChannelsStore(s => s.error)
-  const fetchChannels = useChannelsStore(s => s.fetchChannels)
+  const { fetchChannels } = useChannels()
   const token = useCredentialStore(s => s.token)
 
   useEffect(() => {

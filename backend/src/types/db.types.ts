@@ -4,3 +4,7 @@ export type DbCredentials = {
   username: string
   hashPassword: string
 }
+
+export type ChannelIdParam = {
+  channelId: string
+}

@@ -1,4 +1,4 @@
-import type { Channel, User } from '@chappy/shared'
+import type { Auth, Channel, MessageData, User } from '@chappy/shared'
 export type ApiFailure = {
   state: 'failed'
   message: string
@@ -20,9 +20,13 @@ export type ChannelReturn =
 export type AuthReturn =
   | {
     state: 'success'
-    token: string
-    userId: string
-    name: string
+    authData: Auth
+  } | ApiFailure
+
+export type ChannelMsgReturn =
+  | {
+    state: 'success'
+    ChannelMsgData: MessageData[]
   } | ApiFailure
 
 export type AuthSuccess = Extract<AuthReturn, { state: 'success' }>

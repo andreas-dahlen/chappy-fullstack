@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import ControlPanel from '../LeftSideBar/ControlPanel.tsx'
-import UserConversations from '../LeftSideBar/UserConversations.tsx'
-import Channels from '../LeftSideBar/Channels.tsx'
+import ControlPanel from '../leftSideBar/ControlPanel.tsx'
+import UserConversations from '../leftSideBar/UserConversations.tsx'
+import Channels from '../leftSideBar/Channels.tsx'
 
 export type Section = 'conversations' | 'groups' | 'settings'
 

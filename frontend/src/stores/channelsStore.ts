@@ -1,7 +1,16 @@
-import type { Channel } from '@chappy/shared'
+import type { Channel, MessageData, UUID } from '@chappy/shared'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { dbGetChannels } from '../api/getChannels.ts'
+import { enableMapSet } from 'immer'
+
+enableMapSet()
+
+export type ChannelMsgStoreData = {
+  hasFetchedMsgs: boolean
+  messageData: MessageData[]
+  loading: boolean
+  error: string | null
+}
 
 type ChannelsStore = {
   activeChannels: Channel[]
@@ -9,49 +18,64 @@ type ChannelsStore = {
   loading: boolean
   error: string | null
 
-  fetchChannels: () => Promise<void>
+  setChannels: (channels: Channel[]) => void
+  setHasFetchedChannels: (hasFetched: boolean) => void
+  setLoading: (loading: boolean) => void
+  setError: (error: string | null) => void
+
+  channelMsgData: Map<UUID, ChannelMsgStoreData>
+  setChannelMsgData: (
+    channelId: UUID,
+    data: Partial<ChannelMsgStoreData>
+  ) => void
 }
 
 export const useChannelsStore = create<ChannelsStore>()(
-  immer((set, get) => ({
+  immer(set => ({
     activeChannels: [],
     hasFetchedChannels: false,
     loading: false,
     error: null,
 
-    fetchChannels: async () => {
-      if (get().hasFetchedChannels || get().loading) return
-
-      set((s) => {
-        s.loading = true
-        s.error = null
+    setChannels: channels => {
+      set(s => {
+        s.activeChannels = channels
       })
+    },
 
-      try {
-        const result = await dbGetChannels()
+    setHasFetchedChannels: hasFetched => {
+      set(s => {
+        s.hasFetchedChannels = hasFetched
+      })
+    },
 
-        if (result.state === 'failed') {
-          set((s) => {
-            s.error = result.message
-          })
-          return
-        }
+    setLoading: loading => {
+      set(s => {
+        s.loading = loading
+      })
+    },
 
-        set((s) => {
-          s.activeChannels = result.channels
-          s.hasFetchedChannels = true
+    setError: error => {
+      set(s => {
+        s.error = error
+      })
+    },
+
+    channelMsgData: new Map(),
+
+    setChannelMsgData: (channelId, data) => {
+      set(s => {
+        const existing = s.channelMsgData.get(channelId)
+
+        s.channelMsgData.set(channelId, {
+          hasFetchedMsgs: false,
+          messageData: [],
+          loading: false,
+          error: null,
+          ...existing,
+          ...data
         })
-      } catch (error) {
-        set((s) => {
-          s.error = error instanceof Error
-            ? error.message
-            : String(error)
-        })
-      } finally {
-        set((s) => {
-          s.loading = false
-        })
-      }
+      })
     }
   }))
 )

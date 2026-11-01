@@ -9,27 +9,33 @@ type CredentialStore = {
   userId: string | undefined
   loading: boolean
   error: string | null
+  signOutReason: signOutReason | null
   setCredentials: (credentials: AuthSuccess) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
-  signOut: () => void
+  signOut: (reason: signOutReason) => void
+  setSignOutReason: (reason: signOutReason | null) => void
 }
+
+type signOutReason = 'manual' | 'invalid'
 
 export const useCredentialStore = create<CredentialStore>()(
   persist(
-    immer((set) => ({
+    immer(set => ({
       name: undefined,
       token: undefined,
       userId: undefined,
       loading: false,
       error: null,
+      signOutReason: null,
 
       setCredentials: credentials => {
         set(s => {
-          s.name = credentials.name
-          s.token = credentials.token
-          s.userId = credentials.userId
+          s.name = credentials.authData.name
+          s.token = credentials.authData.token
+          s.userId = credentials.authData.userId
           s.error = null
+          s.signOutReason = null
         })
       },
 
@@ -45,13 +51,20 @@ export const useCredentialStore = create<CredentialStore>()(
         })
       },
 
-      signOut: () => {
+      signOut: (reason) => {
         set(s => {
           s.name = undefined
           s.token = undefined
           s.userId = undefined
           s.loading = false
           s.error = null
+          s.signOutReason = reason
+        })
+      },
+
+      setSignOutReason: (reason) => {
+        set(s => {
+          s.signOutReason = reason
         })
       }
     })),

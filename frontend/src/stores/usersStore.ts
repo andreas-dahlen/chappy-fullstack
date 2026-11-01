@@ -22,7 +22,7 @@ export const useUsersStore = create<UsersStore>()(
     fetchUsers: async () => {
       if (get().hasFetchedUsers || get().loading) return
 
-      set((s) => {
+      set(s => {
         s.loading = true
         s.error = null
       })
@@ -31,24 +31,24 @@ export const useUsersStore = create<UsersStore>()(
         const result = await dbGetUsers()
 
         if (result.state === 'failed') {
-          set((s) => {
+          set(s => {
             s.error = result.message
           })
           return
         }
 
-        set((s) => {
+        set(s => {
           s.activeUsers = result.users
           s.hasFetchedUsers = true
         })
       } catch (error) {
-        set((s) => {
+        set(s => {
           s.error = error instanceof Error
             ? error.message
             : String(error)
         })
       } finally {
-        set((s) => {
+        set(s => {
           s.loading = false
         })
       }

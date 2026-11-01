@@ -2,11 +2,11 @@ import { useCredentialStore } from '../../stores/credentialStore.ts'
 
 export function handleAuthResult(
   status: number,
-  requestToken: string | undefined
+  requestToken: string | null
 ) {
   const store = useCredentialStore.getState()
 
   if (status === 401 && requestToken && store.token === requestToken) {
-    store.signOut()
+    store.signOut('invalid')
   }
 }

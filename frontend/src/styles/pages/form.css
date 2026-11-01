@@ -1,3 +1,8 @@
+.form-box {
+  margin: 0 auto;
+  max-width: 450px;
+}
+
 .form {
   display: grid;
   gap: 0.5rem;
@@ -33,10 +38,14 @@
       outline-offset: 2px;
     }
 
-      &:active {
-    background: var(--focus-col);
+    &:active {
+      background: var(--focus-col);
+    }
   }
-  }
+}
+
+.ai-displayed .form{
+  width: clamp(294px, calc(104.615vw - 615.23px), 430px);
 }
 
 

@@ -1,0 +1,11 @@
+
+.channel-header {
+  /* background-color: hotpink; */
+  /* height: 0px; */
+  border-bottom: 2px solid var(--border-col);
+
+  p {
+    padding: 6px 6px 10px 20px;
+    margin: 0;
+  }
+}
