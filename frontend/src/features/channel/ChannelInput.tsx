@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDynamicInputSizing } from '../../hooks/useDynamicInputSizing.ts'
 import type { UUID } from '@chappy/shared'
 import { useCredentialStore } from '../../stores/credentialStore.ts'
 import { dbPostChannelMessage } from '../../api/channels/postChannelMessage.ts'
 import { useChannelsStore } from '../../stores/channelsStore.ts'
+import { SendHorizonal } from 'lucide-react'
 
 type InputProps = {
   channelId: UUID
@@ -18,31 +19,53 @@ export default function ChannelInput({ channelId }: InputProps) {
 
   const [input, setInput] = useState<string>('')
 
+  useEffect(() => {
+    if (input === '') {
+      resetInputSizing(textareaRef.current)
+    }
+  }, [input, resetInputSizing])
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (!input.trim()) return
+    const trimmedInput = input.trim()
 
-    const message = await dbPostChannelMessage(channelId, input, token ?? null)
+    if (!trimmedInput) return
+
+    const message = await dbPostChannelMessage(channelId, trimmedInput, token ?? null)
     if (message.state === 'success') {
       setChannelMessage(channelId, message.messageData)
       setInput('')
-      resetInputSizing(textareaRef.current)
       return
     }
-
-    console.log(message.status, message.message)
   }
 
   return (
     <form className="channel-input" onSubmit={handleSubmit}>
       <textarea
+        rows={1}
+        name="message"
+        aria-label="Message"
         ref={textareaRef}
         value={input}
+        placeholder='Write a message...'
         onInput={handleInputSizing}
         onChange={e => setInput(e.currentTarget.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            e.currentTarget.form?.requestSubmit()
+          }
+        }}
       />
-      <button type="submit" disabled={!input.trim()}>Send</button>
+
+      <button
+        type="submit"
+        disabled={!input.trim()}
+        className='send-button'
+      >
+        <SendHorizonal size={30} />
+      </button>
     </form>
   )
 }
