@@ -30,7 +30,7 @@ export default function Channels() {
 
   const handleChannelClick = (channel: Channel) => {
     if (channel.authRequired && !token) {
-      void navigate('/sign-in', {
+      navigate('/sign-in', {
         state: {
           reason: 'enter-channel',
           channelId: channel.channelId
@@ -38,14 +38,14 @@ export default function Channels() {
       })
       return
     }
-    void navigate(`/channels/${channel.channelId}`)
+    navigate(`/channels/${channel.channelId}`)
   }
 
   if (loading && channels.length === 0) {
     return <p>Loading channels...</p>
   }
   if (error) {
-    return <p>Failed to load channels: {error}</p>
+    return <p>{error}</p>
   }
   if (channels.length === 0) {
     return <p>No channels found.</p>

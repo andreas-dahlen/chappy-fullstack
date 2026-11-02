@@ -1,16 +1,25 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useUsersStore } from '../stores/usersStore.ts'
 import '../styles/aside/conversation.css'
-import type { User } from '@chappy/shared'
+import type { User, UUID } from '@chappy/shared'
 import { useNavigate } from 'react-router'
 import { useCredentialStore } from '../stores/credentialStore.ts'
+import { dbCreateOrGetConversation } from '../api/conversations/dbCreateOrGetConversation.ts'
+
+type ConversationError = {
+  userId: UUID
+  message: string
+}
 
 export default function UserConversations() {
+  const [conversationError, setConversationError] = useState<ConversationError | null>(null)
+  const [conversationLoading, setConversationLoading] = useState<UUID | null>(null)
   const users = useUsersStore(s => s.activeUsers)
   const loading = useUsersStore(s => s.loading)
-  const error = useUsersStore(s => s.error)
+  const userError = useUsersStore(s => s.error)
   const fetchUsers = useUsersStore(s => s.fetchUsers)
   const token = useCredentialStore(s => s.token)
+  const userId = useCredentialStore(s => s.userId)
   useEffect(() => {
     void fetchUsers()
   }, [fetchUsers])
@@ -23,8 +32,9 @@ export default function UserConversations() {
   //   location.pathname === `/conversations/${conversation.conversationId}`
 
   const handleUserClick = async (user: User) => {
+    setConversationError(null)
     if (!token) {
-      void navigate('/sign-in', {
+      navigate('/sign-in', {
         state: {
           reason: 'start-conversation',
           userId: user.userId
@@ -32,27 +42,41 @@ export default function UserConversations() {
       })
       return
     }
+    setConversationLoading(user.userId)
+    try {
+      const data = await dbCreateOrGetConversation(user.userId, token)
 
-    // TODO: Fetch or create conversation.
-    // Then navigate to it.
+      if (data.state === 'success') {
+        navigate(`/conversations/${data.conversationId}`)
+        return
+      }
+      setConversationError({ userId: user.userId, message: data.message })
+    } finally {
+      setConversationLoading(null)
+    }
   }
 
-  if (loading && users.length === 0) {
-    return <p>Loading users...</p>
+
+
+  const relevantUsers = users.filter(user => user.userId !== userId)
+
+  if (loading && relevantUsers.length === 0) {
+    return <p>Loading users...</p> //TODO will use a rotating thingie <3<3
   }
-  if (error) {
-    return <p>Failed to load users: {error}</p>
+  if (userError) {
+    return <p>{userError}</p>
   }
-  if (users.length === 0) {
+  if (relevantUsers.length === 0) {
     return <p>No users found.</p>
   }
   return (
     <ul className="user-list">
-      {users.map((user) => (
+      {relevantUsers.map((user) => (
         <li key={user.userId} className="user-list-item">
           <button
             type="button"
             className="user-button"
+            disabled={conversationLoading !== null}
             onClick={() => handleUserClick(user)}
           >
             <span className="user-avatar" aria-hidden="true">
@@ -62,7 +86,10 @@ export default function UserConversations() {
             <span className="user-info">
               <span className="user-name">{user.name}</span>
             </span>
+
+            {conversationLoading === user.userId && <div className='??'>loading</div>}
           </button>
+          {conversationError?.userId === user.userId && <div role="alert">{conversationError.message}</div>}
         </li>
       ))}
     </ul>

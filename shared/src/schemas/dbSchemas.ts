@@ -48,3 +48,9 @@ export const idSchema = z.string()
 export const messageStringSchema = z.object({
   message: z.string()
 })
+
+export const dbMetaConversationSchema = z.object({
+  pk: z.string(),
+  sk: z.string(),
+  participants: z.array(z.uuid())
+}).strict()

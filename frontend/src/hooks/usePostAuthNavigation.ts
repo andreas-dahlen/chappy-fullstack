@@ -1,11 +1,13 @@
 import { useLocation, useNavigate } from 'react-router'
 import type { AuthNavigationState } from '../types/apiData.types.ts'
+import { dbCreateOrGetConversation } from '../api/conversations/dbCreateOrGetConversation.ts'
+import { useCredentialStore } from '../stores/credentialStore.ts'
 
 export function usePostAuthNavigation() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const navigateAfterAuth = () => {
+  const navigateAfterAuth = async () => {
     const state = location.state as AuthNavigationState | null
 
     if (!state) {
@@ -27,8 +29,20 @@ export function usePostAuthNavigation() {
         break
 
       case 'start-conversation':
-        // Retrieve/create conversation, then navigate.
+        const token = useCredentialStore.getState().token
+        if (!token) {
+          navigate('/', { replace: true })
+          return
+        }
+        const data = await dbCreateOrGetConversation(state.userId, token)
+
+        if (data.state === 'success') {
+          navigate(`/conversations/${data.conversationId}`, { replace: true })
+        } else {
+          navigate('/', { replace: true })
+        }
         break
+      default: navigate('/', { replace: true })
     }
   }
 

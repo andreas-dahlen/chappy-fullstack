@@ -44,7 +44,6 @@ p {
 
   &.active {
     outline-color: var(--icon-text-col);
-    pointer-events: none;
     cursor: default;
   }
   &:focus-visible {

@@ -31,3 +31,7 @@ export const channelMsgSchema = z.object({
 }).strict()
 
 export const channelMsgArraySchema = z.array(channelMsgSchema)
+
+export const conversationSchema = z.object({
+  conversationId: z.uuid()
+}).strict()

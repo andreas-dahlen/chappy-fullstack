@@ -54,7 +54,7 @@ p {
   }
    &:active {
     background: var(--focus-col);
-    pointer-events: none;
+    /* pointer-events: none; */
     cursor: default;
   }
 }

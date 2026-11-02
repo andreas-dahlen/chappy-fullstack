@@ -106,11 +106,9 @@ database:
 | CHANNEL#123         | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
 | CHANNEL#123         | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
 | CHANNEL#789         | MSG#timestamp#ghi  | x         | user UUID | x            | string  | ghi       | timestamp  | x            | x            |
-| USER#123            | CONVERSATION#123   | x         | x         | x            | x       | x         | x          | x            | x            |
-| USER#789            | CONVERSATION#123   | x         | x         | x            | x       | x         | x          | x            | x            |
-| CONVERSATION#123    | META               | x         | x         | [UUID, UUID] | x       | x         | timestamp  | x            | x            |
-| CONVERSATION#123    | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
-| CONVERSATION#123    | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
+| CONVERSATION#UUIDv5 | META               | x         | x         | [UUID, UUID] | x       | x         | x          | x            | x            |
+| CONVERSATION#UUIDv5 | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
+| CONVERSATION#UUIDv5 | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
 
 questions: who can create a public channel - a user becomes an owner....  can one simply English yes!
 

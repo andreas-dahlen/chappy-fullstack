@@ -17,6 +17,6 @@ export const authRequired: RequestHandler = (req, res, next) => {
     return
   }
 
-  res.locals.userId = result.userId
+  res.locals.authenticatedUserId = result.userId
   next()
 }
