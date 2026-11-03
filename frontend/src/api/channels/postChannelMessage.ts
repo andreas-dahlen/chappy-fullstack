@@ -1,9 +1,9 @@
 import { channelMsgSchema, type UUID } from '@chappy/shared'
-import type { ChannelMsgPostReturn } from '../../types/apiData.types.ts'
+import type { MsgPostReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 import { handleAuthResult } from '../utils/handleAuthResult.ts'
 
-export async function dbPostChannelMessage(channelId: UUID, message: string, token: string | null): Promise<ChannelMsgPostReturn> {
+export async function dbPostChannelMessage(channelId: UUID, message: string, token: string | null): Promise<MsgPostReturn> {
   let status: number | null = null
 
   try {

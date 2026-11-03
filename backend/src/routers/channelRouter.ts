@@ -1,7 +1,7 @@
 import express, { Router } from 'express'
 import db, { tableName } from '../aws/aws.ts'
 import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
-import { dbChannelArraySchema, dbChannelMsgArraySchema, dbChannelSchema, messageStringSchema, type Channel, type DbChannel, type DbMessageData, type Message, type MessageData, type UUID } from '@chappy/shared'
+import { dbChannelArraySchema, dbChannelSchema, dbMsgArraySchema, messageStringSchema, type Channel, type DbChannel, type DbMessageData, type Message, type MessageData, type UUID } from '@chappy/shared'
 import type { ChannelIdParam } from '../types/db.types.ts'
 import { optionalAuth } from '../middleware/express/optionalAuth.ts'
 import { channelIdParser } from '../middleware/express/channelIdParser.ts'
@@ -69,7 +69,7 @@ router.get<ChannelIdParam, MessageData[]>('/:channelId/messages', channelIdParse
     }))
 
 
-    const dbMessages: DbMessageData[] = dbChannelMsgArraySchema.parse(result.Items)
+    const dbMessages: DbMessageData[] = dbMsgArraySchema.parse(result.Items)
 
     const messages: MessageData[] = dbMessages.map(msg => {
       return {

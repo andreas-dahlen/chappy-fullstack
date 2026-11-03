@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { routerConfig } from './routing/router'
 import './styles/main.css'
+import { enableMapSet } from 'immer'
+
+enableMapSet()
 
 const config = createBrowserRouter(routerConfig)
 

@@ -1,9 +1,6 @@
 import type { Channel, MessageData, UUID } from '@chappy/shared'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { enableMapSet } from 'immer'
-
-enableMapSet()
 
 export type ChannelMsgStoreData = {
   hasFetchedMsgs: boolean

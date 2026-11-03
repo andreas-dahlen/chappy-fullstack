@@ -32,7 +32,7 @@ export const dbRegisterSchema = dbSignInSchema.extend({
 
 
 
-export const dbChannelMsgSchema = z.object({
+export const dbMsgSchema = z.object({
   pk: z.string(),
   sk: z.string(),
   ownerId: z.string(),
@@ -41,7 +41,7 @@ export const dbChannelMsgSchema = z.object({
   timestamp: z.iso.datetime()
 }).strict()
 
-export const dbChannelMsgArraySchema = z.array(dbChannelMsgSchema)
+export const dbMsgArraySchema = z.array(dbMsgSchema)
 
 export const idSchema = z.string()
 

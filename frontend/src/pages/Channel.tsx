@@ -23,7 +23,7 @@ export default function Channel() {
   const { fetchChannels } = useChannels()
 
   useEffect(() => {
-    fetchChannels()
+    void fetchChannels()
   }, [fetchChannels])
 
   if (loading || !hasFetchedChannels) {

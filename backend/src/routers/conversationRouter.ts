@@ -2,167 +2,228 @@ import express, { Router } from 'express'
 import { authRequired } from '../middleware/express/authRequired.ts'
 import { participantIdParser } from '../middleware/express/participantIdParser.ts'
 import { getConversationId } from '../auth/getConversationId.ts'
-import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
+import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import db, { tableName } from '../aws/aws.ts'
 import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb'
-import { dbMetaConversationSchema, type Conversation, type DbMetaConversation, type UUID } from '@chappy/shared'
+import { dbMetaConversationSchema, dbMsgArraySchema, messageStringSchema } from '@chappy/shared'
+import type { Conversation, DbMessageData, DbMetaConversation, Message, MessageData, Participant, UUID } from '@chappy/shared'
+import { conversationIdParser } from '../middleware/express/conversationIdParser.ts'
+import type { ConversationIdParam, ParticipantParam } from '../types/db.types.ts'
+import { randomUUID } from 'node:crypto'
 
 const router: Router = express.Router()
 
-type ParticipantParam = {
-  participantId: string
-}
 
-router.post<ParticipantParam, Conversation | void>('/:participantId', authRequired, participantIdParser, async (_req, res) => {
-  const authId: UUID = res.locals.authenticatedUserId
-  const participantId: UUID = res.locals.participantId
+router.get<ConversationIdParam, Participant | void>('/:conversationId',
+  authRequired, conversationIdParser, async (_req, res) => {
+    const authId: UUID = res.locals.authenticatedUserId
+    const conversationId: UUID = res.locals.conversationId
 
-  if (authId === participantId) {
-    res.sendStatus(400)
-    return
-  }
+    try {
+      const metaData = await db.send(new GetCommand({
+        TableName: tableName,
+        Key: {
+          pk: `CONVERSATION#${conversationId}`,
+          sk: 'META'
+        }
+      }))
+      if (!metaData.Item) {
+        res.sendStatus(404)
+        return
+      }
+      const parsedMeta = dbMetaConversationSchema.parse(metaData.Item)
+      const allowed = parsedMeta.participants.includes(authId)
 
-  const conversationId = getConversationId(authId, participantId)
+      if (!allowed) {
+        res.sendStatus(403)
+        return
+      }
+      const participantId = parsedMeta.participants.find(id => id !== authId)
 
-  const metaKey = {
-    pk: `CONVERSATION#${conversationId}`,
-    sk: 'META'
-  }
+      if (!participantId) {
+        res.sendStatus(500)
+        return
+      }
 
-  try {
-    const metaData = await db.send(new GetCommand({
-      TableName: tableName,
-      Key: metaKey
-    }))
+      res.status(200).send({ participantId })
 
-    if (!metaData.Item) {
+    } catch {
+      res.sendStatus(500)
+    }
+  })
+
+router.post<ParticipantParam, Conversation | void>('/:participantId',
+  authRequired, participantIdParser, async (_req, res) => {
+    const authId: UUID = res.locals.authenticatedUserId
+    const participantId: UUID = res.locals.participantId
+
+    if (authId === participantId) {
+      res.sendStatus(400)
+      return
+    }
+
+    const conversationId = getConversationId(authId, participantId)
+
+    const metaKey = {
+      pk: `CONVERSATION#${conversationId}`,
+      sk: 'META'
+    }
+
+    try {
+      const metaData = await db.send(new GetCommand({
+        TableName: tableName,
+        Key: metaKey
+      }))
+
+      if (!metaData.Item) {
+        await db.send(new PutCommand({
+          TableName: tableName,
+          Item: {
+            ...metaKey,
+            participants: [authId, participantId]
+          } satisfies DbMetaConversation,
+          ConditionExpression: 'attribute_not_exists(pk)'
+        }))
+
+        res.status(201).send({ conversationId })
+        return
+      }
+
+      const result = dbMetaConversationSchema.parse(metaData.Item)
+      const allowed = result.participants.includes(authId)
+      const participantExists = result.participants.includes(participantId)
+
+      if (!allowed) {
+        res.sendStatus(403)
+        return
+      }
+
+      if (!participantExists) {
+        res.sendStatus(500)
+        return
+      }
+
+      res.status(200).send({ conversationId })
+
+    } catch (error) {
+      if (error instanceof ConditionalCheckFailedException) {
+        res.status(200).send({ conversationId })
+        return
+      }
+      res.sendStatus(500)
+    }
+  })
+
+router.get<ConversationIdParam, MessageData[]>('/:conversationId/messages',
+  authRequired, conversationIdParser, async (_, res) => {
+    const authId: UUID = res.locals.authenticatedUserId
+    const conversationId: UUID = res.locals.conversationId
+    try {
+      const metaData = await db.send(new GetCommand({
+        TableName: tableName,
+        Key: {
+          pk: `CONVERSATION#${conversationId}`,
+          sk: 'META'
+        }
+      }))
+      if (!metaData.Item) {
+        res.sendStatus(404)
+        return
+      }
+      const parsedMeta = dbMetaConversationSchema.parse(metaData.Item)
+      const allowed = parsedMeta.participants.includes(authId)
+
+      if (!allowed) {
+        res.sendStatus(403)
+        return
+      }
+
+      const result = await db.send(new QueryCommand({
+        TableName: tableName,
+        KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
+        ExpressionAttributeValues: {
+          ':pk': `CONVERSATION#${conversationId}`,
+          ':sk': 'MSG#'
+        }
+      }))
+
+
+      const dbMessages: DbMessageData[] = dbMsgArraySchema.parse(result.Items)
+
+      const messages: MessageData[] = dbMessages.map(msg => {
+        return {
+          createdBy: msg.ownerId,
+          message: msg.message,
+          messageId: msg.messageId,
+          createdAt: msg.timestamp
+        }
+      })
+      res.status(200).send(messages)
+    } catch {
+      res.sendStatus(500)
+    }
+  })
+
+router.post<ConversationIdParam, MessageData, Message>('/:conversationId/messages',
+  authRequired, conversationIdParser, express.json(), async (req, res) => {
+    const conversationId: UUID = res.locals.conversationId
+    const authId: UUID = res.locals.authenticatedUserId
+
+    try {
+      const parsedMsg = messageStringSchema.safeParse(req.body)
+
+      if (!parsedMsg.success) {
+        res.sendStatus(400)
+        return
+      }
+
+      const metaData = await db.send(new GetCommand({
+        TableName: tableName,
+        Key: {
+          pk: `CONVERSATION#${conversationId}`,
+          sk: 'META'
+        }
+      }))
+
+      if (!metaData.Item) {
+        res.sendStatus(404)
+        return
+      }
+
+      const parsedMeta = dbMetaConversationSchema.parse(metaData.Item)
+      const allowed = parsedMeta.participants.includes(authId)
+
+      if (!allowed) {
+        res.sendStatus(403)
+        return
+      }
+
+      const messageId: UUID = randomUUID()
+      const timestamp = new Date().toISOString()
+
       await db.send(new PutCommand({
         TableName: tableName,
         Item: {
-          ...metaKey,
-          participants: [authId, participantId]
-        } satisfies DbMetaConversation,
-        ConditionExpression: 'attribute_not_exists(pk)'
+          pk: `CONVERSATION#${conversationId}`,
+          sk: `MSG#${timestamp}#${messageId}`,
+          ownerId: authId,
+          message: parsedMsg.data.message,
+          messageId,
+          timestamp
+        } satisfies DbMessageData
       }))
 
-      res.status(201).send({ conversationId })
-      return
-    }
-    //zod and we don't need safeparse... think we can throw completely...
-    const result = dbMetaConversationSchema.parse(metaData.Item)
+      const returnData: MessageData = {
+        createdBy: authId,
+        message: parsedMsg.data.message,
+        messageId,
+        createdAt: timestamp
+      }
 
-    const allowed = result.participants.includes(authId)
-
-    const participantExists = result.participants.includes(participantId)
-
-    if (!allowed) {
-      res.sendStatus(403)
-      return
-    }
-
-    if (!participantExists) {
+      res.status(201).send(returnData)
+    } catch {
       res.sendStatus(500)
-      return
     }
-
-    res.status(200).send({ conversationId })
-
-  } catch (error) {
-    if (error instanceof ConditionalCheckFailedException) {
-      res.status(200).send({ conversationId })
-      return
-    }
-    res.sendStatus(500)
-  }
-})
-
-
-// router.get<{}, Conversation[]>('/', authRequired, async (req, res) => {
-//   const authId = res.locals.authenticatedUserId
-
-//   try {
-//     // Get the authenticated user's conversation references
-//     const convos = await db.send(new QueryCommand({
-//       TableName: tableName,
-//       KeyConditionExpression: 'pk = :pk',
-//       ExpressionAttributeValues: {
-//         ':pk': `USER#${authId}`
-//       }
-//     }))
-
-//     const dbConvos: DbUserConversation =
-//       dbUserConversationArraySchema.parse(convos.Items ?? [])
-
-//     // Extract conversation IDs
-//     const convoIds: UUID[] = dbConvos.map(convo =>
-//       convo.sk.replace('CONVERSATION#', '') as UUID
-//     )
-
-//     const metadata: Record<string, unknown>[] = []
-
-//     // BatchGet supports a maximum of 100 keys per request
-//     for (let i = 0; i < convoIds.length; i += 100) {
-//       let unprocessedKeys: NonNullable<
-//         BatchGetCommandInput['RequestItems']
-//       > = {
-//         [tableName]: {
-//           Keys: convoIds.slice(i, i + 100).map(conversationId => ({
-//             pk: `CONVERSATION#${conversationId}`,
-//             sk: 'META'
-//           }))
-//         }
-//       }
-
-//       let attempts = 0
-//       const maxAttempts = 5
-
-//       do {
-//         const result = await db.send(new BatchGetCommand({
-//           RequestItems: unprocessedKeys
-//         }))
-
-//         metadata.push(...(result.Responses?.[tableName] ?? []))
-
-//         unprocessedKeys = result.UnprocessedKeys ?? {}
-//         attempts++
-
-//         if (Object.keys(unprocessedKeys).length > 0 &&
-//           attempts < maxAttempts) {
-//           await new Promise(resolve => setTimeout(resolve, 1000))
-//         }
-//       } while (
-//         Object.keys(unprocessedKeys).length > 0 &&
-//         attempts < maxAttempts
-//       )
-
-//       if (Object.keys(unprocessedKeys).length > 0) {
-//         throw new Error('Could not retrieve all conversation metadata')
-//       }
-//     }
-
-//     // Validate retrieved metadata
-//     const metaConversations: DbMetaConversation[] =
-//       dbMetaConversationArraySchema.parse(metadata)
-
-//     // Build the response
-//     const returnData: Conversation[] = metaConversations.map(convo => {
-//       const participantId = convo.participants.find(id => id !== authId)
-
-//       if (!participantId) {
-//         throw new Error('Could not find conversation participant')
-//       }
-
-//       return {
-//         conversationId: convo.pk.replace('CONVERSATION#', ''),
-//         participantId
-//       }
-//     })
-
-//     res.status(200).send(returnData)
-//   } catch (error) {
-//     console.error('Failed to retrieve conversations:', error)
-//     res.sendStatus(500)
-//   }
-// })
+  })
 
 export default router

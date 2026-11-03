@@ -23,15 +23,25 @@ export const authResponseSchema = z.object({
   name: z.string()
 }).strict()
 
-export const channelMsgSchema = z.object({
-  createdBy: z.uuid().or(z.literal('guest')),
+const msgSchema = z.object({
   message: z.string(),
   messageId: z.uuid(),
   createdAt: z.iso.datetime()
 }).strict()
 
+export const channelMsgSchema = msgSchema.extend({
+  createdBy: z.uuid().or(z.literal('guest'))
+})
+export const conversationMsgSchema = msgSchema.extend({
+  createdBy: z.uuid()
+})
 export const channelMsgArraySchema = z.array(channelMsgSchema)
+export const conversationMsgArraySchema = z.array(conversationMsgSchema)
+
 
 export const conversationSchema = z.object({
   conversationId: z.uuid()
+}).strict()
+export const participantSchema = z.object({
+  participantId: z.uuid()
 }).strict()

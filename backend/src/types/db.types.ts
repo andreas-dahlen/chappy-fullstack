@@ -8,3 +8,11 @@ export type DbCredentials = {
 export type ChannelIdParam = {
   channelId: string
 }
+
+export type ParticipantParam = {
+  participantId: string
+}
+
+export type ConversationIdParam = {
+  conversationId: string
+}

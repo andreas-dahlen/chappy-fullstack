@@ -5,6 +5,7 @@ import { useCredentialStore } from '../../stores/credentialStore.ts'
 import { dbPostChannelMessage } from '../../api/channels/postChannelMessage.ts'
 import { useChannelsStore } from '../../stores/channelsStore.ts'
 import { SendHorizonal } from 'lucide-react'
+import '../../styles/components/input.css'
 
 type InputProps = {
   channelId: UUID
@@ -41,7 +42,7 @@ export default function ChannelInput({ channelId }: InputProps) {
   }
 
   return (
-    <form className="channel-input" onSubmit={handleSubmit}>
+    <form className="input" onSubmit={handleSubmit}>
       <textarea
         rows={1}
         name="message"

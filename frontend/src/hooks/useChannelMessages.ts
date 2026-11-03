@@ -34,7 +34,7 @@ export function useChannelMessages() {
 
       const messageData = new Map<UUID, MessageData>()
 
-      result.channelMsgData.forEach(message => {
+      result.msgData.forEach(message => {
         messageData.set(message.messageId, message)
       })
 

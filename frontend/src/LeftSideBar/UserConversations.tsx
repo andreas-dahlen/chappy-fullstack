@@ -4,7 +4,8 @@ import '../styles/aside/conversation.css'
 import type { User, UUID } from '@chappy/shared'
 import { useNavigate } from 'react-router'
 import { useCredentialStore } from '../stores/credentialStore.ts'
-import { dbCreateOrGetConversation } from '../api/conversations/dbCreateOrGetConversation.ts'
+import { dbCreateOrGetConversation } from '../api/conversations/createOrGetConversation.ts'
+import { useConversationStore } from '../stores/conversationStore.ts'
 
 type ConversationError = {
   userId: UUID
@@ -14,6 +15,9 @@ type ConversationError = {
 export default function UserConversations() {
   const [conversationError, setConversationError] = useState<ConversationError | null>(null)
   const [conversationLoading, setConversationLoading] = useState<UUID | null>(null)
+
+  const setConversationMetaData = useConversationStore(s => s.setConversationMetaData)
+
   const users = useUsersStore(s => s.activeUsers)
   const loading = useUsersStore(s => s.loading)
   const userError = useUsersStore(s => s.error)
@@ -44,13 +48,20 @@ export default function UserConversations() {
     }
     setConversationLoading(user.userId)
     try {
-      const data = await dbCreateOrGetConversation(user.userId, token)
+      const dbData = await dbCreateOrGetConversation(user.userId, token)
 
-      if (data.state === 'success') {
-        navigate(`/conversations/${data.conversationId}`)
+      if (dbData.state === 'success') {
+        setConversationMetaData(dbData.conversationId, {
+          hasFetchedMeta: true,
+          metaData: {
+            participantId: user.userId,
+            participantName: user.name
+          }
+        })
+        navigate(`/conversations/${dbData.conversationId}`)
         return
       }
-      setConversationError({ userId: user.userId, message: data.message })
+      setConversationError({ userId: user.userId, message: dbData.message })
     } finally {
       setConversationLoading(null)
     }

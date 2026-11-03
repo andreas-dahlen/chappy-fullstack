@@ -31,13 +31,20 @@ export type ConversationStarterReturn =
     conversationId: UUID
   } | ApiFailure
 
-export type ChannelMsgReturn =
+export type ConversationParticipantReturn =
   | {
     state: 'success'
-    channelMsgData: MessageData[]
+    participantId: UUID
   } | ApiFailure
 
-export type ChannelMsgPostReturn =
+
+export type MsgReturn =
+  | {
+    state: 'success'
+    msgData: MessageData[]
+  } | ApiFailure
+
+export type MsgPostReturn =
   | {
     state: 'success'
     messageData: MessageData
