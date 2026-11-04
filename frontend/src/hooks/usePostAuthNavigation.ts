@@ -6,6 +6,7 @@ import { useCredentialStore } from '../stores/credentialStore.ts'
 export function usePostAuthNavigation() {
   const location = useLocation()
   const navigate = useNavigate()
+  const goHome = () => navigate('/', { replace: true })
 
   const navigateAfterAuth = async () => {
     const state = location.state as AuthNavigationState | null
@@ -20,7 +21,7 @@ export function usePostAuthNavigation() {
         if (isValidReturnPath(state.pathname)) {
           navigate(state.pathname, { replace: true })
         } else {
-          navigate('/', { replace: true })
+          goHome()
         }
         break
 
@@ -31,18 +32,25 @@ export function usePostAuthNavigation() {
       case 'start-conversation':
         const token = useCredentialStore.getState().token
         if (!token) {
-          navigate('/', { replace: true })
+          goHome()
           return
         }
-        const data = await dbCreateOrGetConversation(state.userId, token)
+        const userId = useCredentialStore.getState().userId
+
+        if (userId === state.participantId) {
+          goHome()
+          return
+        }
+
+        const data = await dbCreateOrGetConversation(state.participantId, token)
 
         if (data.state === 'success') {
           navigate(`/conversations/${data.conversationId}`, { replace: true })
         } else {
-          navigate('/', { replace: true })
+          goHome()
         }
         break
-      default: navigate('/', { replace: true })
+      default: goHome()
     }
   }
 

@@ -264,3 +264,10 @@ type conversation = {
 │                                 │                                                   │
 │                                 │                                                   │
 └─────────────────────────────────┴───────────────────────────────────────────────────┘
+
+
+General — the default hangout.
+Random — anything goes.
+Tech — development, programming, nerd stuff.
+Gaming — games and related nonsense.
+Food — because obviously. xD

@@ -41,7 +41,7 @@ export default function UserConversations() {
       navigate('/sign-in', {
         state: {
           reason: 'start-conversation',
-          userId: user.userId
+          participantId: user.userId
         }
       })
       return

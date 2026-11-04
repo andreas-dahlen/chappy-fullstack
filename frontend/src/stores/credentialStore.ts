@@ -9,15 +9,16 @@ type CredentialStore = {
   userId: string | undefined
   loading: boolean
   error: string | null
-  signOutReason: signOutReason | null
+  signOutReason: SignOutReason | null
   setCredentials: (credentials: AuthSuccess) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
-  signOut: (reason: signOutReason) => void
-  setSignOutReason: (reason: signOutReason | null) => void
+  signOut: (reason: SignOutReason) => void
+  clearSignOutReason: () => void
 }
 
-type signOutReason = 'manual' | 'invalid'
+type SignOutReason = 'manual' | 'invalid'
+
 
 export const useCredentialStore = create<CredentialStore>()(
   persist(
@@ -62,9 +63,9 @@ export const useCredentialStore = create<CredentialStore>()(
         })
       },
 
-      setSignOutReason: (reason) => {
+      clearSignOutReason: () => {
         set(s => {
-          s.signOutReason = reason
+          s.signOutReason = null
         })
       }
     })),

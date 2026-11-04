@@ -1,7 +1,7 @@
 import { conversationMsgSchema, type UUID } from '@chappy/shared'
 import type { MsgPostReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
-import { handleAuthResult } from '../utils/handleAuthResult.ts'
+import { handleApiAuthResult } from '../../authHandlers/handleApiAuthResult.ts'
 
 export async function dbPostConversationMessage(conversationId: UUID, message: string, token: string): Promise<MsgPostReturn> {
   let status: number | null = null
@@ -19,7 +19,7 @@ export async function dbPostConversationMessage(conversationId: UUID, message: s
 
 
     status = response.status
-    handleAuthResult(status, token)
+    handleApiAuthResult(status, token)
 
     if (!response.ok) {
       return {

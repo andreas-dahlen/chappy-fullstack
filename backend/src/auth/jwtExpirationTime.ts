@@ -1,0 +1,1 @@
+export const expTime = '1m'

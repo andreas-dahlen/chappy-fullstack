@@ -1,7 +1,7 @@
 import { channelMsgSchema, type UUID } from '@chappy/shared'
 import type { MsgPostReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
-import { handleAuthResult } from '../utils/handleAuthResult.ts'
+import { handleApiAuthResult } from '../../authHandlers/handleApiAuthResult.ts'
 
 export async function dbPostChannelMessage(channelId: UUID, message: string, token: string | null): Promise<MsgPostReturn> {
   let status: number | null = null
@@ -21,7 +21,7 @@ export async function dbPostChannelMessage(channelId: UUID, message: string, tok
 
 
     status = response.status
-    handleAuthResult(status, token)
+    handleApiAuthResult(status, token)
 
     if (!response.ok) {
       return {

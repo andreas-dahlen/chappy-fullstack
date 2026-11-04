@@ -9,16 +9,15 @@ export function useConversationMessages() {
   const setConversationMsgData = useConversationStore(s => s.setConversationMsgData)
 
   const fetchConversationMessages = useCallback(async (conversationId: UUID) => {
-    const { conversationMsgData, conversationMetaData } = useConversationStore.getState()
-
-    const conversation = conversationMetaData.get(conversationId)
-    if (!conversation?.hasFetchedMeta) return
+    const { conversationMsgData } = useConversationStore.getState()
 
     const msgData = conversationMsgData.get(conversationId)
 
-    if (msgData?.hasFetchedMsgs || msgData?.loading) return
-    if (!token) return
+    if (msgData?.hasFetchedMsgs || msgData?.loading) {
+      return
+    }
 
+    if (!token) return
     setConversationMsgData(conversationId, {
       loading: true,
       error: null
@@ -31,7 +30,6 @@ export function useConversationMessages() {
         setConversationMsgData(conversationId, { error: result.message })
         return
       }
-
       const messageData = new Map<UUID, MessageData>()
 
       result.msgData.forEach(message => {
@@ -42,6 +40,7 @@ export function useConversationMessages() {
         messageData: messageData,
         hasFetchedMsgs: true
       })
+
     } catch (error) {
       setConversationMsgData(conversationId, {
         error: error instanceof Error ? error.message : String(error)

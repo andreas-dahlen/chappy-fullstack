@@ -1,6 +1,6 @@
 import { participantSchema, type UUID } from '@chappy/shared';
 import type { ConversationParticipantReturn } from '../../types/apiData.types.ts';
-import { handleAuthResult } from '../utils/handleAuthResult.ts';
+import { handleApiAuthResult } from '../../authHandlers/handleApiAuthResult.ts';
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts';
 
 
@@ -16,7 +16,7 @@ export async function dbGetConversationParticipant(conversationId: UUID, token: 
     })
 
     status = response.status
-    handleAuthResult(status, token)
+    handleApiAuthResult(status, token)
 
     if (!response.ok) {
       return {

@@ -1,11 +1,14 @@
 import express, { Router } from 'express'
 import db, { tableName } from '../aws/aws.ts'
-import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
-import { dbChannelArraySchema, dbChannelSchema, dbMsgArraySchema, messageStringSchema, type Channel, type DbChannel, type DbMessageData, type Message, type MessageData, type UUID } from '@chappy/shared'
+import { BatchWriteCommand, DeleteCommand, GetCommand, PutCommand, QueryCommand, type BatchWriteCommandInput, type QueryCommandInput } from '@aws-sdk/lib-dynamodb'
+import { dbChannelArraySchema, dbChannelSchema, dbKeyArraySchema, dbMsgArraySchema, messageStringSchema, type Channel, type DbChannel, type DbKey, type DbMessageData, type Message, type MessageData, type UUID } from '@chappy/shared'
 import type { ChannelIdParam } from '../types/db.types.ts'
 import { optionalAuth } from '../middleware/express/optionalAuth.ts'
 import { channelIdParser } from '../middleware/express/channelIdParser.ts'
 import { randomUUID } from 'node:crypto'
+import { authRequired } from '../middleware/express/authRequired.ts'
+import { DeleteRequest$ } from '@aws-sdk/client-dynamodb'
+import { batchWrite } from '../utils/batchWrite.ts'
 
 const router: Router = express.Router()
 
@@ -144,5 +147,69 @@ router.post<ChannelIdParam, MessageData, Message>('/:channelId/messages',
     }
   })
 
+router.delete<ChannelIdParam>('/:channelId',
+  authRequired, channelIdParser, async (req, res) => {
+    const channelId = res.locals.channelId
+    const authId = res.locals.authenticatedUserId
 
+    const Key = {
+      pk: 'CHANNEL',
+      sk: `CHANNEL#${channelId}`
+    }
+
+    const data = await db.send(new GetCommand({
+      TableName: tableName,
+      Key
+    }))
+
+    if (!data.Item) {
+      res.sendStatus(404)
+      return
+    }
+
+    const dbChannel: DbChannel = dbChannelSchema.parse(data.Item)
+
+    if (authId !== dbChannel.ownerId) {
+      res.sendStatus(403)
+      return
+    }
+
+    let ExclusiveStartKey: QueryCommandInput['ExclusiveStartKey']
+
+    do {
+      const msgs = await db.send(new QueryCommand({
+        TableName: tableName,
+        KeyConditionExpression: 'pk = :pk',
+        ExpressionAttributeValues: {
+          ':pk': `CHANNEL#${channelId}`
+        },
+        ProjectionExpression: 'pk, sk',
+        ...(ExclusiveStartKey && { ExclusiveStartKey })
+      }))
+
+      const dbMessageKeys: DbKey[] = dbKeyArraySchema.parse(msgs.Items ?? [])
+
+      for (let i = 0; i < dbMessageKeys.length; i += 25) {
+        const batch = dbMessageKeys.slice(i, i + 25).map(({ pk, sk }) => ({
+          DeleteRequest: {
+            Key: { pk, sk }
+          }
+        }))
+
+        await batchWrite(batch)
+      }
+
+      ExclusiveStartKey = msgs.LastEvaluatedKey
+    } while (ExclusiveStartKey)
+
+    await db.send(new DeleteCommand({
+      TableName: tableName,
+      Key,
+      ConditionExpression: 'attribute_exists(pk)'
+    }))
+
+    res.sendStatus(204)
+  })
+
+//TODO create / delete
 export default router

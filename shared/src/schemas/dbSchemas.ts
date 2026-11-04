@@ -54,3 +54,10 @@ export const dbMetaConversationSchema = z.object({
   sk: z.string(),
   participants: z.array(z.uuid())
 }).strict()
+
+export const dbKeySchema = z.object({
+  pk: z.string(),
+  sk: z.string()
+}).strict()
+
+export const dbKeyArraySchema = z.array(dbKeySchema)

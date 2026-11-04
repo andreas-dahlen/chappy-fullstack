@@ -1,6 +1,6 @@
 import { conversationSchema, type UUID } from '@chappy/shared';
 import type { ConversationStarterReturn } from '../../types/apiData.types.ts';
-import { handleAuthResult } from '../utils/handleAuthResult.ts';
+import { handleApiAuthResult } from '../../authHandlers/handleApiAuthResult.ts';
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts';
 
 
@@ -17,7 +17,7 @@ export async function dbCreateOrGetConversation(participantId: UUID, token: stri
     })
 
     status = response.status
-    handleAuthResult(status, token)
+    handleApiAuthResult(status, token)
 
     if (!response.ok) {
       return {

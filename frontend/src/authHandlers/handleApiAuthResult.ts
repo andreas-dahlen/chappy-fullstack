@@ -1,6 +1,6 @@
-import { useCredentialStore } from '../../stores/credentialStore.ts'
+import { useCredentialStore } from '../stores/credentialStore.ts'
 
-export function handleAuthResult(
+export function handleApiAuthResult(
   status: number,
   requestToken: string | null
 ) {

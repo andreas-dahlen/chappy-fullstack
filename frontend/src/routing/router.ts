@@ -6,7 +6,7 @@ import SignIn from '../pages/SignIn.tsx'
 import Conversation from '../pages/Conversation.tsx'
 import Channel from '../pages/Channel.tsx'
 import Register from '../pages/Register.tsx'
-import RequireAuth from './RequireAuth.tsx'
+import RequireConversationAuth from '../authHandlers/RequireConversationAuth.tsx'
 
 const routerConfig: RouteObject[] = [
   {
@@ -27,7 +27,7 @@ const routerConfig: RouteObject[] = [
       },
       // Protected routes
       {
-        Component: RequireAuth,
+        Component: RequireConversationAuth,
         children: [
           {
             path: 'conversations/:conversationId',

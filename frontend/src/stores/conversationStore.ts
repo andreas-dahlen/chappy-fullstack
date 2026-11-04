@@ -16,7 +16,7 @@ export type ConversationMetaData = {
 
 export type ConversationStoreMetaData = {
   metaData: ConversationMetaData | undefined
-  hasFetchedMeta: boolean
+  hasFetchedMeta: boolean //TODO remove? can check metaData directly
   loading: boolean
   error: string | null
 }

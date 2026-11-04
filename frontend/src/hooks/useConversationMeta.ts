@@ -4,11 +4,13 @@ import { useCredentialStore } from '../stores/credentialStore.ts'
 import { useConversationStore } from '../stores/conversationStore.ts'
 import { dbGetConversationParticipant } from '../api/conversations/getConversationParticipant.ts'
 import { useUsersStore } from '../stores/usersStore.ts'
+import { useNavigate } from 'react-router'
 
 export function useConversationMeta() {
   const token = useCredentialStore(s => s.token)
   const setConversationMetaData = useConversationStore(s => s.setConversationMetaData)
   const fetchUsers = useUsersStore(s => s.fetchUsers)
+  const navigate = useNavigate()
 
   const fetchConversationMeta = useCallback(async (conversationId: UUID) => {
     if (!token) return
@@ -26,6 +28,11 @@ export function useConversationMeta() {
       const result = await dbGetConversationParticipant(conversationId, token)
 
       if (result.state === 'failed') {
+        if (result.status === 403 &&
+          useCredentialStore.getState().token === token) {
+          navigate('/', { replace: true })
+          return
+        }
         setConversationMetaData(conversationId, { error: result.message })
         return
       }
@@ -39,7 +46,7 @@ export function useConversationMeta() {
         savedUser = useUsersStore.getState().activeUsers.find(user => user.userId === result.participantId)
       }
 
-      if (!savedUser) throw new Error('could not find User i database. Is the URL correct?')
+      if (!savedUser) throw new Error('could not find User in database. Is the URL correct?')
 
       setConversationMetaData(conversationId, {
         metaData: {
@@ -56,7 +63,7 @@ export function useConversationMeta() {
       setConversationMetaData(conversationId, { loading: false })
     }
 
-  }, [token, setConversationMetaData, fetchUsers])
+  }, [token, setConversationMetaData, fetchUsers, navigate])
 
   return { fetchConversationMeta }
 }

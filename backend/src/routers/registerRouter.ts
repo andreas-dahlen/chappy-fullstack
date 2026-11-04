@@ -7,6 +7,7 @@ import { createUser } from '../auth/createUser.ts'
 import { PutCommand } from '@aws-sdk/lib-dynamodb'
 import db, { tableName } from '../aws/aws.ts'
 import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb'
+import { expTime } from '../auth/jwtExpirationTime.ts'
 
 const { sign } = jwt
 
@@ -34,7 +35,7 @@ router.post<{}, JwtResponse | void, RegCredentials>('/', express.json(), async (
       ConditionExpression: 'attribute_not_exists(pk)'
     }))
 
-    const token = sign({ uuid: user.ownerId }, getJwtSecret(), { expiresIn: '1h' })
+    const token = sign({ uuid: user.ownerId }, getJwtSecret(), { expiresIn: expTime })
 
     res.status(201).send({ token, userId: user.ownerId, name: user.name })
   } catch (error) {

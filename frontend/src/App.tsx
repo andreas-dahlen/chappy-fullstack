@@ -3,7 +3,7 @@ import './styles/app.css'
 import LeftSideBar from './layout/LeftSideBar.tsx'
 import Header from './layout/Header.tsx'
 import { useState } from 'react'
-import { useSignOutNavigation } from './hooks/useSignOutNavigation.ts'
+import { useSignOutNavigation } from './authHandlers/useSignOutNavigation.ts'
 
 export default function App() {
 

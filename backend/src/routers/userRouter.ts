@@ -31,5 +31,5 @@ router.get<{}, User[]>('/', async (_, res) => {
   }
 })
 
-
+//TODO create /delete
 export default router

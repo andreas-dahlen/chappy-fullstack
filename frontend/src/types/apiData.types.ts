@@ -58,7 +58,7 @@ export type AuthNavigationState =
   }
   | {
     reason: 'start-conversation'
-    userId: string
+    participantId: string
   }
   | {
     reason: 'return-to'
