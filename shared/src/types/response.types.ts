@@ -1,5 +1,5 @@
 import type z from 'zod'
-import { dbChannelSchema, dbKeySchema, dbMetaConversationSchema, dbMsgSchema, dbUserSchema, messageStringSchema, uuidSchema } from '../schemas/dbSchemas.ts'
+import { channelCreationSchema, dbChannelSchema, dbKeySchema, dbMetaConversationSchema, dbMsgSchema, dbUserSchema, messageStringSchema, uuidSchema } from '../schemas/dbSchemas.ts'
 import type { authResponseSchema, channelMsgSchema, channelSchema, conversationMsgSchema, conversationSchema, participantSchema } from '../schemas/frontendSchemas.ts'
 
 export type UUID = z.infer<typeof uuidSchema>
@@ -31,3 +31,5 @@ export type Participant = z.infer<typeof participantSchema>
 export type DbMetaConversation = z.infer<typeof dbMetaConversationSchema>
 
 export type DbKey = z.infer<typeof dbKeySchema>
+
+export type ChannelCreation = z.infer<typeof channelCreationSchema>

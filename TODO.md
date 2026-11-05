@@ -106,7 +106,7 @@ database:
 | CHANNEL#123         | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
 | CHANNEL#123         | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
 | CHANNEL#789         | MSG#timestamp#ghi  | x         | user UUID | x            | string  | ghi       | timestamp  | x            | x            |
-| CONVERSATION#UUIDv5 | META               | x         | x         | [UUID, UUID] | x       | x         | x          | x            | x            |
+| CONVERSATION        | META#UUIDv5        | x         | x         | [UUID, UUID] | x       | x         | x          | x            | x            |
 | CONVERSATION#UUIDv5 | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
 | CONVERSATION#UUIDv5 | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
 
@@ -257,7 +257,7 @@ type conversation = {
 
 
 ┌─────────────────────────────────┬───────────────────────────────────────────────────┐
-│ 💬 PM 👥 GROUP ⚙️ SET ✨ AI   │                                                   │
+│ 💬 PM 👥 GROUP ⚙️ SET          │                                                   │
 │---------------------------------│                  main display                     │
 │         pm or group view        │                                                   │
 │                                 │                                                   │

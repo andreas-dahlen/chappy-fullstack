@@ -1,4 +1,8 @@
 import type { Auth, Channel, MessageData, User, UUID } from '@chappy/shared'
+
+export type ApiSuccess = {
+  state: 'success'
+}
 export type ApiFailure = {
   state: 'failed'
   message: string
@@ -15,6 +19,12 @@ export type ChannelReturn =
   | {
     state: 'success'
     channels: Channel[]
+  } | ApiFailure
+
+export type CreatedChannelReturn =
+  | {
+    state: 'success'
+    channel: Channel
   } | ApiFailure
 
 export type AuthReturn =
@@ -49,7 +59,6 @@ export type MsgPostReturn =
     state: 'success'
     messageData: MessageData
   } | ApiFailure
-
 
 export type AuthNavigationState =
   | {

@@ -13,9 +13,9 @@ export default function Channel() {
 
   const token = useCredentialStore(s => s.token)
 
-  const channel = useChannelsStore(s =>
-    s.activeChannels.find(c => c.channelId === channelId)
-  )
+  const channelData = useChannelsStore(s =>
+    channelId ? s.channels.get(channelId) : undefined)
+
 
   const loading = useChannelsStore(s => s.loading)
   const hasFetchedChannels = useChannelsStore(s => s.hasFetchedChannels)
@@ -30,14 +30,14 @@ export default function Channel() {
     return <p>Loading channel...</p>
   }
 
-  if (!channelId || !channel) return (
+  if (!channelId || !channelData) return (
     <div className='faulty-state'>
       <p>Ooops! Could not load the channel</p>
       <NavLink to="/" replace>Home</NavLink>
     </div>
   ) //TODO add error handling error = useChannelsStore(s => s.error) and messages.error
 
-  if (!token && channel.authRequired) {
+  if (!token && channelData.channel.authRequired) {
     return (
       <div className='faulty-state'>
         <p>You need to sign in to view this channel.</p>
@@ -50,7 +50,7 @@ export default function Channel() {
     <div className='channel-page'>
       <div className='channel-header'>
         <p >
-          {channel.channelName}
+          {channelData.channel.channelName}
         </p>
       </div>
       <div className="channel-view">

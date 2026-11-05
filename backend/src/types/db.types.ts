@@ -1,3 +1,5 @@
+import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
+
 export type DbCredentials = {
   ownerId: string
   name: string
@@ -16,3 +18,6 @@ export type ParticipantParam = {
 export type ConversationIdParam = {
   conversationId: string
 }
+
+export type BatchWriteItems = NonNullable<
+  NonNullable<BatchWriteCommandInput['RequestItems']>[string]>

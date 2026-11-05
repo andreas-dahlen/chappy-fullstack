@@ -1,9 +1,6 @@
-import { BatchWriteCommand, type BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
+import { BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
 import db, { tableName } from '../aws/aws.ts'
-
-type BatchWriteItems = NonNullable<
-  NonNullable<BatchWriteCommandInput['RequestItems']>[string]
->
+import type { BatchWriteItems } from '../types/db.types.ts'
 
 export async function batchWrite(items: BatchWriteItems) {
   let unprocessedItems = items

@@ -8,22 +8,22 @@ export function clearAllAuthData() {
     conversationMsgData: new Map()
   })
 
-  const channels = useChannelsStore.getState().activeChannels
+  const channels = useChannelsStore.getState().channels
 
   const lockedChannels = new Set<UUID>()
-  channels.forEach(chan => {
-    if (chan.authRequired) {
-      lockedChannels.add(chan.channelId)
+  channels.forEach(data => {
+    if (data.channel.authRequired) {
+      lockedChannels.add(data.channel.channelId)
     }
   })
 
   useChannelsStore.setState(s => {
     const newChannelMsgData = new Map<UUID, ChannelMsgStoreData>()
 
-    for (const [key, entry] of s.channelMsgData) {
-      if (lockedChannels.has(key)) continue
+    for (const [id, entry] of s.channelMsgData) {
+      if (lockedChannels.has(id)) continue
 
-      newChannelMsgData.set(key, entry)
+      newChannelMsgData.set(id, entry)
     }
     return {
       channelMsgData: newChannelMsgData

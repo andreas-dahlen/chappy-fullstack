@@ -55,9 +55,16 @@ export const dbMetaConversationSchema = z.object({
   participants: z.array(z.uuid())
 }).strict()
 
+export const dbMetaConvoArraySchema = z.array(dbMetaConversationSchema)
+
 export const dbKeySchema = z.object({
   pk: z.string(),
   sk: z.string()
 }).strict()
+
+export const channelCreationSchema = z.object({
+  name: z.string(),
+  authRequired: z.boolean()
+})
 
 export const dbKeyArraySchema = z.array(dbKeySchema)

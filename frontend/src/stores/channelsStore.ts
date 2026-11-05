@@ -9,13 +9,21 @@ export type ChannelMsgStoreData = {
   error: string | null
 }
 
+export type ChannelStoreData = {
+  channel: Channel
+  loading: boolean
+  error: string | null
+}
+
 type ChannelsStore = {
-  activeChannels: Channel[]
+  channels: Map<UUID, ChannelStoreData>
   hasFetchedChannels: boolean
   loading: boolean
   error: string | null
 
   setChannels: (channels: Channel[]) => void
+  setChannel: (channel: Channel) => void
+  setChannelData: (channelId: UUID, data: Partial<ChannelStoreData>) => void
   setHasFetchedChannels: (hasFetched: boolean) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
@@ -26,18 +34,43 @@ type ChannelsStore = {
     data: Partial<ChannelMsgStoreData>
   ) => void
   setChannelMsg: (channelId: UUID, message: MessageData) => void
+  removeChannel: (channelId: UUID) => void
 }
 
 export const useChannelsStore = create<ChannelsStore>()(
   immer(set => ({
-    activeChannels: [],
+    channels: new Map(),
     hasFetchedChannels: false,
     loading: false,
     error: null,
 
     setChannels: channels => {
       set(s => {
-        s.activeChannels = channels
+        s.channels = new Map(
+          channels.map(channel => [
+            channel.channelId,
+            { channel, loading: false, error: null }
+          ])
+        )
+      })
+    },
+
+    setChannel: (channel: Channel) => {
+      set(s => {
+        s.channels.set(channel.channelId, {
+          channel,
+          loading: false,
+          error: null
+        })
+      })
+    },
+
+    setChannelData: (channelId, data) => {
+      set(s => {
+        const existing = s.channels.get(channelId)
+        if (!existing) return
+
+        Object.assign(existing, data)
       })
     },
 
@@ -67,7 +100,7 @@ export const useChannelsStore = create<ChannelsStore>()(
 
         s.channelMsgData.set(channelId, {
           hasFetchedMsgs: false,
-          messageData: new Map,
+          messageData: new Map(),
           loading: false,
           error: null,
           ...existing,
@@ -83,6 +116,13 @@ export const useChannelsStore = create<ChannelsStore>()(
         if (!existing) return
 
         existing.messageData.set(channelMsg.messageId, channelMsg)
+      })
+    },
+
+    removeChannel: (channelId: UUID) => {
+      set(s => {
+        s.channels.delete(channelId)
+        s.channelMsgData.delete(channelId)
       })
     }
   }))

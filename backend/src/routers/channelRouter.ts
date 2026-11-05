@@ -1,14 +1,14 @@
 import express, { Router } from 'express'
 import db, { tableName } from '../aws/aws.ts'
-import { BatchWriteCommand, DeleteCommand, GetCommand, PutCommand, QueryCommand, type BatchWriteCommandInput, type QueryCommandInput } from '@aws-sdk/lib-dynamodb'
-import { dbChannelArraySchema, dbChannelSchema, dbKeyArraySchema, dbMsgArraySchema, messageStringSchema, type Channel, type DbChannel, type DbKey, type DbMessageData, type Message, type MessageData, type UUID } from '@chappy/shared'
+import { DeleteCommand, GetCommand, PutCommand, QueryCommand, type QueryCommandInput } from '@aws-sdk/lib-dynamodb'
+import { channelCreationSchema, dbChannelArraySchema, dbChannelSchema, dbKeyArraySchema, dbMsgArraySchema, messageStringSchema, type Channel, type ChannelCreation, type DbChannel, type DbKey, type DbMessageData, type Message, type MessageData, type UUID } from '@chappy/shared'
 import type { ChannelIdParam } from '../types/db.types.ts'
 import { optionalAuth } from '../middleware/express/optionalAuth.ts'
 import { channelIdParser } from '../middleware/express/channelIdParser.ts'
 import { randomUUID } from 'node:crypto'
 import { authRequired } from '../middleware/express/authRequired.ts'
-import { DeleteRequest$ } from '@aws-sdk/client-dynamodb'
 import { batchWrite } from '../utils/batchWrite.ts'
+import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb'
 
 const router: Router = express.Router()
 
@@ -42,6 +42,50 @@ router.get<{}, Channel[]>('/', async (_, res) => {
   }
 })
 
+router.post<{}, Channel, ChannelCreation>('/', authRequired, express.json(), async (req, res) => {
+  try {
+    const channelData = channelCreationSchema.safeParse(req.body)
+
+    if (!channelData.success) {
+      res.sendStatus(400)
+      return
+    }
+
+    const { name, authRequired } = channelData.data
+
+    const channelId = crypto.randomUUID()
+    const channel: DbChannel = {
+      pk: 'CHANNEL',
+      sk: `CHANNEL#${channelId}`,
+      name,
+      authRequired,
+      ownerId: res.locals.authenticatedUserId,
+      timestamp: new Date().toISOString()
+    }
+
+    await db.send(new PutCommand({
+      TableName: tableName,
+      Item: channel,
+      ConditionExpression: 'attribute_not_exists(pk)'
+    }))
+
+    res.status(201).send({
+      channelId,
+      channelName: name,
+      createdBy: res.locals.authenticatedUserId,
+      authRequired,
+      createdAt: channel.timestamp
+    })
+
+  } catch (error) {
+    if (error instanceof ConditionalCheckFailedException) {
+      res.sendStatus(409)
+      return
+    }
+    res.sendStatus(500)
+  }
+})
+
 router.get<ChannelIdParam, MessageData[]>('/:channelId/messages', channelIdParser, optionalAuth, async (_, res) => {
   try {
     const data = await db.send(new GetCommand({
@@ -65,9 +109,10 @@ router.get<ChannelIdParam, MessageData[]>('/:channelId/messages', channelIdParse
 
     const result = await db.send(new QueryCommand({
       TableName: tableName,
-      KeyConditionExpression: 'pk = :pk',
+      KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
       ExpressionAttributeValues: {
-        ':pk': `CHANNEL#${res.locals.channelId}`
+        ':pk': `CHANNEL#${res.locals.channelId}`,
+        ':sk': "MSG#"
       }
     }))
 
@@ -179,9 +224,10 @@ router.delete<ChannelIdParam>('/:channelId',
     do {
       const msgs = await db.send(new QueryCommand({
         TableName: tableName,
-        KeyConditionExpression: 'pk = :pk',
+        KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
         ExpressionAttributeValues: {
-          ':pk': `CHANNEL#${channelId}`
+          ':pk': `CHANNEL#${channelId}`,
+          ':sk': "MSG#"
         },
         ProjectionExpression: 'pk, sk',
         ...(ExclusiveStartKey && { ExclusiveStartKey })
@@ -211,5 +257,4 @@ router.delete<ChannelIdParam>('/:channelId',
     res.sendStatus(204)
   })
 
-//TODO create / delete
 export default router

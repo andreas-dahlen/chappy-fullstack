@@ -37,13 +37,13 @@ export function useConversationMeta() {
         return
       }
 
-      let savedUser = useUsersStore.getState().activeUsers.find(user => user.userId === result.participantId)
+      let savedUser = useUsersStore.getState().users.get(result.participantId)
 
       if (!savedUser) {
         if (!useUsersStore.getState().hasFetchedUsers) {
           await fetchUsers()
         }
-        savedUser = useUsersStore.getState().activeUsers.find(user => user.userId === result.participantId)
+        savedUser = useUsersStore.getState().users.get(result.participantId)
       }
 
       if (!savedUser) throw new Error('could not find User in database. Is the URL correct?')

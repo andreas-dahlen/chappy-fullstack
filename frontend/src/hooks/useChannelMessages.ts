@@ -9,15 +9,15 @@ export function useChannelMessages() {
   const setChannelMsgData = useChannelsStore(s => s.setChannelMsgData)
 
   const fetchChannelMessages = useCallback(async (channelId: UUID) => {
-    const { activeChannels, channelMsgData } = useChannelsStore.getState()
+    const { channels, channelMsgData } = useChannelsStore.getState()
 
-    const channel = activeChannels.find(c => c.channelId === channelId)
-    if (!channel) return
+    const channelData = channels.get(channelId)
+    if (!channelData) return
 
     const msgData = channelMsgData.get(channelId)
 
     if (msgData?.hasFetchedMsgs || msgData?.loading) return
-    if (channel.authRequired && !token) return
+    if (channelData.channel.authRequired && !token) return
 
     setChannelMsgData(channelId, {
       loading: true,

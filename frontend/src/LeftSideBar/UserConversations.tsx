@@ -18,7 +18,7 @@ export default function UserConversations() {
 
   const setConversationMetaData = useConversationStore(s => s.setConversationMetaData)
 
-  const users = useUsersStore(s => s.activeUsers)
+  const users = useUsersStore(s => s.users)
   const loading = useUsersStore(s => s.loading)
   const userError = useUsersStore(s => s.error)
   const fetchUsers = useUsersStore(s => s.fetchUsers)
@@ -69,7 +69,7 @@ export default function UserConversations() {
 
 
 
-  const relevantUsers = users.filter(user => user.userId !== userId)
+  const relevantUsers = [...users.values()].filter(user => user.userId !== userId)
 
   if (loading && relevantUsers.length === 0) {
     return <p>Loading users...</p> //TODO will use a rotating thingie <3<3

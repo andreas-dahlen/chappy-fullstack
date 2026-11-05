@@ -14,7 +14,7 @@ export default function ChannelMessages({ channelId }: MessageProps) {
 
   const { fetchChannelMessages } = useChannelMessages()
 
-  const activeUsers = useUsersStore(s => s.activeUsers)
+  const users = useUsersStore(s => s.users)
 
   useEffect(() => {
     void fetchChannelMessages(channelId)
@@ -29,7 +29,7 @@ export default function ChannelMessages({ channelId }: MessageProps) {
   const resolvedList = messageList.map(entry => {
     return {
       ...entry,
-      name: activeUsers.find(user => user.userId === entry.createdBy)?.name ?? 'guest'
+      name: users.get(entry.createdBy)?.name ?? 'guest'
     }
   })
 

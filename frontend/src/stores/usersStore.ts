@@ -1,20 +1,21 @@
-import type { User } from '@chappy/shared'
+import type { User, UUID } from '@chappy/shared'
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { dbGetUsers } from '../api/account/getUsers.ts'
 
 type UsersStore = {
-  activeUsers: User[]
+  users: Map<UUID, User>
   hasFetchedUsers: boolean
   loading: boolean
   error: string | null
 
   fetchUsers: () => Promise<void>
+  removeUser: (userId: UUID) => void
 }
 
 export const useUsersStore = create<UsersStore>()(
   immer((set, get) => ({
-    activeUsers: [],
+    users: new Map(),
     hasFetchedUsers: false,
     loading: false,
     error: null,
@@ -38,9 +39,12 @@ export const useUsersStore = create<UsersStore>()(
         }
 
         set(s => {
-          s.activeUsers = result.users
+          s.users = new Map(
+            result.users.map(user => [user.userId, user])
+          )
           s.hasFetchedUsers = true
         })
+
       } catch (error) {
         set(s => {
           s.error = error instanceof Error
@@ -52,6 +56,11 @@ export const useUsersStore = create<UsersStore>()(
           s.loading = false
         })
       }
+    },
+    removeUser: userId => {
+      set(s => {
+        s.users.delete(userId)
+      })
     }
   }))
 )

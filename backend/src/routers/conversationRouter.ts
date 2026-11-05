@@ -23,8 +23,8 @@ router.get<ConversationIdParam, Participant | void>('/:conversationId',
       const metaData = await db.send(new GetCommand({
         TableName: tableName,
         Key: {
-          pk: `CONVERSATION#${conversationId}`,
-          sk: 'META'
+          pk: 'CONVERSATION',
+          sk: `META#${conversationId}`
         }
       }))
       if (!metaData.Item) {
@@ -65,8 +65,8 @@ router.post<ParticipantParam, Conversation | void>('/:participantId',
     const conversationId = getConversationId(authId, participantId)
 
     const metaKey = {
-      pk: `CONVERSATION#${conversationId}`,
-      sk: 'META'
+      pk: 'CONVERSATION',
+      sk: `META#${conversationId}`
     }
 
     try {
@@ -122,8 +122,8 @@ router.get<ConversationIdParam, MessageData[]>('/:conversationId/messages',
       const metaData = await db.send(new GetCommand({
         TableName: tableName,
         Key: {
-          pk: `CONVERSATION#${conversationId}`,
-          sk: 'META'
+          pk: 'CONVERSATION',
+          sk: `META#${conversationId}`
         }
       }))
       if (!metaData.Item) {
@@ -180,8 +180,8 @@ router.post<ConversationIdParam, MessageData, Message>('/:conversationId/message
       const metaData = await db.send(new GetCommand({
         TableName: tableName,
         Key: {
-          pk: `CONVERSATION#${conversationId}`,
-          sk: 'META'
+          pk: 'CONVERSATION',
+          sk: `META#${conversationId}`
         }
       }))
 
