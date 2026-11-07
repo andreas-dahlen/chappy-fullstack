@@ -97,18 +97,20 @@ backend/src/
 
 database:
 
-| pk                  | sk                 | name      | ownerId   | participants | message | messageId | timestamp  | authRequired | hashPassword |
-|---------------------|--------------------|-----------|-----------|--------------|---------|-----------|------------|--------------|--------------|
-| USER                | USER#username      | Karlsson  | user UUID | x            | x       | x         | x          | x            | ****         |
-| USER                | USER#username      | Anna      | user UUID | x            | x       | x         | x          | x            | ****         |
-| CHANNEL             | CHANNEL#123        | spaceship | user UUID | x            | x       | x         | timestamp  | boolean      | x            |
-| CHANNEL             | CHANNEL#789        | anotherone| user UUID | x            | x       | x         | timestamp  | boolean      | x            |
-| CHANNEL#123         | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
-| CHANNEL#123         | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
-| CHANNEL#789         | MSG#timestamp#ghi  | x         | user UUID | x            | string  | ghi       | timestamp  | x            | x            |
-| CONVERSATION        | META#UUIDv5        | x         | x         | [UUID, UUID] | x       | x         | x          | x            | x            |
-| CONVERSATION#UUIDv5 | MSG#timestamp#abc  | x         | user UUID | x            | string  | abc       | timestamp  | x            | x            |
-| CONVERSATION#UUIDv5 | MSG#timestamp#def  | x         | user UUID | x            | string  | def       | timestamp  | x            | x            |
+| pk                  | sk                 | name      | ownerId     | participants | message | messageId | timestamp  | authRequired | hashPassword |
+|---------------------|--------------------|-----------|-------------|--------------|---------|-----------|------------|--------------|--------------|
+| USER                | USER#username      | Karlsson  |  user UUID  | x            | x       | x         | x          | x            | ****         |
+| USER                | USER#username      | Anna      |  user UUID  | x            | x       | x         | x          | x            | ****         |
+| CHANNEL             | CHANNEL#123        | spaceship |  user UUID  | x            | x       | x         | timestamp  | boolean      | x            |
+| CHANNEL             | CHANNEL#789        | anotherone|  user UUID  | x            | x       | x         | timestamp  | boolean      | x            |
+| CHANNEL#123         | MSG#timestamp#abc  | x         |  user UUID  | x            | string  | abc       | timestamp  | x            | x            |
+| CHANNEL#123         | MSG#timestamp#def  | x         |  user UUID  | x            | string  | def       | timestamp  | x            | x            |
+| CHANNEL#789         | MSG#timestamp#ghi  | x         |  user UUID  | x            | string  | ghi       | timestamp  | x            | x            |
+| CONVERSATION        | META#UUIDv5        | x         |  x          | [UUID, UUID] | x       | x         | x          | x            | x            |
+| CONVERSATION#UUIDv5 | MSG#timestamp#abc  | x         |  user UUID  | x            | string  | abc       | timestamp  | x            | x            |
+| CONVERSATION#UUIDv5 | MSG#timestamp#def  | x         |  user UUID  | x            | string  | def       | timestamp  | x            | x            |
+| USER#userId         | META#aiId          |  yep      |             | x            | x       | x         | sure..     | x            | x            |
+| USER#aiId           | AI#timestamp#abc   | x         |             | x            | string  | ido       | timestamp  | x            | x            | role: ai
 
 questions: who can create a public channel - a user becomes an owner....  can one simply English yes!
 

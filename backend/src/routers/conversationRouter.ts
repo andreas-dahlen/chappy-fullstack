@@ -5,8 +5,8 @@ import { getConversationId } from '../auth/getConversationId.ts'
 import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import db, { tableName } from '../aws/aws.ts'
 import { ConditionalCheckFailedException } from '@aws-sdk/client-dynamodb'
-import { dbMetaConversationSchema, dbMsgArraySchema, messageStringSchema } from '@chappy/shared'
-import type { Conversation, DbMessageData, DbMetaConversation, Message, MessageData, Participant, UUID } from '@chappy/shared'
+import { dbMetaConversationSchema, dbMsgArraySchema, reqMessageSchema } from '@chappy/shared'
+import type { Conversation, DbMessageData, DbMetaConversation, MessageInput, MessageData, Participant, UUID } from '@chappy/shared'
 import { conversationIdParser } from '../middleware/express/conversationIdParser.ts'
 import type { ConversationIdParam, ParticipantParam } from '../types/db.types.ts'
 import { randomUUID } from 'node:crypto'
@@ -164,13 +164,13 @@ router.get<ConversationIdParam, MessageData[]>('/:conversationId/messages',
     }
   })
 
-router.post<ConversationIdParam, MessageData, Message>('/:conversationId/messages',
+router.post<ConversationIdParam, MessageData, MessageInput>('/:conversationId/messages',
   authRequired, conversationIdParser, express.json(), async (req, res) => {
     const conversationId: UUID = res.locals.conversationId
     const authId: UUID = res.locals.authenticatedUserId
 
     try {
-      const parsedMsg = messageStringSchema.safeParse(req.body)
+      const parsedMsg = reqMessageSchema.safeParse(req.body)
 
       if (!parsedMsg.success) {
         res.sendStatus(400)

@@ -1,7 +1,7 @@
 import express, { type Router } from 'express'
 import jwt from 'jsonwebtoken'
 import { getJwtSecret } from '../envGetters/getJwtSecret.ts'
-import { dbSignInSchema, dbUserSchema, type Credentials } from '@chappy/shared'
+import { reqSignInSchema, dbUserSchema, type SignInCredentials } from '@chappy/shared'
 import type { JwtResponse } from '../types/response.types.ts'
 import { GetCommand } from '@aws-sdk/lib-dynamodb'
 import db, { tableName } from '../aws/aws.ts'
@@ -12,8 +12,8 @@ const { sign } = jwt
 
 const router: Router = express.Router()
 
-router.post<{}, JwtResponse | void, Credentials>('/', express.json(), async (req, res) => {
-  const parsed = dbSignInSchema.safeParse(req.body)
+router.post<{}, JwtResponse | void, SignInCredentials>('/', express.json(), async (req, res) => {
+  const parsed = reqSignInSchema.safeParse(req.body)
   if (parsed.error) {
     res.sendStatus(400)
     return

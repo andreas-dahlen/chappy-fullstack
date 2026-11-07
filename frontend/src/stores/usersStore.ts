@@ -11,6 +11,7 @@ type UsersStore = {
 
   fetchUsers: () => Promise<void>
   removeUser: (userId: UUID) => void
+  setUser: (user: User) => void
 }
 
 export const useUsersStore = create<UsersStore>()(
@@ -60,6 +61,12 @@ export const useUsersStore = create<UsersStore>()(
     removeUser: userId => {
       set(s => {
         s.users.delete(userId)
+      })
+    },
+
+    setUser: user => {
+      set(s => {
+        s.users.set(user.userId, user)
       })
     }
   }))

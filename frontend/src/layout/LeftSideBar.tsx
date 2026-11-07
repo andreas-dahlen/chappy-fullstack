@@ -1,21 +1,22 @@
 import { useState } from 'react'
-import ControlPanel from '../leftSideBar/ControlPanel.tsx'
-import UserConversations from '../leftSideBar/UserConversations.tsx'
-import Channels from '../leftSideBar/Channels.tsx'
+import ControlPanel from '../sideBars/leftBar/ControlPanel.tsx'
+import Conversations from '../sideBars/leftBar/Conversations.tsx'
+import Channels from '../sideBars/leftBar/channel/Channels.tsx'
+import Settings from '../sideBars/leftBar/settings/Settings.tsx'
 
-export type Section = 'conversations' | 'groups' | 'settings'
+export type Section = 'conversations' | 'channels' | 'settings'
 
 export default function LeftSideBar() {
   const [section, setSection] = useState<Section>('conversations')
 
   return (
     <aside className="sidebar">
-      <ControlPanel onSelect={setSection} selected={section} />
+      <ControlPanel setSelect={setSection} selected={section} />
 
       <section className="sidebar-content">
-        {section === 'conversations' && <UserConversations />}
-        {section === 'groups' && <Channels />}
-        {section === 'settings' && <div>Settings</div>}
+        {section === 'conversations' && <Conversations />}
+        {section === 'channels' && <Channels />}
+        {section === 'settings' && <Settings />}
       </section>
     </aside>
   )

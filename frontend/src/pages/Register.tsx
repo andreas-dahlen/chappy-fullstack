@@ -31,7 +31,7 @@ export default function Register() {
 
   const navigateAfterAuth = usePostAuthNavigation()
 
-  const handleSignIn = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleRegistration = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const success = await registerUser(input)
@@ -44,17 +44,18 @@ export default function Register() {
   return (
     <div className='form-box'>
       <form className='form'
-        onSubmit={handleSignIn}
+        onSubmit={handleRegistration}
       >
 
-        <label htmlFor="displayName">Display Name *</label>
+        <label htmlFor="displayName">Display name *</label>
         <input
           id="displayName"
           type="text"
           required
           value={input.name}
+          disabled={loading}
           onChange={e => setInput(prev => ({ ...prev, name: e.target.value }))}
-        // placeholder="Username"
+          autoComplete='name'
         />
         <label htmlFor="username">Username *</label>
         <input
@@ -62,8 +63,9 @@ export default function Register() {
           type="text"
           required
           value={input.username}
+          disabled={loading}
           onChange={e => setInput(prev => ({ ...prev, username: e.target.value }))}
-        // placeholder="Username"
+          autoComplete='username'
         />
 
         <label htmlFor="password">Password *</label>
@@ -72,8 +74,9 @@ export default function Register() {
           type="password"
           required
           value={input.password}
+          disabled={loading}
           onChange={e => setInput(prev => ({ ...prev, password: e.target.value }))}
-        // placeholder="Password"
+          autoComplete='new-password'
         />
         <label htmlFor="confirmPassword">Confirm password *</label>
         <input
@@ -81,13 +84,14 @@ export default function Register() {
           type="password"
           required
           value={input.confirmPassword}
+          disabled={loading}
           onChange={e => setInput(prev => ({ ...prev, confirmPassword: e.target.value }))}
-        // placeholder="Password"
+          autoComplete='new-password'
         />
         <div className='state-display'>
           {loading
             ? <span role="status" aria-label="Register">
-              <Loader className="loader" />
+              <Loader className="loader" aria-hidden="true" />
             </span>
             : error && <p role="alert">{error}</p>
           }

@@ -36,9 +36,12 @@ p {
   background: transparent;
   border: 0;
   border-radius: 0.5rem;
+    outline: 2px solid transparent;
+  outline-offset: -2px;
 
   cursor: pointer;
-  transition: background-color 150ms ease;
+  transition: background-color 150ms ease,
+    outline 150ms ease;
 
   &.active {
     outline-color: var(--icon-text-col);
@@ -54,8 +57,6 @@ p {
   }
    &:active {
     background: var(--focus-col);
-    /* pointer-events: none; */
-    cursor: default;
   }
 }
 

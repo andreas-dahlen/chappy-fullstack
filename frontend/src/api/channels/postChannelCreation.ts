@@ -1,9 +1,9 @@
-import { channelSchema, type ChannelCreation } from '@chappy/shared';
+import { resChannelSchema, type ChannelCreationInput } from '@chappy/shared';
 import type { CreatedChannelReturn } from '../../types/apiData.types.ts';
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts';
 import { handleApiAuthResult } from '../../authHandlers/handleApiAuthResult.ts';
 
-export async function dbPostChannelCreation(creation: ChannelCreation, token: string): Promise<CreatedChannelReturn> {
+export async function dbPostChannelCreation(creation: ChannelCreationInput, token: string): Promise<CreatedChannelReturn> {
   let status: number | null = null
   try {
     const response = await fetch(`/api/channels`, {
@@ -25,7 +25,7 @@ export async function dbPostChannelCreation(creation: ChannelCreation, token: st
     }
 
     const rawData: unknown = await response.json()
-    const channel = channelSchema.safeParse(rawData)
+    const channel = resChannelSchema.safeParse(rawData)
 
     if (!channel.success) {
       console.error('Invalid channel creation:', channel.error)

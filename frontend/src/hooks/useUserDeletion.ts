@@ -2,6 +2,7 @@ import { useCredentialStore } from '../stores/credentialStore.ts';
 import { useCallback } from 'react';
 import { dbDeleteUser } from '../api/account/deleteUser.ts';
 import { useUsersStore } from '../stores/usersStore.ts';
+import { clearDeletedAccountData } from '../authHandlers/clearDeletedAccountData.ts';
 
 export function useUserDeletion() {
   const token = useCredentialStore(s => s.token)
@@ -24,7 +25,7 @@ export function useUserDeletion() {
         setError(result.message)
         return
       }
-
+      clearDeletedAccountData(userId)
       removeUser(userId)
       signOut('manual')
 

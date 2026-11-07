@@ -1,8 +1,8 @@
-import { authResponseSchema, type Credentials } from '@chappy/shared'
+import { resAuthSchema, type SignInCredentials } from '@chappy/shared'
 import type { AuthReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 
-export async function dbSignInUser(cred: Credentials): Promise<AuthReturn> {
+export async function dbSignInUser(cred: SignInCredentials): Promise<AuthReturn> {
   let status: number | null = null
 
   try {
@@ -21,7 +21,7 @@ export async function dbSignInUser(cred: Credentials): Promise<AuthReturn> {
     }
 
     const rawData: unknown = await response.json()
-    const result = authResponseSchema.safeParse(rawData)
+    const result = resAuthSchema.safeParse(rawData)
 
     if (!result.success) {
       console.error('Invalid signIn response:', result.error)

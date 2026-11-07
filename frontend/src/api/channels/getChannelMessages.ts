@@ -1,4 +1,4 @@
-import { channelMsgArraySchema, type UUID } from '@chappy/shared'
+import { resChannelMsgArraySchema, type UUID } from '@chappy/shared'
 import type { MsgReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 import { handleApiAuthResult } from '../../authHandlers/handleApiAuthResult.ts'
@@ -31,7 +31,7 @@ export async function dbGetChannelMessages(channelId: UUID, token: string | null
     }
 
     const rawData: unknown = await response.json()
-    const messages = channelMsgArraySchema.safeParse(rawData)
+    const messages = resChannelMsgArraySchema.safeParse(rawData)
 
     if (!messages.success) {
       console.error('Invalid channel messages response:', messages.error)

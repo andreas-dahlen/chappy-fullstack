@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
-import { useUsersStore } from '../stores/usersStore.ts'
-import '../styles/aside/conversation.css'
+import { useUsersStore } from '../../stores/usersStore.ts'
+import '../../styles/aside/conversation.css'
 import type { User, UUID } from '@chappy/shared'
-import { useNavigate } from 'react-router'
-import { useCredentialStore } from '../stores/credentialStore.ts'
-import { dbCreateOrGetConversation } from '../api/conversations/createOrGetConversation.ts'
-import { useConversationStore } from '../stores/conversationStore.ts'
+import { useNavigate, useParams } from 'react-router'
+import { useCredentialStore } from '../../stores/credentialStore.ts'
+import { dbCreateOrGetConversation } from '../../api/conversations/createOrGetConversation.ts'
+import { useConversationStore } from '../../stores/conversationStore.ts'
+import SidebarHeader from './SidebarHeader.tsx'
 
 type ConversationError = {
   userId: UUID
   message: string
 }
 
-export default function UserConversations() {
+export default function Conversations() {
   const [conversationError, setConversationError] = useState<ConversationError | null>(null)
   const [conversationLoading, setConversationLoading] = useState<UUID | null>(null)
 
@@ -29,11 +30,16 @@ export default function UserConversations() {
   }, [fetchUsers])
 
   const navigate = useNavigate()
+  const { conversationId } = useParams()
 
-  // const conversations = useConversationsStore(s => s.conversations)
-  // const location = useLocation()
-  // const isActive =
-  //   location.pathname === `/conversations/${conversation.conversationId}`
+  const activeParticipantId = useConversationStore(s =>
+    conversationId
+      ? s.conversationMetaData.get(conversationId)?.metaData?.participantId
+      : undefined
+  )
+  const resolveActive = (userId: UUID) => {
+    return userId === activeParticipantId ? 'active' : ''
+  }
 
   const handleUserClick = async (user: User) => {
     setConversationError(null)
@@ -81,28 +87,31 @@ export default function UserConversations() {
     return <p>No users found.</p>
   }
   return (
-    <ul className="user-list">
-      {relevantUsers.map((user) => (
-        <li key={user.userId} className="user-list-item">
-          <button
-            type="button"
-            className="user-button"
-            disabled={conversationLoading !== null}
-            onClick={() => handleUserClick(user)}
-          >
-            <span className="user-avatar" aria-hidden="true">
-              {user.name.charAt(0).toUpperCase()}
-            </span>
+    <>
+      <SidebarHeader title={'Conversations'} />
+      <ul className="user-list">
+        {relevantUsers.map((user) => (
+          <li key={user.userId} className="user-list-item">
+            <button
+              type="button"
+              className={`user-button ${resolveActive(user.userId)}`}
+              disabled={conversationLoading !== null}
+              onClick={() => handleUserClick(user)}
+            >
+              <span className="user-avatar" aria-hidden="true">
+                {user.name.charAt(0).toUpperCase()}
+              </span>
 
-            <span className="user-info">
-              <span className="user-name">{user.name}</span>
-            </span>
+              <span className="user-info">
+                <span className="user-name">{user.name}</span>
+              </span>
 
-            {conversationLoading === user.userId && <div className='??'>loading</div>}
-          </button>
-          {conversationError?.userId === user.userId && <div role="alert">{conversationError.message}</div>}
-        </li>
-      ))}
-    </ul>
+              {conversationLoading === user.userId && <div className='??'>loading</div>}
+            </button>
+            {conversationError?.userId === user.userId && <div role="alert">{conversationError.message}</div>}
+          </li>
+        ))}
+      </ul>
+    </>
   )
 }

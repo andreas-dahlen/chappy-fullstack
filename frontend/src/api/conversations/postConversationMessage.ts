@@ -1,4 +1,4 @@
-import { conversationMsgSchema, type UUID } from '@chappy/shared'
+import { resConversationMsgSchema, type UUID } from '@chappy/shared'
 import type { MsgPostReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 import { handleApiAuthResult } from '../../authHandlers/handleApiAuthResult.ts'
@@ -30,7 +30,7 @@ export async function dbPostConversationMessage(conversationId: UUID, message: s
     }
 
     const rawData: unknown = await response.json()
-    const parsedMsg = conversationMsgSchema.safeParse(rawData)
+    const parsedMsg = resConversationMsgSchema.safeParse(rawData)
 
     if (!parsedMsg.success) {
       console.error('Invalid conversation message response:', parsedMsg.error)

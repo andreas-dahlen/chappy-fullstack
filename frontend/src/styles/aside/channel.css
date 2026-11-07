@@ -40,7 +40,8 @@ p {
 
   cursor: pointer;
   transition: 
-  background-color 150ms ease;
+  background-color 150ms ease,
+    outline 150ms ease;
 
   &.active {
     outline-color: var(--icon-text-col);

@@ -1,4 +1,4 @@
-import { conversationSchema, type UUID } from '@chappy/shared';
+import { resConversationSchema, type UUID } from '@chappy/shared';
 import type { ConversationStarterReturn } from '../../types/apiData.types.ts';
 import { handleApiAuthResult } from '../../authHandlers/handleApiAuthResult.ts';
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts';
@@ -28,7 +28,7 @@ export async function dbCreateOrGetConversation(participantId: UUID, token: stri
     }
 
     const rawData: unknown = await response.json()
-    const parsedConversationId = conversationSchema.safeParse(rawData)
+    const parsedConversationId = resConversationSchema.safeParse(rawData)
 
     if (!parsedConversationId.success) {
       console.error('Invalid conversation response:', parsedConversationId.error)

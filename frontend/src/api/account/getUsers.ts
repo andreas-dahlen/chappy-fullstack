@@ -1,4 +1,4 @@
-import { userArraySchema } from '@chappy/shared'
+import { resUserArraySchema } from '@chappy/shared'
 import type { UserReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 
@@ -16,7 +16,7 @@ export async function dbGetUsers(): Promise<UserReturn> {
     }
 
     const rawData: unknown = await response.json()
-    const users = userArraySchema.safeParse(rawData)
+    const users = resUserArraySchema.safeParse(rawData)
 
     if (!users.success) {
       console.error('Invalid users response:', users.error)

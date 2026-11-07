@@ -48,15 +48,15 @@ export default function Conversation() {
 
   return (
     <div className="conversation-page">
-      <div className='conversation-header'>
-        <p >
+      <header className='conversation-header'>
+        <h1>
           {conversationMeta?.metaData?.participantName ?? 'Unknown user'}
-        </p>
-      </div>
-      <div className="conversation-view">
+        </h1>
+      </header>
+      <section className="conversation-view">
         <ConversationMessages conversationId={conversationId} />
         <ConversationInput conversationId={conversationId} />
-      </div>
+      </section>
     </div>
   )
 }

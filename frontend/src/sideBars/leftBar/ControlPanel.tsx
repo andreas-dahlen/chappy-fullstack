@@ -1,13 +1,13 @@
 import { MessagesCircle, Settings, UserRoundGroup } from 'lucide-react'
-import type { Section } from '../layout/LeftSideBar.tsx'
-import '../styles/aside/aside.css'
+import type { Section } from '../../layout/LeftSideBar.tsx'
+import '../../styles/aside/aside.css'
 
 type ControlPanelProps = {
-  onSelect: (section: Section) => void
+  setSelect: (section: Section) => void
   selected: Section
 }
 export default function ControlPanel({
-  onSelect,
+  setSelect,
   selected
 }: ControlPanelProps) {
 
@@ -17,23 +17,23 @@ export default function ControlPanel({
         <button
           type="button"
           aria-label="conversations"
-          onClick={() => onSelect('conversations')}
+          onClick={() => setSelect('conversations')}
           className={`ctrl-button ${selected === 'conversations' ? 'active' : ''}`}
         >
           <MessagesCircle size={33} className="icon" />
         </button>
         <button
           type="button"
-          aria-label="groups"
-          onClick={() => onSelect('groups')}
-          className={`ctrl-button ${selected === 'groups' ? 'active' : ''}`}
+          aria-label="channels"
+          onClick={() => setSelect('channels')}
+          className={`ctrl-button ${selected === 'channels' ? 'active' : ''}`}
         >
           <UserRoundGroup size={33} className="icon" />
         </button>
         <button
           type="button"
           aria-label="settings"
-          onClick={() => onSelect('settings')}
+          onClick={() => setSelect('settings')}
           className={`ctrl-button ${selected === 'settings' ? 'active' : ''}`}
         >
           <Settings size={33} className="icon" />

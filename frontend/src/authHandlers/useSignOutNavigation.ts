@@ -32,8 +32,6 @@ export function useSignOutNavigation() {
       const participantId = conversationId
         ? metaData.get(conversationId)?.metaData?.participantId
         : undefined
-      console.log(conversationId)
-      console.log(participantId)
 
       if (participantId) {
         navigate('/sign-in', {

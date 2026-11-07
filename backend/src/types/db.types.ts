@@ -19,5 +19,9 @@ export type ConversationIdParam = {
   conversationId: string
 }
 
+export type AiIdParam = {
+  aiId: string
+}
+
 export type BatchWriteItems = NonNullable<
   NonNullable<BatchWriteCommandInput['RequestItems']>[string]>

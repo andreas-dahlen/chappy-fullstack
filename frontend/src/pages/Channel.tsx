@@ -48,15 +48,15 @@ export default function Channel() {
 
   return (
     <div className='channel-page'>
-      <div className='channel-header'>
-        <p >
+      <header className='channel-header'>
+        <h1>
           {channelData.channel.channelName}
-        </p>
-      </div>
-      <div className="channel-view">
+        </h1>
+      </header>
+      <section className="channel-view">
         <ChannelMessages channelId={channelId} />
         <ChannelInput channelId={channelId} />
-      </div>
+      </section>
 
     </div>
   )

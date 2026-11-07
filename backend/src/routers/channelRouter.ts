@@ -1,7 +1,7 @@
 import express, { Router } from 'express'
 import db, { tableName } from '../aws/aws.ts'
 import { DeleteCommand, GetCommand, PutCommand, QueryCommand, type QueryCommandInput } from '@aws-sdk/lib-dynamodb'
-import { channelCreationSchema, dbChannelArraySchema, dbChannelSchema, dbKeyArraySchema, dbMsgArraySchema, messageStringSchema, type Channel, type ChannelCreation, type DbChannel, type DbKey, type DbMessageData, type Message, type MessageData, type UUID } from '@chappy/shared'
+import { dbChannelArraySchema, dbChannelSchema, dbKeyArraySchema, dbMsgArraySchema, reqChannelCreationSchema, reqMessageSchema, type Channel, type ChannelCreationInput, type DbChannel, type DbKey, type DbMessageData, type MessageData, type MessageInput, type UUID } from '@chappy/shared'
 import type { ChannelIdParam } from '../types/db.types.ts'
 import { optionalAuth } from '../middleware/express/optionalAuth.ts'
 import { channelIdParser } from '../middleware/express/channelIdParser.ts'
@@ -42,9 +42,9 @@ router.get<{}, Channel[]>('/', async (_, res) => {
   }
 })
 
-router.post<{}, Channel, ChannelCreation>('/', authRequired, express.json(), async (req, res) => {
+router.post<{}, Channel | void, ChannelCreationInput>('/', authRequired, express.json(), async (req, res) => {
   try {
-    const channelData = channelCreationSchema.safeParse(req.body)
+    const channelData = reqChannelCreationSchema.safeParse(req.body)
 
     if (!channelData.success) {
       res.sendStatus(400)
@@ -133,10 +133,10 @@ router.get<ChannelIdParam, MessageData[]>('/:channelId/messages', channelIdParse
   }
 })
 
-router.post<ChannelIdParam, MessageData, Message>('/:channelId/messages',
+router.post<ChannelIdParam, MessageData | void, MessageInput>('/:channelId/messages',
   channelIdParser, optionalAuth, express.json(), async (req, res) => {
     try {
-      const parsedMsg = messageStringSchema.safeParse(req.body)
+      const parsedMsg = reqMessageSchema.safeParse(req.body)
 
       if (!parsedMsg.success) {
         res.sendStatus(400)

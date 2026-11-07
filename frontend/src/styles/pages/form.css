@@ -22,12 +22,15 @@
     margin-bottom: 1.6rem;
     padding: 0.7rem 0.8rem;
     color: inherit;
-    background: #111116;
+    background-color: #111116;
     border: none;
     border-radius: 6px;
+    transition:
+      background-color 100ms ease-in-out,
+      outline 150ms ease;
     
     &:hover {
-      background: var(--hover-col);
+      background-color: var(--hover-col);
     }
 
     &:last-of-type {
@@ -39,7 +42,7 @@
     }
 
     &:active {
-      background: var(--focus-col);
+      background-color: var(--focus-col);
     }
   }
 }
@@ -60,9 +63,9 @@
   justify-content: center;
   align-items: center;
 
-  .loader {
-    animation: spin 2s linear infinite;
-  }
+}
+.loader {
+  animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
@@ -80,6 +83,9 @@
   font-weight: 600;
   cursor: pointer;
   background: var(--surface-dark);
+  transition:
+    background-color 150ms ease-in-out,
+    outline 150ms ease;
 
   &:not(:disabled):hover {
     background: var(--hover-col);

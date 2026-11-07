@@ -1,4 +1,4 @@
-import type { Auth, Channel, MessageData, User, UUID } from '@chappy/shared'
+import type { Auth, Channel, MessageData, Summary, User, UUID } from '@chappy/shared'
 
 export type ApiSuccess = {
   state: 'success'
@@ -58,6 +58,12 @@ export type MsgPostReturn =
   | {
     state: 'success'
     messageData: MessageData
+  } | ApiFailure
+
+export type SummaryReturn =
+  | {
+    state: 'success'
+    summary: string
   } | ApiFailure
 
 export type AuthNavigationState =

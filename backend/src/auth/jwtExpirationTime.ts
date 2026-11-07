@@ -1,1 +1,1 @@
-export const expTime = '1m'
+export const expTime = '30m'

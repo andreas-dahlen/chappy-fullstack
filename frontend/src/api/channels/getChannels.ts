@@ -1,4 +1,4 @@
-import { channelArraySchema } from '@chappy/shared'
+import { resChannelArraySchema } from '@chappy/shared'
 import type { ChannelReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 
@@ -16,7 +16,7 @@ export async function dbGetChannels(): Promise<ChannelReturn> {
     }
 
     const rawData: unknown = await response.json()
-    const channels = channelArraySchema.safeParse(rawData)
+    const channels = resChannelArraySchema.safeParse(rawData)
 
     if (!channels.success) {
       console.error('Invalid channels response:', channels.error)

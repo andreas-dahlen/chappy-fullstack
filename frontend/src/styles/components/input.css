@@ -23,7 +23,8 @@
   outline-offset: -2px;
   background-color: var(--dark-col)#1e22423d;
     transition: 
-  background-color 150ms ease;
+  background 150ms ease,
+  outline 150ms ease;
 
   
   /* &:focus-visible {

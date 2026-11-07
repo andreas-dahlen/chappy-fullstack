@@ -1,4 +1,5 @@
-export * from './types/response.types.ts'
 export * from './schemas/dbSchemas.ts'
-export * from './schemas/frontendSchemas.ts'
+export * from './schemas/responseSchemas.ts'
+export * from './schemas/requestSchemas.ts'
 export * from './types/shared.types.ts'
+export * from './types/db.types.ts'

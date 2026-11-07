@@ -7,10 +7,14 @@
 
 .channel-header {
   border-bottom: 2px solid var(--border-col);
-
-  p {
+  background: none;
+  padding: 0;
+  /* TODO something to distinguish channels from conversations? */
+  h1 {
     padding: 6px 6px 10px 20px;
     margin: 0;
+    font-size: 1rem;
+
   }
 }
 
@@ -24,20 +28,16 @@
 .channel-message-box {
   min-height: 0;
   overflow-y: auto;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  /* padding: 1rem; */
-  
-  /* justify-content: flex-end; */
-  
+
   .channel-messages {
     margin-top: auto;
-    
+
     .channel-msg {
-      /* min-height: 60px; */
       border-bottom: 2px solid var(--border-col);
-  white-space: pre-wrap;
+      white-space: pre-wrap;
+
       &:last-child {
         border-bottom: none;
       }

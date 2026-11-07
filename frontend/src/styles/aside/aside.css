@@ -1,26 +1,87 @@
 
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
   background: var(--aside-surface);
+  border-right: var(--border);
+}
+
+.sidebar-content {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   position: relative;
-  border-right: var(--border);
+}
+
+.side-bar-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  isolation: isolate;
+  height: 1.5rem;
+  margin-bottom: 1.2em;
+  /* border-top: var(--border); */
+  border-bottom: none;
+  background: none;
+}
+
+.side-bar-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -1.5rem;
+  z-index: -1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to bottom,
+    var(--surface-dark) 0%,
+    var(--surface-dark) 65%,
+    transparent 100%
+  );
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 50%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 50%,
+    transparent 100%
+  );
+}
+
+.side-bar-header-content {
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.6rem;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  /* align-items: center; */
+}
+
+.add-channel-nav {
+  color: inherit;
+  display: flex;
+  
 }
 
 .control-panel-fixed {
   position: sticky;
-   top: 0;
-  padding: 1rem;
+  top: 0;
+  padding: 0.6rem 0;
   z-index: 1;
-}
-.control-panel-fixed::before{
-  inset: 0;
-  z-index: -1;
-  position: absolute;
-  content: "";
-  /* background-color: var(--surface-bright); */
-  background: var(--surface-bright);
-  filter: blur(5px);
+  background: var(--surface-dark);
+  border-bottom: var(--border);
 }
 
 .control-panel {
@@ -34,7 +95,8 @@
   padding: 5px 7px 1px;
   background-color: transparent;
   transition:
-    background 100ms ease-in-out;
+    background 100ms ease-in-out,
+    outline 150ms ease;
 
     
     & .icon {
@@ -56,9 +118,3 @@
       background: var(--focus-col);
     }
 }
-
-
-
-/* .sidebar-content {
-} */
-

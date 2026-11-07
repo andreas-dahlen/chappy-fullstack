@@ -10,6 +10,7 @@
   grid-template-columns: 16rem minmax(0, 1fr);
   min-height: 0;
   min-width: 0;
+  height: 100%;
 }
 
 .workspace {
@@ -29,12 +30,6 @@ main {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.ai-sidebar {
-  background: var(--aside-surface);
-  overflow-y: auto;
-  border-left: var(--border);
 }
 
 /* Tablet: AI overlays main */

@@ -1,8 +1,8 @@
-import { authResponseSchema, type RegCredentials } from '@chappy/shared'
+import { resAuthSchema, type RegistrationCredentials } from '@chappy/shared'
 import type { AuthReturn } from '../../types/apiData.types.ts'
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts'
 
-export async function dbRegisterUser(cred: RegCredentials): Promise<AuthReturn> {
+export async function dbRegisterUser(cred: RegistrationCredentials): Promise<AuthReturn> {
   let status: number | null = null
   try {
     const response = await fetch(`/api/register`, {
@@ -22,7 +22,7 @@ export async function dbRegisterUser(cred: RegCredentials): Promise<AuthReturn> 
     }
 
     const rawData: unknown = await response.json()
-    const result = authResponseSchema.safeParse(rawData)
+    const result = resAuthSchema.safeParse(rawData)
 
     if (!result.success) {
       console.error('Invalid register response:', result.error)

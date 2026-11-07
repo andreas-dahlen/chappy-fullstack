@@ -4,6 +4,7 @@ import LeftSideBar from './layout/LeftSideBar.tsx'
 import Header from './layout/Header.tsx'
 import { useState } from 'react'
 import { useSignOutNavigation } from './authHandlers/useSignOutNavigation.ts'
+import RightSideBar from './layout/rightSideBar.tsx'
 
 export default function App() {
 
@@ -20,13 +21,9 @@ export default function App() {
 
         <div className={`workspace ${isAiDisplayed ? 'ai-displayed' : ''}`}>
           <main>
-            {/* <div className='page-content'> */}
             <Outlet />
-            {/* </div> */}
           </main>
-          {isAiDisplayed && <aside
-            className="ai-sidebar"> {/* AI assistant */}
-          </aside>}
+          {isAiDisplayed && <RightSideBar hideAi={() => setIsAiDisplayed(false)} />}
         </div>
       </div>
     </div>

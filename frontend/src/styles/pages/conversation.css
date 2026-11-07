@@ -7,10 +7,14 @@
 
 .conversation-header {
   border-bottom: 2px solid var(--border-col);
-
-  p {
+  background: none;
+  padding: 0;
+  /* TODO something to distinguish channels from conversations? */
+  h1 {
     padding: 6px 6px 10px 20px;
     margin: 0;
+    font-size: 1rem;
+
   }
 }
 

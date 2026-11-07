@@ -1,10 +1,11 @@
-import type { Credentials, RegCredentials } from '@chappy/shared'
+import type { SignInCredentials, RegistrationCredentials } from '@chappy/shared'
 import { useCredentialStore } from '../stores/credentialStore.ts'
 import { dbRegisterUser } from '../api/account/registerUser.ts'
 import type { AuthReturn } from '../types/apiData.types.ts'
 import { dbSignInUser } from '../api/account/signInUser.ts'
+import { useUsersStore } from '../stores/usersStore.ts'
 
-type InputCredentials = RegCredentials & {
+type InputCredentials = RegistrationCredentials & {
   confirmPassword: string
 }
 
@@ -12,6 +13,7 @@ export function useAuthentication() {
   const setCredentials = useCredentialStore(s => s.setCredentials)
   const setLoading = useCredentialStore(s => s.setLoading)
   const setError = useCredentialStore(s => s.setError)
+  const setUser = useUsersStore(s => s.setUser)
 
   const authenticate = async (
     request: () => Promise<AuthReturn>
@@ -26,7 +28,7 @@ export function useAuthentication() {
         setError(result.message)
         return false
       }
-
+      setUser({ name: result.authData.name, userId: result.authData.userId })
       setCredentials(result)
       return true
     } catch (error) {
@@ -43,11 +45,11 @@ export function useAuthentication() {
       return false
     }
 
-    const { confirmPassword, ...data } = cred
+    const { confirmPassword: _, ...data } = cred
     return authenticate(() => dbRegisterUser(data))
   }
 
-  const signIn = (cred: Credentials) =>
+  const signIn = (cred: SignInCredentials) =>
     authenticate(() => dbSignInUser(cred))
 
   return { registerUser, signIn }

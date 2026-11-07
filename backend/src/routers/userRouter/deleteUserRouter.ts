@@ -1,39 +1,12 @@
-import express, { Router } from 'express'
-import db, { tableName } from '../aws/aws.ts'
+import { authRequired } from '../../middleware/express/authRequired.ts'
+import db, { tableName } from '../../aws/aws.ts'
 import { DeleteCommand, QueryCommand, type QueryCommandInput } from '@aws-sdk/lib-dynamodb'
-import { dbKeyArraySchema, dbMetaConvoArraySchema, dbMsgArraySchema, dbUserArraySchema, type DbKey, type DbMessageData, type DbMetaConversation, type DbUser, type User } from '@chappy/shared'
-import { authRequired } from '../middleware/express/authRequired.ts'
-import { batchWrite } from '../utils/batchWrite.ts'
+import { dbKeyArraySchema, dbMetaConvoArraySchema, dbMsgArraySchema, dbUserArraySchema, type DbKey, type DbMessageData, type DbMetaConversation, type DbUser } from '@chappy/shared'
+import { batchWrite } from '../../utils/batchWrite.ts'
+import userRouter from './userRouter.ts'
 
-const router: Router = express.Router()
 
-router.get<{}, User[]>('/', async (_, res) => {
-  try {
-    const result = await db.send(new QueryCommand({
-      TableName: tableName,
-      KeyConditionExpression: 'pk = :pk',
-      ExpressionAttributeValues: {
-        ':pk': 'USER'
-      }
-    }))
-
-    const dbUsers: DbUser[] = dbUserArraySchema.parse(result.Items ?? [])
-
-    const users: User[] = dbUsers.map(item => {
-      const { name, ownerId } = item
-
-      return {
-        name,
-        userId: ownerId
-      }
-    })
-    res.status(200).send(users)
-  } catch {
-    res.sendStatus(500)
-  }
-})
-
-router.delete<{}>('/', authRequired, async (req, res) => {
+userRouter.delete<{}>('/', authRequired, async (req, res) => {
   const authId = res.locals.authenticatedUserId
   try {
     const userResponse = await db.send(new QueryCommand({
@@ -235,7 +208,3 @@ router.delete<{}>('/', authRequired, async (req, res) => {
     res.sendStatus(500)
   }
 })
-
-
-//TODO create /delete
-export default router
