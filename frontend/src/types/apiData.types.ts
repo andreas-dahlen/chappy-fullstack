@@ -1,4 +1,4 @@
-import type { Auth, Channel, MessageData, Summary, User, UUID } from '@chappy/shared'
+import type { AiMessage, AiMetaData, AiResponse, Auth, Channel, MessageData, User, UUID } from '@chappy/shared'
 
 export type ApiSuccess = {
   state: 'success'
@@ -63,7 +63,25 @@ export type MsgPostReturn =
 export type SummaryReturn =
   | {
     state: 'success'
-    summary: string
+    data: AiResponse
+  } | ApiFailure
+
+export type AiMetaDataReturn =
+  | {
+    state: 'success'
+    data: AiMetaData[]
+  } | ApiFailure
+
+export type PostAiMetaDataReturn =
+  | {
+    state: 'success'
+    data: AiMetaData
+  } | ApiFailure
+
+export type AiMessageReturn =
+  | {
+    state: 'success'
+    data: AiMessage[]
   } | ApiFailure
 
 export type AuthNavigationState =

@@ -5,9 +5,11 @@ import Header from './layout/Header.tsx'
 import { useState } from 'react'
 import { useSignOutNavigation } from './authHandlers/useSignOutNavigation.ts'
 import RightSideBar from './layout/rightSideBar.tsx'
+import { useSocket } from './hooks/socket/useSocket.ts'
 
 export default function App() {
 
+  useSocket()
   useSignOutNavigation()
   const [isAiDisplayed, setIsAiDisplayed] = useState<boolean>(false)
 

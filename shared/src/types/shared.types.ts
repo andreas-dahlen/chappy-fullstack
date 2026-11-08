@@ -1,6 +1,6 @@
 import type * as z from 'zod'
 import { uuidSchema } from '../schemas/dbSchemas.ts'
-import type { resAiMetaSchema, resAiSchema, resAuthSchema, resChannelMsgSchema, resChannelSchema, resConversationMsgSchema, resConversationSchema, resParticipantSchema, resSummarizeSchema, resUserSchema } from '../schemas/responseSchemas.ts'
+import type { resAiMetaSchema, resAiSchema, resAuthSchema, resChannelMsgSchema, resChannelSchema, resConversationMsgSchema, resConversationSchema, resFromAiSchema, resParticipantSchema, resUserSchema } from '../schemas/responseSchemas.ts'
 import type { reqAiMetaSchema, reqChannelCreationSchema, reqMessageSchema, reqRegisterSchema, reqSignInSchema, reqSummarizeSchema } from '../schemas/requestSchemas.ts'
 
 export type UUID = z.infer<typeof uuidSchema>
@@ -30,7 +30,7 @@ export type SummarizeInput = z.infer<typeof reqSummarizeSchema>
 
 export type AiMetaInput = z.infer<typeof reqAiMetaSchema>
 
-export type Summary = z.infer<typeof resSummarizeSchema>
+export type AiResponse = z.infer<typeof resFromAiSchema>
 
 export type AiMetaData = z.infer<typeof resAiMetaSchema>
-export type AiMessages = z.infer<typeof resAiSchema>
+export type AiMessage = z.infer<typeof resAiSchema>

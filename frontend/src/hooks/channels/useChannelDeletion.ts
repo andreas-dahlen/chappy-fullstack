@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from 'react-router';
-import { useCredentialStore } from '../stores/credentialStore.ts';
-import { useChannelsStore } from '../stores/channelsStore.ts';
+import { useCredentialStore } from '../../stores/credentialStore.ts';
+import { useChannelsStore } from '../../stores/channelsStore.ts';
 import { useCallback } from 'react';
 import type { UUID } from '@chappy/shared';
-import { dbDeleteChannel } from '../api/channels/deleteChannel.ts';
+import { dbDeleteChannel } from '../../api/channels/deleteChannel.ts';
 
 export function useChannelDeletion() {
   const token = useCredentialStore(s => s.token)

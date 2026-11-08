@@ -1,12 +1,29 @@
-import type { UUID } from '@chappy/shared'
+import type { AiMessage, AiMetaData, AiResponse, UUID } from '@chappy/shared'
 import { create } from 'zustand'
 // import { persist, createJSONStorage } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 
 export type AiStoreSummaryData = {
-  summary: string | null
+  messageData: AiResponse | null
   loading: boolean
   error: string | null
+}
+
+export type AiStoreMetaData = {
+  metaData: AiMetaData
+}
+
+export type AiStoreMessageData = {
+  messageData: Map<UUID, AiMessage>
+  hasFetchedMsgs: boolean
+  loading: boolean
+  error: string | null
+}
+
+type UpdateAiState = {
+  hasFetchedAiMeta?: boolean
+  loadingAiMeta?: boolean
+  errorAiMeta?: string | null
 }
 
 // type PersistedAiStore = {
@@ -14,9 +31,27 @@ export type AiStoreSummaryData = {
 // }
 type AiStore = {
   summaries: Map<UUID, AiStoreSummaryData>
-
   setSummaryData: (summaryId: UUID, data: Partial<AiStoreSummaryData>) => void
   removeSummaryData: (summaryId: UUID) => void
+
+  aiMetaData: Map<UUID, AiStoreMetaData>
+
+  hasFetchedAiMeta: boolean
+  loadingAiMeta: boolean
+  errorAiMeta: string | null
+
+  setAiMetaFetchState: (data: UpdateAiState) => void
+
+  setAllAiMetaData: (data: AiMetaData[]) => void
+
+  setAiMetaData: (data: AiMetaData) => void
+
+  aiMessageData: Map<UUID, AiStoreMessageData>
+  setAiMessageData: (
+    aiId: UUID,
+    data: Partial<AiStoreMessageData>
+  ) => void
+  setAiMessage: (aiId: UUID, data: AiMessage) => void
 }
 
 export const useAiStore = create<AiStore>()(
@@ -29,7 +64,7 @@ export const useAiStore = create<AiStore>()(
         const existing = s.summaries.get(summaryId)
 
         s.summaries.set(summaryId, {
-          summary: null,
+          messageData: null,
           loading: false,
           error: null,
           ...existing,
@@ -43,7 +78,73 @@ export const useAiStore = create<AiStore>()(
       })
     },
 
+    aiMetaData: new Map(),
 
+    hasFetchedAiMeta: false,
+    loadingAiMeta: false,
+    errorAiMeta: null,
+
+    setAllAiMetaData(data) {
+      set(s => {
+        s.aiMetaData = new Map(
+          data.map(entry => [
+            entry.aiId,
+            {
+              metaData: entry,
+            }
+          ])
+        )
+      })
+    },
+
+    setAiMetaData: (metaData) => {
+      set(s => {
+        s.aiMetaData.set(metaData.aiId, { metaData })
+      })
+    },
+
+    setAiMetaFetchState: data => {
+      set(s => {
+        if (data.hasFetchedAiMeta !== undefined) {
+          s.hasFetchedAiMeta = data.hasFetchedAiMeta
+        }
+
+        if (data.loadingAiMeta !== undefined) {
+          s.loadingAiMeta = data.loadingAiMeta
+        }
+
+        if (data.errorAiMeta !== undefined) {
+          s.errorAiMeta = data.errorAiMeta
+        }
+      })
+    },
+
+    aiMessageData: new Map(),
+
+    setAiMessageData: (aiId, data) => {
+      set(s => {
+        const existing = s.aiMessageData.get(aiId)
+
+        s.aiMessageData.set(aiId, {
+          hasFetchedMsgs: false,
+          loading: false,
+          error: null,
+          messageData: new Map(),
+          ...existing,
+          ...data
+        })
+      })
+    },
+
+    setAiMessage: (aiId, data) => {
+      set(s => {
+        const existing = s.aiMessageData.get(aiId)
+
+        if (!existing) return
+
+        existing.messageData.set(data.messageId, data)
+      })
+    }
   })),
   // {
   //   name: 'chappy-summaries',

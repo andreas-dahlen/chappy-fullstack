@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useUserDeletion } from '../../../hooks/useUserDeletion.ts'
+import { useUserDeletion } from '../../../hooks/user/useUserDeletion.ts'
 import { useCredentialStore } from '../../../stores/credentialStore.ts'
 import { Loader } from 'lucide-react'
 

@@ -1,5 +1,5 @@
-import { useChannelsStore } from '../../stores/channelsStore.ts'
-import { useConversationStore } from '../../stores/conversationStore.ts'
+import { useChannelsStore } from '../../../stores/channelsStore.ts'
+import { useConversationStore } from '../../../stores/conversationStore.ts'
 import type { SummaryIdType } from './useAiSummary.ts'
 
 export function getMessages({ id, type }: SummaryIdType) {

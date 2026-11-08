@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 import type { UUID } from '@chappy/shared'
-import { useCredentialStore } from '../stores/credentialStore.ts'
-import { useConversationStore } from '../stores/conversationStore.ts'
-import { dbGetConversationParticipant } from '../api/conversations/getConversationParticipant.ts'
-import { useUsersStore } from '../stores/usersStore.ts'
+import { useCredentialStore } from '../../stores/credentialStore.ts'
+import { useConversationStore } from '../../stores/conversationStore.ts'
+import { dbGetConversationParticipant } from '../../api/conversations/getConversationParticipant.ts'
+import { useUsersStore } from '../../stores/usersStore.ts'
 import { useNavigate } from 'react-router'
 
 export function useConversationMeta() {

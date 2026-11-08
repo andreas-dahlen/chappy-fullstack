@@ -1,8 +1,8 @@
-import { useCredentialStore } from '../stores/credentialStore.ts';
+import { useCredentialStore } from '../../stores/credentialStore.ts';
 import { useCallback } from 'react';
-import { dbDeleteUser } from '../api/account/deleteUser.ts';
-import { useUsersStore } from '../stores/usersStore.ts';
-import { clearDeletedAccountData } from '../authHandlers/clearDeletedAccountData.ts';
+import { dbDeleteUser } from '../../api/account/deleteUser.ts';
+import { useUsersStore } from '../../stores/usersStore.ts';
+import { clearDeletedAccountData } from '../../authHandlers/clearDeletedAccountData.ts';
 
 export function useUserDeletion() {
   const token = useCredentialStore(s => s.token)

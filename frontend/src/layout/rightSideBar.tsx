@@ -3,7 +3,6 @@ import Summary from '../sideBars/rightAiBar/Summary.tsx'
 import '../styles/aside/ai-side.css'
 import Chat from '../sideBars/rightAiBar/Chat.tsx'
 import AiControlPanel from '../sideBars/rightAiBar/AiControlPanel.tsx'
-import ChatInput from '../sideBars/rightAiBar/ChatInput.tsx'
 export type AiSection = 'Summary' | 'Chat'
 
 type RightSideBarProps = {
@@ -20,8 +19,6 @@ export default function RightSideBar({ hideAi }: RightSideBarProps) {
         {section === 'Summary' && <Summary />}
         {section === 'Chat' && <Chat />}
       </section>
-
-      {section === 'Chat' && <ChatInput />}
     </aside>
   )
 }

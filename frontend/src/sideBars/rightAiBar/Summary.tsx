@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import { useAiSummary } from '../../hooks/ai/useAiSummary.ts'
+import { useAiSummary } from '../../hooks/ai/summary/useAiSummary.ts'
 import { useAiStore } from '../../stores/aiStore.ts'
 import { Loader } from 'lucide-react'
 import '../../styles/aside/summary.css'
@@ -17,9 +17,12 @@ export default function Summary() {
   const error = summaryData?.error
 
   const summary =
-    summaryData?.summary
+    summaryData?.messageData?.message
     ?? (loading ? '' : 'A summary will be generated when messages are available.')
 
+  const duration =
+    summaryData?.messageData?.duration
+    ?? ''
 
   useEffect(() => {
     if (!summaryId) return
@@ -29,7 +32,7 @@ export default function Summary() {
 
   return (
     <div className='summary'>
-      {!error && summaryId && <div>{summary}</div>}
+      {!error && summaryId && <div className='summary-text'>{summary} {duration}</div>}
       {error && <p>{error}</p>}
       <div className='loading-reloading'>
         {loading && <Loader className='loader' size={50} />}

@@ -1,16 +1,19 @@
-import { dbAiArraySchema, dbAiMetaArraySchema, reqAiMetaSchema, reqSummarizeSchema, type AiMessages, type AiMetaData, type AiMetaInput, type DbAiMessages, type DbAiMeta, type SummarizeInput, type Summary } from '@chappy/shared'
+import { dbAiArraySchema, dbAiMetaArraySchema, reqAiMetaSchema, reqMessageSchema, reqSummarizeSchema, type AiMessage, type AiMetaData, type AiMetaInput, type AiResponse, type DbAiMessage, type DbAiMeta, type MessageInput, type SummarizeInput } from '@chappy/shared'
 import { sendRequest } from '../gemini/request.ts'
 import express, { Router } from 'express'
 import { authRequired } from '../middleware/express/authRequired.ts'
 import db, { tableName } from '../aws/aws.ts'
-import { GetCommand, PutCommand, QueryCommand, type QueryCommandInput } from '@aws-sdk/lib-dynamodb'
-import { AiIdParam } from '../types/db.types.ts'
+import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
+import type { AiIdParam } from '../types/db.types.ts'
 import { aiIdParser } from '../middleware/express/aiIdParser.ts'
-import { randomUUID } from 'node:crypto'
+import { randomUUID, type UUID } from 'node:crypto'
+import type { Content } from '@google/genai'
+import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb'
+import { summarizeInstruction } from '../gemini/config.ts'
 
 const router: Router = express.Router()
 
-router.post<{}, Summary | void, SummarizeInput>('/summarize', express.json(), async (req, res) => {
+router.post<{}, AiResponse | void, SummarizeInput>('/summarize', express.json(), async (req, res) => {
   const result = reqSummarizeSchema.safeParse(req.body)
 
   if (!result.success) {
@@ -18,14 +21,14 @@ router.post<{}, Summary | void, SummarizeInput>('/summarize', express.json(), as
     return
   }
 
-  const summary = await sendRequest(result.data.text)
+  const summary = await sendRequest(result.data.text, { instruction: summarizeInstruction })
 
   if (!summary) {
     res.sendStatus(502)
     return
   }
 
-  res.status(200).send({ summary })
+  res.status(200).send(summary)
 })
 
 router.get<{}, AiMetaData[]>('/chat', authRequired, async (req, res) => {
@@ -38,7 +41,7 @@ router.get<{}, AiMetaData[]>('/chat', authRequired, async (req, res) => {
       ExpressionAttributeValues: {
         ':pk': `USER#${ownerId}`,
         ':sk': 'META#'
-      },
+      }
     }))
 
     const dbResult: DbAiMeta[] = dbAiMetaArraySchema.parse(response.Items ?? [])
@@ -58,7 +61,7 @@ router.get<{}, AiMetaData[]>('/chat', authRequired, async (req, res) => {
   }
 })
 
-router.post<{}, void, AiMetaInput>('/chat', authRequired, express.json(), async (req, res) => {
+router.post<{}, AiMetaData, AiMetaInput>('/chat', authRequired, express.json(), async (req, res) => {
 
   const parsed = reqAiMetaSchema.safeParse(req.body)
 
@@ -84,13 +87,17 @@ router.post<{}, void, AiMetaInput>('/chat', authRequired, express.json(), async 
       ConditionExpression: 'attribute_not_exists(pk)'
     }))
 
-    res.sendStatus(201)
+    res.status(201).send({
+      name: parsed.data.name,
+      createdAt: now,
+      aiId
+    })
   } catch {
     res.sendStatus(500)
   }
 })
 
-router.get<AiIdParam, AiMessages[]>('/chat/:aiId', aiIdParser, authRequired, async (req, res) => {
+router.get<AiIdParam, AiMessage[]>('/chat/:aiId/messages', authRequired, aiIdParser, async (req, res) => {
   const aiId = res.locals.aiId
   const ownerId = res.locals.authenticatedUserId
   try {
@@ -104,7 +111,7 @@ router.get<AiIdParam, AiMessages[]>('/chat/:aiId', aiIdParser, authRequired, asy
     }))
 
     if (!metaData.Item) {
-      res.sendStatus(404) //or not authed? hmmm forbidden..
+      res.sendStatus(404)
       return
     }
 
@@ -119,15 +126,16 @@ router.get<AiIdParam, AiMessages[]>('/chat/:aiId', aiIdParser, authRequired, asy
       Limit: 50
     }))
 
-    const dbResult: DbAiMessages[] = dbAiArraySchema.parse(response.Items ?? [])
+    const dbResult: DbAiMessage[] = dbAiArraySchema.parse(response.Items ?? [])
 
-    const result: AiMessages[] = dbResult.reverse().map(db => {
+    const result: AiMessage[] = dbResult.reverse().map(db => {
       return {
         role: db.role,
         message: db.message,
         messageId: db.messageId,
-        createdAt: db.timestamp
-      } satisfies AiMessages
+        createdAt: db.timestamp,
+        duration: db.duration
+      } satisfies AiMessage
     })
 
     res.status(200).send(result)
@@ -137,35 +145,115 @@ router.get<AiIdParam, AiMessages[]>('/chat/:aiId', aiIdParser, authRequired, asy
   }
 })
 
+router.post<AiIdParam, AiMessage[], MessageInput>('/chat/:aiId/messages', authRequired, aiIdParser, express.json(), async (req, res) => {
+  const aiId = res.locals.aiId
+  const authId = res.locals.authenticatedUserId
+
+  try {
+    const parsedMsg = reqMessageSchema.safeParse(req.body)
+
+    if (!parsedMsg.success) {
+      res.sendStatus(400)
+      return
+    }
+
+    const metaData = await db.send(new GetCommand({
+      TableName: tableName,
+      Key: {
+        pk: `USER#${authId}`,
+        sk: `META#${aiId}`
+      }
+    }))
+
+    if (!metaData.Item) {
+      res.sendStatus(404)
+      return
+    }
+
+    const timestamp = new Date().toISOString()
+    const messageId: UUID = randomUUID()
+
+    const dbHistory = await db.send(new QueryCommand({
+      TableName: tableName,
+      KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
+      ExpressionAttributeValues: {
+        ':pk': `USER#${aiId}`,
+        ':sk': 'AI#'
+      },
+      ScanIndexForward: false,
+      Limit: 50
+    }))
+
+    const dbResult: DbAiMessage[] = dbAiArraySchema.parse(dbHistory.Items ?? [])
+
+    const formatted: Content[] = dbResult.reverse().map(db => {
+      return {
+        role: db.role,
+        parts: [{ text: db.message }]
+      }
+    })
+    const request: Content[] = [...formatted, { role: 'user', parts: [{ text: parsedMsg.data.message }] }]
+    const response = await sendRequest(request)
+    if (!response) {
+      res.sendStatus(502)
+      return
+    }
+
+    const responseTimestamp = new Date().toISOString()
+    const responseMessageId: UUID = randomUUID()
+
+    await db.send(new TransactWriteCommand({
+      TransactItems: [
+        {
+          Put: {
+            TableName: tableName,
+            Item: {
+              pk: `USER#${aiId}`,
+              sk: `AI#${timestamp}#${messageId}`,
+              role: 'user',
+              message: parsedMsg.data.message,
+              messageId,
+              timestamp
+            } satisfies DbAiMessage
+          }
+        },
+        {
+          Put: {
+            TableName: tableName,
+            Item: {
+              pk: `USER#${aiId}`,
+              sk: `AI#${responseTimestamp}#${responseMessageId}`,
+              role: 'model',
+              message: response.message,
+              duration: response.duration,
+              messageId: responseMessageId,
+              timestamp: responseTimestamp
+            } satisfies DbAiMessage
+          }
+        }
+      ]
+    }))
+
+    const userData: AiMessage = {
+      role: 'user',
+      message: parsedMsg.data.message,
+      messageId,
+      createdAt: timestamp
+    }
+    const aiData: AiMessage = {
+      role: 'model',
+      message: response.message,
+      duration: response.duration,
+      messageId: responseMessageId,
+      createdAt: responseTimestamp
+    }
+
+
+    res.status(201).send([userData, aiData])
+
+  } catch {
+    res.sendStatus(500)
+  }
+})
+
 export default router
-
-
-
-//     const response = await db.send(new QueryCommand({
-//       TableName: tableName,
-//       KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
-//       ExpressionAttributeValues: {
-//         ':pk': `USER#${ownerId}`,
-//         'sk': 'META#'
-//       },
-//       ScanIndexForward: false,
-//       Limit: 50
-//     }))
-
-//     const dbResult: DbAiMessages[] = dbAiArraySchema.parse(response.Items ?? [])
-
-//     const result: AiMessages[] = dbResult.reverse().map(db => {
-//       return {
-//         role: db.role,
-//         message: db.message,
-//         messageId: db.messageId,
-//         createdAt: db.timestamp
-//       } satisfies AiMessages
-//     })
-
-//     res.status(200).send(result)
-
-//   } catch {
-//     res.sendStatus(500)
-//   }
-// })

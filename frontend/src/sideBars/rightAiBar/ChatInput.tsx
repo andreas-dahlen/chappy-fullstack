@@ -1,12 +1,30 @@
 import { useEffect, useRef, useState } from 'react'
-import { useDynamicInputSizing } from '../../hooks/useDynamicInputSizing.ts'
+import { useDynamicInputSizing } from '../../hooks/sideEffects/useDynamicInputSizing.ts'
 import { SendHorizonal } from 'lucide-react'
 import '../../styles/components/ai-input.css'
 
-export default function ChatInput() {
+type ChatInputProps = {
+  onSubmit: (message: string) => void
+  loading: boolean
+}
+export default function ChatInput({
+  onSubmit,
+  loading
+}: ChatInputProps) {
   const [input, setInput] = useState<string>('')
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => { }
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const { handleInputSizing, resetInputSizing } = useDynamicInputSizing()
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const message = input.trim()
+    if (!message) return
+
+    onSubmit(message)
+    setInput('')
+  }
 
   useEffect(() => {
     if (input === '') {
@@ -14,7 +32,6 @@ export default function ChatInput() {
     }
 
   }, [input, resetInputSizing])
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   return (
     <form className="input-ai" onSubmit={handleSubmit}>
@@ -37,7 +54,7 @@ export default function ChatInput() {
 
       <button
         type="submit"
-        disabled={!input.trim()}
+        disabled={!input.trim() || loading}
         className='send-button'
       >
         <SendHorizonal size={30} />

@@ -1,4 +1,4 @@
-import { useChannelMessages } from '../../hooks/useChannelMessages.ts'
+import { useChannelMessages } from '../../hooks/channels/useChannelMessages.ts'
 import { useChannelsStore } from '../../stores/channelsStore.ts'
 import type { UUID } from '@chappy/shared'
 import { useEffect, useLayoutEffect, useRef } from 'react'
@@ -44,12 +44,16 @@ export default function ChannelMessages({ channelId }: MessageProps) {
     <div ref={messageBoxRef} className="channel-message-box">
       <div className='channel-messages'>
         {resolvedList.map(msg => (
-          <div key={msg.messageId} className='channel-msg'>
+          <article key={msg.messageId} className='channel-msg'>
+            <header className='channel-msg-header'>
+              <span className='channel-msg-author'>{msg.name}</span>
+              <time dateTime={msg.createdAt}>
+                {isoToDate.format(new Date(msg.createdAt))}
+              </time>
+            </header>
 
-            <p >{msg.message}</p>
-            <p>{msg.name}</p>
-            <p>{isoToDate.format(new Date(msg.createdAt))}</p>
-          </div>
+            <p className='channel-msg-content'>{msg.message}</p>
+          </article>
         ))}
       </div>
     </div>

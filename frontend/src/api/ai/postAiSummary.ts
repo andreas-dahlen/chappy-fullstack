@@ -1,4 +1,4 @@
-import { resSummarizeSchema, type SummarizeInput } from '@chappy/shared';
+import { resFromAiSchema, type SummarizeInput } from '@chappy/shared';
 import type { SummaryReturn } from '../../types/apiData.types.ts';
 import { getHttpErrorMessage } from '../../utils/getErrorMsg.ts';
 
@@ -22,7 +22,7 @@ export async function dbPostAiSummary(text: SummarizeInput): Promise<SummaryRetu
     }
 
     const rawData: unknown = await response.json()
-    const channel = resSummarizeSchema.safeParse(rawData)
+    const channel = resFromAiSchema.safeParse(rawData)
 
     if (!channel.success) {
       console.error('Invalid summary request:', channel.error)
@@ -35,7 +35,7 @@ export async function dbPostAiSummary(text: SummarizeInput): Promise<SummaryRetu
     }
     return {
       state: 'success',
-      summary: channel.data.summary
+      data: channel.data
     }
 
   } catch (error) {

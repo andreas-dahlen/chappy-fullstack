@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router'
-import type { AuthNavigationState } from '../types/apiData.types.ts'
-import { dbCreateOrGetConversation } from '../api/conversations/createOrGetConversation.ts'
-import { useCredentialStore } from '../stores/credentialStore.ts'
+import type { AuthNavigationState } from '../../types/apiData.types.ts'
+import { dbCreateOrGetConversation } from '../../api/conversations/createOrGetConversation.ts'
+import { useCredentialStore } from '../../stores/credentialStore.ts'
 
 export function usePostAuthNavigation() {
   const location = useLocation()

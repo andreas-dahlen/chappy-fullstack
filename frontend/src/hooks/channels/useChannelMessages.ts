@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 import type { MessageData, UUID } from '@chappy/shared'
-import { useChannelsStore } from '../stores/channelsStore.ts'
-import { useCredentialStore } from '../stores/credentialStore.ts'
-import { dbGetChannelMessages } from '../api/channels/getChannelMessages.ts'
+import { useChannelsStore } from '../../stores/channelsStore.ts'
+import { useCredentialStore } from '../../stores/credentialStore.ts'
+import { dbGetChannelMessages } from '../../api/channels/getChannelMessages.ts'
 
 export function useChannelMessages() {
   const token = useCredentialStore(s => s.token)

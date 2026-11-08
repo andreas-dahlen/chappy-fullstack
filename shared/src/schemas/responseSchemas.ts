@@ -43,8 +43,9 @@ export const resParticipantSchema = z.object({
   participantId: z.uuid()
 }).strict()
 
-export const resSummarizeSchema = z.object({
-  summary: z.string().min(1)
+export const resFromAiSchema = z.object({
+  message: z.string().min(1),
+  duration: z.number()
 }).strict()
 
 export const resAiMetaSchema = z.object({
@@ -59,7 +60,8 @@ export const resAiSchema = z.object({
   role: z.enum(['user', 'model']),
   message: z.string().min(1),
   messageId: z.uuid(),
-  createdAt: z.iso.datetime()
+  createdAt: z.iso.datetime(),
+  duration: z.number().optional()
 }).strict()
 
 export const resAiArraySchema = z.array(resAiSchema)

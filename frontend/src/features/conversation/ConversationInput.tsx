@@ -1,6 +1,6 @@
 import type { UUID } from '@chappy/shared';
 import { useEffect, useRef, useState } from 'react';
-import { useDynamicInputSizing } from '../../hooks/useDynamicInputSizing.ts';
+import { useDynamicInputSizing } from '../../hooks/sideEffects/useDynamicInputSizing.ts';
 import { useCredentialStore } from '../../stores/credentialStore.ts';
 import { useConversationStore } from '../../stores/conversationStore.ts';
 import { SendHorizonal } from 'lucide-react';

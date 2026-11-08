@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 import type { MessageData, UUID } from '@chappy/shared'
-import { useCredentialStore } from '../stores/credentialStore.ts'
-import { useConversationStore } from '../stores/conversationStore.ts'
-import { dbGetConversationMessages } from '../api/conversations/getConversationMessages.ts'
+import { useCredentialStore } from '../../stores/credentialStore.ts'
+import { useConversationStore } from '../../stores/conversationStore.ts'
+import { dbGetConversationMessages } from '../../api/conversations/getConversationMessages.ts'
 
 export function useConversationMessages() {
   const token = useCredentialStore(s => s.token)

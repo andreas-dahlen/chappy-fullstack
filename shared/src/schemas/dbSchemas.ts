@@ -47,6 +47,7 @@ export const dbAiSchema = dbKeySchema.extend({
   role: z.enum(['user', 'model']),
   message: z.string().min(1),
   messageId: z.uuid(),
-  timestamp: z.iso.datetime()
+  timestamp: z.iso.datetime(),
+  duration: z.number().optional()
 }).strict()
 export const dbAiArraySchema = z.array(dbAiSchema)

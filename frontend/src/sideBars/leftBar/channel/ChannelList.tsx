@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router'
 import { type ChannelStoreData } from '../../../stores/channelsStore.ts'
 import { Lock, Trash2 } from 'lucide-react'
 import { useCredentialStore } from '../../../stores/credentialStore.ts'
-import { useChannelDeletion } from '../../../hooks/useChannelDeletion.ts'
+import { useChannelDeletion } from '../../../hooks/channels/useChannelDeletion.ts'
 
 type ChannelListProps = {
   channels: Map<string, ChannelStoreData>

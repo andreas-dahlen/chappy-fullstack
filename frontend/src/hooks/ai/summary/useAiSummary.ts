@@ -1,10 +1,10 @@
 import type { UUID } from '@chappy/shared';
 import { useCallback } from 'react';
-import { useAiStore } from '../../stores/aiStore.ts';
-import { dbPostAiSummary } from '../../api/ai/postAiSummary.ts';
+import { useAiStore } from '../../../stores/aiStore.ts';
+import { dbPostAiSummary } from '../../../api/ai/postAiSummary.ts';
 import { getMessages } from './getMessages.ts';
 import { formatMessagesForAi } from './formatMessages.ts';
-import { useCredentialStore } from '../../stores/credentialStore.ts';
+import { useCredentialStore } from '../../../stores/credentialStore.ts';
 
 export type SummaryIdType = {
   type: 'conversation' | 'channel'
@@ -20,7 +20,7 @@ export function useAiSummary() {
 
     const existing = summaries.get(id)
 
-    if (!reload && existing?.summary) return
+    if (!reload && existing?.messageData) return
     if (existing?.loading) return
 
     const messages = getMessages({ id, type })
@@ -55,7 +55,7 @@ export function useAiSummary() {
         return
       }
 
-      setSummaryData(id, { summary: result.summary })
+      setSummaryData(id, { messageData: result.data })
 
     } catch (error) {
       setSummaryData(id, {

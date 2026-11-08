@@ -1,5 +1,5 @@
 import type { MessageData } from '@chappy/shared';
-import { useUsersStore } from '../../stores/usersStore.ts';
+import { useUsersStore } from '../../../stores/usersStore.ts';
 
 export function formatMessagesForAi(messages: MessageData[]): string {
 

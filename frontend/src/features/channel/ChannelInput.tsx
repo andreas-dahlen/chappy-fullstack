@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useDynamicInputSizing } from '../../hooks/useDynamicInputSizing.ts'
+import { useDynamicInputSizing } from '../../hooks/sideEffects/useDynamicInputSizing.ts'
 import type { UUID } from '@chappy/shared'
 import { useCredentialStore } from '../../stores/credentialStore.ts'
 import { dbPostChannelMessage } from '../../api/channels/postChannelMessage.ts'

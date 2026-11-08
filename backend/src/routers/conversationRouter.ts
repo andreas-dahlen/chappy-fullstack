@@ -10,6 +10,7 @@ import type { Conversation, DbMessageData, DbMetaConversation, MessageInput, Mes
 import { conversationIdParser } from '../middleware/express/conversationIdParser.ts'
 import type { ConversationIdParam, ParticipantParam } from '../types/db.types.ts'
 import { randomUUID } from 'node:crypto'
+import type { Server } from 'socket.io'
 
 const router: Router = express.Router()
 
@@ -198,6 +199,13 @@ router.post<ConversationIdParam, MessageData, MessageInput>('/:conversationId/me
         return
       }
 
+      const participantId = parsedMeta.participants.find(id => id !== authId)
+
+      if (!participantId) {
+        res.sendStatus(500)
+        return
+      }
+
       const messageId: UUID = randomUUID()
       const timestamp = new Date().toISOString()
 
@@ -212,6 +220,12 @@ router.post<ConversationIdParam, MessageData, MessageInput>('/:conversationId/me
           timestamp
         } satisfies DbMessageData
       }))
+
+      const io = req.app.get('io') as Server
+
+      io.to(`user:${authId}`)
+        .to(`user:${participantId}`)
+        .emit('conversation:message', { conversationId })
 
       const returnData: MessageData = {
         createdBy: authId,

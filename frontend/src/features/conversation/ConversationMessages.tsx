@@ -2,7 +2,7 @@ import type { UUID } from '@chappy/shared'
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import { isoToDate } from '../../utils/isoToDate.ts'
 import { useConversationStore } from '../../stores/conversationStore.ts'
-import { useConversationMessages } from '../../hooks/useConversationMessages.ts'
+import { useConversationMessages } from '../../hooks/conversations/useConversationMessages.ts'
 type ConversationMessagesProps = {
   conversationId: UUID
 }
@@ -14,9 +14,15 @@ export default function ConversationMessages({ conversationId }: ConversationMes
 
   const { fetchConversationMessages } = useConversationMessages()
 
+  const hasFetchedMsgs = useConversationStore(s =>
+    s.conversationMsgData.get(conversationId)?.hasFetchedMsgs ?? false
+  )
+
   useEffect(() => {
-    void fetchConversationMessages(conversationId)
-  }, [conversationId, fetchConversationMessages])
+    if (!hasFetchedMsgs) {
+      void fetchConversationMessages(conversationId)
+    }
+  }, [conversationId, hasFetchedMsgs, fetchConversationMessages])
 
   const messages = useConversationStore(s =>
     s.conversationMsgData.get(conversationId)?.messageData
@@ -46,12 +52,16 @@ export default function ConversationMessages({ conversationId }: ConversationMes
     <div ref={messageBoxRef} className="conversation-message-box">
       <div className='conversation-messages'>
         {resolvedList.map(msg => (
-          <div key={msg.messageId} className='conversation-msg'>
+          <article key={msg.messageId} className='conversation-msg'>
+            <header className='conversation-msg-header'>
+              <span className='conversation-msg-author'>{msg.name}</span>
+              <time dateTime={msg.createdAt}>
+                {isoToDate.format(new Date(msg.createdAt))}
+              </time>
+            </header>
 
-            <p >{msg.message}</p>
-            <p>{msg.name}</p>
-            <p>{isoToDate.format(new Date(msg.createdAt))}</p>
-          </div>
+            <p className='conversation-msg-content'>{msg.message}</p>
+          </article>
         ))}
       </div>
     </div>

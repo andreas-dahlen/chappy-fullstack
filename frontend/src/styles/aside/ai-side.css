@@ -22,7 +22,7 @@
   padding: 0.2rem 0.4rem 0.2rem 0;
   z-index: 1;
   background: var(--surface-dark);
-  border-bottom: var(--border);
+  /* border-bottom: var(--border); */
   h2 {
     margin: 0;
     padding-left: 1rem;
@@ -42,24 +42,4 @@
     padding: 0;
     margin: 0;
   } */
-}
-
-.ai-message-box {
-  min-height: 0;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-
-  .ai-messages {
-    margin-top: auto;
-
-    .ai-msg {
-      border-bottom: 2px solid var(--border-col);
-      white-space: pre-wrap;
-
-      /* &:last-child {
-        border-bottom: none;
-      } */
-    }
-  }
 }

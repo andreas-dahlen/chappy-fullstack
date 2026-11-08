@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import '../../../styles/aside/channel.css'
 import { useChannelsStore } from '../../../stores/channelsStore.ts'
-import { useChannels } from '../../../hooks/useChannels.ts'
+import { useChannels } from '../../../hooks/channels/useChannels.ts'
 import SidebarHeader from '../SidebarHeader.tsx'
 import ChannelList from './ChannelList.tsx'
 import ChannelCreation from './ChannelCreation.tsx'

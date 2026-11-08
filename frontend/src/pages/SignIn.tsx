@@ -3,8 +3,8 @@ import '../styles/pages/form.css'
 import { useCredentialStore } from '../stores/credentialStore.ts'
 import { Loader } from 'lucide-react'
 import { NavLink, useLocation } from 'react-router'
-import { usePostAuthNavigation } from '../hooks/usePostAuthNavigation.ts'
-import { useAuthentication } from '../hooks/useAuthentication.ts'
+import { usePostAuthNavigation } from '../hooks/sideEffects/usePostAuthNavigation.ts'
+import { useAuthentication } from '../hooks/user/useAuthentication.ts'
 
 type SignIn = {
   username: string

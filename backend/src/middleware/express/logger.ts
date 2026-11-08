@@ -1,12 +1,11 @@
 import type { RequestHandler } from 'express'
+import { logger } from '../../utils/logger.ts'
 
-
-
-export const logger: RequestHandler = (req, res, next): void => {
-  console.log(`${req.method} ${req.url}`)
+export const expressLogger: RequestHandler = (req, res, next) => {
+  logger.info(`${req.method} ${req.url}`)
 
   res.on('finish', () => {
-    console.log("status code: ", res.statusCode)
+    logger.info(`Status code: ${res.statusCode}`)
   })
 
   next()

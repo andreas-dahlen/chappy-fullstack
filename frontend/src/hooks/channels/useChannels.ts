@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
-import { useChannelsStore } from '../stores/channelsStore.ts'
-import { dbGetChannels } from '../api/channels/getChannels.ts'
+import { useChannelsStore } from '../../stores/channelsStore.ts'
+import { dbGetChannels } from '../../api/channels/getChannels.ts'
 
 export function useChannels() {
   const setChannels = useChannelsStore(s => s.setChannels)

@@ -30,6 +30,7 @@ type ConversationStore = {
   ) => void
 
   conversationMsgData: Map<UUID, ConversationMsgStoreData>
+
   setConversationMsgData: (
     conversationId: UUID,
     data: Partial<ConversationMsgStoreData>
@@ -65,7 +66,7 @@ export const useConversationStore = create<ConversationStore>()(
 
         s.conversationMsgData.set(conversationId, {
           hasFetchedMsgs: false,
-          messageData: new Map,
+          messageData: new Map(),
           loading: false,
           error: null,
           ...existing,

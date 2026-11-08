@@ -2,7 +2,7 @@ import express, { type Express } from 'express'
 import path from 'node:path'
 import userRouter from './routers/userRouter/userRouter.ts'
 import channelRouter from './routers/channelRouter.ts'
-import { logger } from './middleware/express/logger.ts'
+import { expressLogger } from './middleware/express/logger.ts'
 import registerRouter from './routers/registerRouter.ts'
 import signInRouter from './routers/signInRouter.ts'
 import conversationRouter from './routers/conversationRouter.ts'
@@ -22,7 +22,7 @@ entry.get('/.well-known/appspecific/com.chrome.devtools.json', (_, res) => {
 const apiRouter = express.Router()
 entry.use('/api', apiRouter)
 
-apiRouter.use(logger)
+apiRouter.use(expressLogger)
 apiRouter.use('/users', userRouter)
 apiRouter.use('/channels', channelRouter)
 apiRouter.use('/register', registerRouter)

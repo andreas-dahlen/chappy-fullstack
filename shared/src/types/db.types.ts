@@ -11,6 +11,6 @@ export type DbChannel = z.infer<typeof dbChannelSchema>
 
 export type DbKey = z.infer<typeof dbKeySchema>
 
-export type DbAiMessages = z.infer<typeof dbAiSchema>
+export type DbAiMessage = z.infer<typeof dbAiSchema>
 
 export type DbAiMeta = z.infer<typeof dbAiMetaSchema>

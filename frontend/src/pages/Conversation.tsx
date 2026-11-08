@@ -1,6 +1,6 @@
 import { NavLink, useParams } from 'react-router'
 import { useCredentialStore } from '../stores/credentialStore.ts'
-import { useConversationMeta } from '../hooks/useConversationMeta.ts'
+import { useConversationMeta } from '../hooks/conversations/useConversationMeta.ts'
 import { useEffect } from 'react'
 import { useConversationStore } from '../stores/conversationStore.ts'
 import ConversationMessages from '../features/conversation/ConversationMessages.tsx'
