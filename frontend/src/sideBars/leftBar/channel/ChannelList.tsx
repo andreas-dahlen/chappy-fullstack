@@ -1,10 +1,11 @@
 import '../../../styles/aside/channel.css'
-import type { Channel } from '@chappy/shared'
+import type { Channel, UUID } from '@chappy/shared'
 import { useLocation, useNavigate } from 'react-router'
 import { type ChannelStoreData } from '../../../stores/channelsStore.ts'
-import { Lock, Trash2 } from 'lucide-react'
+import { Loader, Lock, Trash2 } from 'lucide-react'
 import { useCredentialStore } from '../../../stores/credentialStore.ts'
 import { useChannelDeletion } from '../../../hooks/channels/useChannelDeletion.ts'
+import { useState } from 'react'
 
 type ChannelListProps = {
   channels: Map<string, ChannelStoreData>
@@ -16,6 +17,7 @@ export default function ChannelList({
   const token = useCredentialStore(s => s.token)
   const userId = useCredentialStore(s => s.userId)
   const { deleteChannel } = useChannelDeletion()
+  const [confirmDeletion, setConfirmDeletion] = useState<UUID | null>(null)
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -48,40 +50,81 @@ export default function ChannelList({
   return (
     <>
       <ul className="channel-list">
-        {sortedChannels.map((data) => (
-          <li key={data.channel.channelId} className='channel-list-item'>
-            <button
-              type="button"
-              className={`channel-button ${resolveActive(data.channel.channelId)}`}
-              onClick={() => handleChannelClick(data.channel)}
-            >
-              <span className="channel-avatar"
-                aria-hidden="true">
-                {data.channel.channelName.charAt(0).toUpperCase()}
-                {!token && data.channel.authRequired &&
-                  <div className='lock-box'>
-                    <Lock size={17} />
-                  </div>}
-              </span>
+        {sortedChannels.map((data) => {
+          const isOwner = token && data.channel.createdBy === userId
+          const isConfirmingDeletion = confirmDeletion && confirmDeletion === data.channel.channelId && isOwner
+          const isActive = confirmDeletion === data.channel.channelId
 
-              <span className="channel-info">
-                <span className="channel-name">{data.channel.channelName}</span>
-              </span>
-
-            </button>
-
-            {token && data.channel.createdBy === userId && (
+          return (
+            <li key={data.channel.channelId} className='channel-list-item'>
               <button
                 type="button"
-                className="channel-delete-button"
-                onClick={() => deleteChannel(data.channel.channelId)}
-                aria-label={`Delete ${data.channel.channelName}`}
+                className={`channel-button ${resolveActive(data.channel.channelId)}`}
+                onClick={() => handleChannelClick(data.channel)}
               >
-                <Trash2 size={16} />
+                <span className="channel-avatar"
+                  aria-hidden="true">
+                  {data.channel.channelName.charAt(0).toUpperCase()}
+                  {!token && data.channel.authRequired &&
+                    <div className='lock-box'>
+                      <Lock size={17} />
+                    </div>}
+                </span>
+                <span className="channel-info">
+                  <span className="channel-name">{data.channel.channelName}</span>
+                </span>
               </button>
-            )}
-          </li>
-        ))
+
+              {isOwner && (
+                <button
+                  type="button"
+                  className={`channel-delete-button ${isActive ? 'active' : ''}`}
+                  disabled={isActive}
+                  onClick={() => setConfirmDeletion(data.channel.channelId)}
+                  aria-label={`Delete ${data.channel.channelName}`}
+                >
+                  <Trash2 size={18} className="icon" />
+                </button>
+              )}
+
+              {isConfirmingDeletion && (
+                <>
+                  {confirmDeletion && confirmDeletion === data.channel.channelId && (
+                    <div className="deletion-box relative">
+                      <p>Delete {data.channel.channelName}?</p>
+
+                      <div className="popup-buttons">
+                        <button
+                          type="button"
+                          disabled={data.loading}
+                          className='delete-buttons deleter'
+                          onClick={() => void deleteChannel(data.channel.channelId)}
+                        >
+                          {data.loading
+                            ? <Loader className="loader" size={16} />
+                            : 'DELETE'}
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={data.loading}
+                          className='delete-buttons'
+                          onClick={() => setConfirmDeletion(null)}
+                        >
+                          CANCEL
+                        </button>
+                      </div>
+
+                      {data.error && (
+                        <p role="alert">{data.error}</p>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </li>
+          )
+        })
         }
       </ul >
     </>

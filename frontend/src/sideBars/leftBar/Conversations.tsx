@@ -7,6 +7,7 @@ import { useCredentialStore } from '../../stores/credentialStore.ts'
 import { dbCreateOrGetConversation } from '../../api/conversations/createOrGetConversation.ts'
 import { useConversationStore } from '../../stores/conversationStore.ts'
 import SidebarHeader from './SidebarHeader.tsx'
+import { Loader } from 'lucide-react'
 
 type ConversationError = {
   userId: UUID
@@ -22,12 +23,11 @@ export default function Conversations() {
   const users = useUsersStore(s => s.users)
   const loading = useUsersStore(s => s.loading)
   const userError = useUsersStore(s => s.error)
+  const hasFetchedUser = useUsersStore(s => s.hasFetchedUsers)
   const fetchUsers = useUsersStore(s => s.fetchUsers)
+
   const token = useCredentialStore(s => s.token)
   const userId = useCredentialStore(s => s.userId)
-  useEffect(() => {
-    void fetchUsers()
-  }, [fetchUsers])
 
   const navigate = useNavigate()
   const { conversationId } = useParams()
@@ -37,12 +37,16 @@ export default function Conversations() {
       ? s.conversationMetaData.get(conversationId)?.metaData?.participantId
       : undefined
   )
-  const resolveActive = (userId: UUID) => {
-    return userId === activeParticipantId ? 'active' : ''
-  }
+
+  const relevantUsers = [...users.values()].filter(user => user.userId !== userId)
+
+  useEffect(() => {
+    void fetchUsers()
+  }, [fetchUsers])
 
   const handleUserClick = async (user: User) => {
     setConversationError(null)
+
     if (!token) {
       navigate('/sign-in', {
         state: {
@@ -52,66 +56,100 @@ export default function Conversations() {
       })
       return
     }
+
     setConversationLoading(user.userId)
+
     try {
       const dbData = await dbCreateOrGetConversation(user.userId, token)
 
-      if (dbData.state === 'success') {
-        setConversationMetaData(dbData.conversationId, {
-          hasFetchedMeta: true,
-          metaData: {
-            participantId: user.userId,
-            participantName: user.name
-          }
+      if (dbData.state === 'failed') {
+        setConversationError({
+          userId: user.userId,
+          message: dbData.message
         })
-        navigate(`/conversations/${dbData.conversationId}`)
         return
       }
-      setConversationError({ userId: user.userId, message: dbData.message })
+
+      setConversationMetaData(dbData.conversationId, {
+        hasFetchedMeta: true,
+        metaData: {
+          participantId: user.userId,
+          participantName: user.name
+        }
+      })
+
+      navigate(`/conversations/${dbData.conversationId}`)
+
+    } catch (error) {
+      setConversationError({
+        userId: user.userId,
+        message: error instanceof Error ? error.message : String(error)
+      })
     } finally {
       setConversationLoading(null)
     }
   }
 
-
-
-  const relevantUsers = [...users.values()].filter(user => user.userId !== userId)
-
-  if (loading && relevantUsers.length === 0) {
-    return <p>Loading users...</p> //TODO will use a rotating thingie <3<3
-  }
-  if (userError) {
-    return <p>{userError}</p>
-  }
-  if (relevantUsers.length === 0) {
-    return <p>No users found.</p>
-  }
   return (
     <>
-      <SidebarHeader title={'Conversations'} />
-      <ul className="user-list">
-        {relevantUsers.map((user) => (
-          <li key={user.userId} className="user-list-item">
-            <button
-              type="button"
-              className={`user-button ${resolveActive(user.userId)}`}
-              disabled={conversationLoading !== null}
-              onClick={() => handleUserClick(user)}
-            >
-              <span className="user-avatar" aria-hidden="true">
-                {user.name.charAt(0).toUpperCase()}
-              </span>
+      <SidebarHeader title="Conversations" />
 
-              <span className="user-info">
-                <span className="user-name">{user.name}</span>
-              </span>
+      {loading && relevantUsers.length === 0 && (
+        <div className='placement'>
+          <Loader className='loader' size={40}></Loader>
+        </div>
+      )}
 
-              {conversationLoading === user.userId && <div className='??'>loading</div>}
-            </button>
-            {conversationError?.userId === user.userId && <div role="alert">{conversationError.message}</div>}
-          </li>
-        ))}
-      </ul>
+      {userError && (
+        <div className="user-error" role="alert">
+          <p>{userError}</p>
+          <button
+            type="button"
+            className="reload-button"
+            disabled={loading}
+            onClick={() => void fetchUsers()}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!loading && !userError && relevantUsers.length === 0 && hasFetchedUser && (
+        <p>No users found.</p>
+      )}
+
+      {relevantUsers.length > 0 && (
+        <ul className="user-list">
+          {relevantUsers.map(user => (
+            <li key={user.userId} className="user-list-item">
+              <button
+                type="button"
+                className={`user-button ${user.userId === activeParticipantId ? 'active' : ''}`}
+                disabled={conversationLoading !== null}
+                onClick={() => void handleUserClick(user)}
+              >
+                <span className="user-avatar" aria-hidden="true">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+
+                <span className="user-info">
+                  <span className="user-name">{user.name}</span>
+                </span>
+
+                {conversationLoading === user.userId && (
+                  <Loader className='loader' aria-label="Opening conversation"></Loader>
+                )}
+              </button>
+
+              {conversationError?.userId === user.userId && (
+                <p className="conversation-error" role="alert">
+                  {conversationError.message}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   )
 }

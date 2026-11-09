@@ -1,7 +1,6 @@
 import { MessageSquareText, Minimize2, ScanText } from 'lucide-react'
 import '../../styles/aside/aside.css'
 import type { AiSection } from '../../layout/rightSideBar.tsx'
-import { useCredentialStore } from '../../stores/credentialStore.ts'
 
 type ControlPanelProps = {
   setSelect: (section: AiSection) => void
@@ -13,14 +12,6 @@ export default function AiControlPanel({
   selected,
   hideAi
 }: ControlPanelProps) {
-
-  const token = useCredentialStore(s => s.token)
-
-  // const handleSelectChat = () => {
-  //   if (!token)
-  // set a message
-  // else setSelect(chat)
-  // }
 
   return (
     <nav aria-label="ai control panel" className='control-panel-fixed-ai'>

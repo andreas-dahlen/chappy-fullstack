@@ -11,6 +11,7 @@
   grid-template-rows: minmax(0, 1fr) auto;
   flex: 1;
   min-height: 0;
+    min-width: 0;
 }
 
 .control-panel-fixed-ai {

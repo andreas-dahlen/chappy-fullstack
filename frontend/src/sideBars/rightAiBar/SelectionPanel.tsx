@@ -1,7 +1,7 @@
 import type { UUID } from '@chappy/shared'
 import { useAiStore } from '../../stores/aiStore.ts'
 import { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Plus } from 'lucide-react'
 
 type SelectionPanelProps = {
   selected: UUID | null
@@ -26,7 +26,7 @@ export default function SelectionPanel({ selected, setSelected }: SelectionPanel
         aria-expanded={isOpen}
         onClick={() => setIsOpen(prev => !prev)}
       >
-        <span>{selectedName ?? 'Select a conversation'}</span>
+        <span>{selectedName ?? 'New conversation'}</span>
         {isOpen
           ? <ChevronUp />
           : <ChevronDown />
@@ -35,6 +35,20 @@ export default function SelectionPanel({ selected, setSelected }: SelectionPanel
 
       {isOpen && (
         <ul className='drop-down-list'>
+          <li>
+            <button
+              type='button'
+              className='drop-down-button'
+              onClick={() => {
+                setSelected(null)
+                setIsOpen(false)
+              }}
+            >
+              <Plus size={16} />
+              New conversation
+            </button>
+          </li>
+
           {[...metaData.values()].map(d => {
             const aiId = d.metaData?.aiId
             if (!aiId) return null

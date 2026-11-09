@@ -4,7 +4,7 @@ export function getHttpErrorMessage(status: number): string {
       return 'Invalid request. Please check your input.'
 
     case 401:
-      return 'Invalid username or password.'
+      return 'Oops! Something went wrong. Please sign in again.'
 
     case 403:
       return "You don't have permission to perform this action."

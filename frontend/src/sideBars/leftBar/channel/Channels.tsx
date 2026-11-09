@@ -6,7 +6,7 @@ import SidebarHeader from '../SidebarHeader.tsx'
 import ChannelList from './ChannelList.tsx'
 import ChannelCreation from './ChannelCreation.tsx'
 import { useCredentialStore } from '../../../stores/credentialStore.ts'
-import { Plus, Undo2 } from 'lucide-react'
+import { Loader, Plus, Undo2 } from 'lucide-react'
 
 export type ChannelView = 'list' | 'creating'
 
@@ -56,9 +56,27 @@ export default function Channels() {
 
       {channelView === 'list' && (
         <>
-          {loading && channels.size === 0 && <p>Loading channels...</p>}
-          {error && <p>{error}</p>}
-          {!loading && !error && channels.size === 0 && <p>No channels found.</p>}
+          {loading && channels.size === 0 && (
+            <div className="placement">
+              <Loader className="loader" size={40} />
+            </div>
+          )}
+          {error && (
+            <div className="user-error" role="alert">
+              <p>{error}</p>
+              <button
+                type="button"
+                className="reload-button"
+                disabled={loading}
+                onClick={() => void fetchChannels()}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+          {!loading && !error && channels.size === 0 &&
+            <p>No channels found.</p>
+          }
           {channels.size > 0 && <ChannelList channels={channels} />}
         </>
       )}

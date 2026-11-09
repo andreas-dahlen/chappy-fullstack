@@ -18,6 +18,7 @@ export default function ChatMessages({ selected }: ChatMessageProps) {
     s.aiMessageData.get(selected)?.messageData
   )
 
+
   const messageList = messages ? [...messages.values()] : []
 
   useLayoutEffect(() => {
@@ -30,14 +31,24 @@ export default function ChatMessages({ selected }: ChatMessageProps) {
   useEffect(() => {
     if (!token || !selected) return
     void getAiMessages(selected, token)
-  }, [token, getAiMessages])
+  }, [token, getAiMessages, selected])
 
   return (
     <div ref={messageBoxRef} className='ai-messages'>
       {messageList.map(msg => (
-        <div key={msg.messageId}>{msg.message}</div>
-      )
-      )}
+        <article
+          key={msg.messageId}
+          className={`ai-msg ${msg.role === 'model' ? 'model-msg' : 'user-msg'}`}
+        >
+          <p>{msg.message}</p>
+
+          {msg.duration !== undefined && (
+            <time>
+              {(msg.duration / 1000).toFixed(1)}s
+            </time>
+          )}
+        </article>
+      ))}
     </div>
   )
 }

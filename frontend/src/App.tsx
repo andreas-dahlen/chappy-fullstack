@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router'
 import './styles/app.css'
+import './styles/utils.css'
 import LeftSideBar from './layout/LeftSideBar.tsx'
 import Header from './layout/Header.tsx'
 import { useState } from 'react'

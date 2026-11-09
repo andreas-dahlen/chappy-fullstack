@@ -1,0 +1,65 @@
+.deletion-box {
+  position: relative;
+
+  .delete-buttons {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    
+    background: transparent;
+    border: 0;
+    border-radius: 0.5rem;
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+    
+    cursor: pointer;
+    transition: background-color 150ms ease,
+    outline 150ms ease;
+
+    &:focus-visible {
+      outline-color: var(--focus-col);
+      outline-offset: -2px;
+    }
+
+    &:hover {
+      background-color: var(--hover-col);
+    }
+    &:active {
+      background: var(--focus-col);
+    }
+
+    &.deleter {
+      &:hover {
+        background-color: rgb(141, 0, 0);
+      }
+      &:focus-visible {
+        outline-color: red;
+      }
+    }
+  }
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  outline: 2px solid var(--icon-text-col);
+  border-radius: 0.4rem;
+  padding: 0.7rem;
+
+  p {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 0.5rem;
+
+  button {
+    flex: 1;
+  }
+}

@@ -25,7 +25,11 @@ export function useAuthentication() {
       const result = await request()
 
       if (result.state === 'failed') {
-        setError(result.message)
+        setError(
+          result.status === 401
+            ? 'Invalid username or password.'
+            : result.message
+        )
         return false
       }
       setUser({ name: result.authData.name, userId: result.authData.userId })

@@ -47,6 +47,7 @@ export default function Summary() {
           }, true)}
         >Reload</button>}
       </div>
+      {!error && !summaryId && !loading && <div> nothing available to summarize yet. </div>}
     </div>
   )
 }

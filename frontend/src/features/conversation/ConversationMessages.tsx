@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react'
 import { isoToDate } from '../../utils/isoToDate.ts'
 import { useConversationStore } from '../../stores/conversationStore.ts'
 import { useConversationMessages } from '../../hooks/conversations/useConversationMessages.ts'
+import { useCredentialStore } from '../../stores/credentialStore.ts'
 type ConversationMessagesProps = {
   conversationId: UUID
 }
@@ -13,6 +14,7 @@ export default function ConversationMessages({ conversationId }: ConversationMes
   const messageBoxRef = useRef<HTMLDivElement>(null)
 
   const { fetchConversationMessages } = useConversationMessages()
+  const userId = useCredentialStore(s => s.userId)
 
   const hasFetchedMsgs = useConversationStore(s =>
     s.conversationMsgData.get(conversationId)?.hasFetchedMsgs ?? false
@@ -30,14 +32,16 @@ export default function ConversationMessages({ conversationId }: ConversationMes
 
   const messageList = messages ? [...messages.values()] : []
 
-  const metaData = useConversationStore(s => s.conversationMetaData).get(conversationId)?.metaData
+  // const metaData = useConversationStore(s => s.conversationMetaData).get(conversationId)?.metaData
 
-  const resolvedList = messageList.map(entry => {
+  const resolvedList = messageList.map((entry, index) => {
+    const previous = messageList[index - 1]
+    const next = messageList[index + 1]
     return {
       ...entry,
-      name: entry.createdBy === metaData?.participantId
-        ? metaData.participantName
-        : 'you'
+      isOwn: entry.createdBy === userId,
+      isFirstInGroup: previous?.createdBy !== entry.createdBy,
+      isLastInGroup: next?.createdBy !== entry.createdBy
     }
   })
 
@@ -52,15 +56,19 @@ export default function ConversationMessages({ conversationId }: ConversationMes
     <div ref={messageBoxRef} className="conversation-message-box">
       <div className='conversation-messages'>
         {resolvedList.map(msg => (
-          <article key={msg.messageId} className='conversation-msg'>
-            <header className='conversation-msg-header'>
-              <span className='conversation-msg-author'>{msg.name}</span>
+          <article key={msg.messageId}
+            className={`conversation-msg 
+          ${msg.isOwn ? 'own-msg' : 'inc-msg'}
+          ${msg.isFirstInGroup ? 'first-msg' : ''}
+          ${msg.isLastInGroup ? 'last-msg' : ''}
+          `}>
+            <p className='conversation-msg-content'>{msg.message}</p>
+
+            {msg.isLastInGroup && (
               <time dateTime={msg.createdAt}>
                 {isoToDate.format(new Date(msg.createdAt))}
               </time>
-            </header>
-
-            <p className='conversation-msg-content'>{msg.message}</p>
+            )}
           </article>
         ))}
       </div>

@@ -9,6 +9,7 @@ import SelectionPanel from './SelectionPanel.tsx';
 import { dbPostAiMessage } from '../../api/ai/postAiMessage.ts';
 import { dbPostAiMetaData } from '../../api/ai/postMetaData.ts';
 import { useAiStore } from '../../stores/aiStore.ts';
+import { Loader } from 'lucide-react';
 
 export default function Chat() {
 
@@ -18,22 +19,37 @@ export default function Chat() {
   const setAiMessage = useAiStore(s => s.setAiMessage)
 
   const [selected, setSelected] = useState<UUID | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
+
+  const errorAiMeta = useAiStore(s => s.errorAiMeta)
+  const loadingAiMeta = useAiStore(s => s.loadingAiMeta)
+
+  const loadingAiMessage = useAiStore(s =>
+    selected
+      ? s.aiMessageData.get(selected)?.loading
+      : undefined
+  )
+
+  const errorAiMessage = useAiStore(s =>
+    selected
+      ? s.aiMessageData.get(selected)?.error
+      : undefined
+  )
+
+  const setAiMetaState = useAiStore(s => s.setAiMetaFetchState)
+  const setAiMessageData = useAiStore(s => s.setAiMessageData)
 
   const onSubmit = async (message: string) => {
     if (!token) return
 
+    let resolvedAiId = selected
     try {
-      let resolvedAiId = selected
-      setError(null)
-      setLoading(true)
       if (!selected) {
-        const chatName = message.slice(0, 10)
+        setAiMetaState({ errorAiMeta: null, loadingAiMeta: true })
+        const chatName = message.slice(0, 40)
         const result = await dbPostAiMetaData(chatName, token)
 
         if (result.state === 'failed') {
-          setError(result.message)
+          setAiMetaState({ errorAiMeta: result.message })
           return
         }
         setAiMetaData(result.data)
@@ -41,20 +57,23 @@ export default function Chat() {
         setSelected(resolvedAiId)
       }
       if (!resolvedAiId) return
-
+      setAiMessageData(resolvedAiId, { loading: true, error: null })
       const result = await dbPostAiMessage(resolvedAiId, message, token)
 
       if (result.state === 'failed') {
-        setError(result.message)
+        setAiMessageData(resolvedAiId, { error: result.message })
         return
       }
 
-      result.data.forEach(message => {
+      for (const message of result.data) {
         setAiMessage(resolvedAiId, message)
-      })
+      }
 
     } finally {
-      setLoading(false)
+      setAiMetaState({ loadingAiMeta: false })
+      if (resolvedAiId) {
+        setAiMessageData(resolvedAiId, { loading: false })
+      }
     }
   }
 
@@ -64,17 +83,30 @@ export default function Chat() {
     void fetchAllAiMeta(token)
   }, [fetchAllAiMeta, token])
 
-  if (!token) { return (<div className='ai-chat'>need to sign in to use this feature</div>) }
+  if (!token) {
+    return (<div className='ai-chat'><p className='auth-required'>
+      Need to sign in to use this feature.
+    </p>
+    </div>)
+  }
 
   return (
     <div className='ai-chat'>
       <SelectionPanel selected={selected} setSelected={setSelected} />
+      {loadingAiMeta &&
+        <Loader className="loader" size={50} />
+      }
+
+      <p className="ai-error">{errorAiMeta}</p>
+
       <div className='ai-message-box'>
         {selected && <ChatMessages selected={selected} />}
       </div>
+      {loadingAiMessage && <Loader className='loader' size={30} />}
+      <p className="ai-error">{errorAiMessage}</p>
       <ChatInput
         onSubmit={onSubmit}
-        loading={loading}
+        loading={loadingAiMeta || Boolean(loadingAiMessage)}
       />
     </div>
   )

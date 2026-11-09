@@ -2,6 +2,17 @@ p {
   margin: 1rem 1rem;
 }
 
+.user-error {
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.placement {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
 
 .user-list {
   display: flex;
@@ -19,6 +30,11 @@ p {
   width: 90%;
   display: flex;
   justify-content: center;
+  flex-direction: column;
+}
+
+.conversation-error {
+  margin: 0 0rem 0 1rem;
 }
 
 .user-button {
@@ -57,6 +73,11 @@ p {
   }
    &:active {
     background: var(--focus-col);
+  }
+
+
+  .loader {
+    margin-left: auto;
   }
 }
 
