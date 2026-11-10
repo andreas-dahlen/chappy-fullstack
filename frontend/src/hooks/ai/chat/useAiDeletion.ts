@@ -1,4 +1,3 @@
-import { useNavigate, useParams } from 'react-router';
 import { useCallback } from 'react';
 import type { UUID } from '@chappy/shared';
 import { useCredentialStore } from '../../../stores/credentialStore.ts';
