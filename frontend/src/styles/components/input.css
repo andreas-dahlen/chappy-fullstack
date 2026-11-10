@@ -1,3 +1,5 @@
+
+
 .input {
   position: relative;
   display: flex;
@@ -5,6 +7,7 @@
   /* gap: 0.75rem; */
   /* padding: 1rem; */
   border-top: 1px solid var(--border-col);
+  background: var(--bg);
 
 
 & textarea {

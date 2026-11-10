@@ -1,7 +1,9 @@
 .deletion-box {
   position: relative;
-
+  
   .delete-buttons {
+    outline: 2px solid var(--icon-text-col);
+    border-radius: 0.5rem;
     width: 100%;
     padding: 0.625rem 0.75rem;
     
@@ -27,9 +29,9 @@
     &:hover {
       background-color: var(--hover-col);
     }
-    &:active {
+    /* &:active {
       background: var(--focus-col);
-    }
+    } */
 
     &.deleter {
       &:hover {
@@ -43,12 +45,16 @@
 }
 
 .popup {
+  position: absolute;
+  width: 100%;
+  top: 2rem;
   display: flex;
   flex-direction: column;
   text-align: center;
   outline: 2px solid var(--icon-text-col);
   border-radius: 0.4rem;
   padding: 0.7rem;
+    background: var(--dark-col);
 
   p {
     margin-bottom: 0.5rem;

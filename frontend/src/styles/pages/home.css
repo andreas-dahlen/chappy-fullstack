@@ -1,0 +1,47 @@
+.home {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  padding: 3rem 2rem;
+  text-align: center;
+    /* background: radial-gradient(rgb(8, 8, 8), rgb(23, 18, 26)) */
+}
+
+.home-welcome {
+  max-width: 500px;
+  max-width: 620px;
+  animation: home-appear 500ms ease both;
+}
+
+.home-welcome h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  margin-bottom: 1rem;
+}
+
+.home-welcome p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--icon-text-col);
+}
+
+@keyframes home-appear {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-welcome {
+    animation: none;
+  }
+}

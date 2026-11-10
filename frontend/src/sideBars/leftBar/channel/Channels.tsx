@@ -80,7 +80,7 @@ export default function Channels() {
           {channels.size > 0 && <ChannelList channels={channels} />}
         </>
       )}
-      {channelView === 'creating' && <ChannelCreation />}
+      {channelView === 'creating' && <ChannelCreation setChannelView={setChannelView} />}
     </>
   )
 }

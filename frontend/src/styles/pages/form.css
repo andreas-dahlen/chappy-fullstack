@@ -3,12 +3,27 @@
   max-width: 450px;
 }
 
+.auth-message {
+  min-height: 2rem;
+  margin-top: 2rem;
+  text-align: center;
+  width: clamp(294px, 50vw, 430px);
+}
+
+.register-form {
+  display: flex;
+  align-items: center;
+  min-height: 100%;
+  padding: 2rem 0;
+  box-sizing: border-box;
+}
+
 .form {
   display: grid;
   gap: 0.5rem;
-  width: clamp(294px, 50vw, 430px);
+  width: clamp(294px, 55vw, 430px);
   padding: 1.2rem;
-  margin-top: 1rem;
+  /* margin-top: 1rem; */
 
   p {
     display: flex;
@@ -44,6 +59,12 @@
     &:active {
       background-color: var(--focus-col);
     }
+  }
+}
+
+@media (max-width: 570px) {
+  .form {
+    width: 100%;
   }
 }
 

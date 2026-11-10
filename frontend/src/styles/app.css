@@ -13,6 +13,12 @@
   height: 100%;
 }
 
+@media (max-width: 570px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -30,6 +36,7 @@ main {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  background: radial-gradient( rgb(8, 8, 8), rgb(33, 20, 43))
 }
 
 /* Tablet: AI overlays main */

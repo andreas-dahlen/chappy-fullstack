@@ -6,7 +6,12 @@ import { useCredentialStore } from '../../../stores/credentialStore.ts'
 import { useChannelsStore } from '../../../stores/channelsStore.ts'
 import '../../../styles/aside/channel-creation.css'
 import { useNavigate } from 'react-router'
-export default function ChannelCreation() {
+import type { ChannelView } from './Channels.tsx'
+
+type ChannelCreationProps = {
+  setChannelView: React.Dispatch<React.SetStateAction<ChannelView>>
+}
+export default function ChannelCreation({ setChannelView }: ChannelCreationProps) {
 
   const token = useCredentialStore(s => s.token)
   const setChannel = useChannelsStore(s => s.setChannel)
@@ -31,6 +36,7 @@ export default function ChannelCreation() {
 
       setChannel(data.channel)
       navigate(`/channels/${data.channel.channelId}`)
+      setChannelView('list')
 
     } finally { //catch already handled
       setLoading(false)
@@ -103,8 +109,3 @@ export default function ChannelCreation() {
     </div>
   )
 }
-
-// .visibility-option:has(input:checked) {
-//   border-color: var(--accent);
-//   background: var(--surface-selected);
-// }

@@ -50,15 +50,15 @@
       overflow-wrap: anywhere;
       white-space: pre-wrap;
       border-radius: 16px;
-      background: var(--aside-header);
       
       &.own-msg {
         align-self: flex-end;
-        background: var(--aside-header);
+        background: #13111a;
       }
-
+      
       &.inc-msg {
         align-self: flex-start;
+        background: var(--aside-header);
       }
 
       &.first-msg {
@@ -71,6 +71,7 @@
         opacity: 0.65;
         text-align: right;
         margin-top: 4px;
+        color: var(--icon-text-col)
       }
     }
   }

@@ -10,6 +10,7 @@ import { dbPostAiMessage } from '../../api/ai/postAiMessage.ts';
 import { dbPostAiMetaData } from '../../api/ai/postMetaData.ts';
 import { useAiStore } from '../../stores/aiStore.ts';
 import { Loader } from 'lucide-react';
+import DeletionPopup from './DeletionPopup.tsx';
 
 export default function Chat() {
 
@@ -23,17 +24,11 @@ export default function Chat() {
   const errorAiMeta = useAiStore(s => s.errorAiMeta)
   const loadingAiMeta = useAiStore(s => s.loadingAiMeta)
 
+  const [confirmDeletion, setConfirmDeletion] = useState<UUID | null>(null)
   const loadingAiMessage = useAiStore(s =>
-    selected
-      ? s.aiMessageData.get(selected)?.loading
-      : undefined
-  )
-
+    selected ? s.aiMessageData.get(selected)?.loading : undefined)
   const errorAiMessage = useAiStore(s =>
-    selected
-      ? s.aiMessageData.get(selected)?.error
-      : undefined
-  )
+    selected ? s.aiMessageData.get(selected)?.error : undefined)
 
   const setAiMetaState = useAiStore(s => s.setAiMetaFetchState)
   const setAiMessageData = useAiStore(s => s.setAiMessageData)
@@ -92,17 +87,30 @@ export default function Chat() {
 
   return (
     <div className='ai-chat'>
-      <SelectionPanel selected={selected} setSelected={setSelected} />
+      <SelectionPanel
+        selected={selected}
+        setSelected={setSelected}
+        setConfirmDeletion={setConfirmDeletion}
+      />
       {loadingAiMeta &&
         <Loader className="loader" size={50} />
       }
 
       <p className="ai-error">{errorAiMeta}</p>
 
+      <div className='deletion-box'>
+        <DeletionPopup
+          selected={selected}
+          setSelected={setSelected}
+          setConfirmDeletion={setConfirmDeletion}
+          confirmDeletion={confirmDeletion}
+        />
+      </div>
+
       <div className='ai-message-box'>
         {selected && <ChatMessages selected={selected} />}
       </div>
-      {loadingAiMessage && <Loader className='loader' size={30} />}
+      {!loadingAiMeta && loadingAiMessage && <Loader className='loader' size={30} />}
       <p className="ai-error">{errorAiMessage}</p>
       <ChatInput
         onSubmit={onSubmit}

@@ -202,59 +202,63 @@ router.delete<ChannelIdParam>('/:channelId',
       sk: `CHANNEL#${channelId}`
     }
 
-    const data = await db.send(new GetCommand({
-      TableName: tableName,
-      Key
-    }))
-
-    if (!data.Item) {
-      res.sendStatus(404)
-      return
-    }
-
-    const dbChannel: DbChannel = dbChannelSchema.parse(data.Item)
-
-    if (authId !== dbChannel.ownerId) {
-      res.sendStatus(403)
-      return
-    }
-
-    let ExclusiveStartKey: QueryCommandInput['ExclusiveStartKey']
-
-    do {
-      const msgs = await db.send(new QueryCommand({
+    try {
+      const data = await db.send(new GetCommand({
         TableName: tableName,
-        KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
-        ExpressionAttributeValues: {
-          ':pk': `CHANNEL#${channelId}`,
-          ':sk': "MSG#"
-        },
-        ProjectionExpression: 'pk, sk',
-        ...(ExclusiveStartKey && { ExclusiveStartKey })
+        Key
       }))
 
-      const dbMessageKeys: DbKey[] = dbKeyArraySchema.parse(msgs.Items ?? [])
-
-      for (let i = 0; i < dbMessageKeys.length; i += 25) {
-        const batch = dbMessageKeys.slice(i, i + 25).map(({ pk, sk }) => ({
-          DeleteRequest: {
-            Key: { pk, sk }
-          }
-        }))
-
-        await batchWrite(batch)
+      if (!data.Item) {
+        res.sendStatus(404)
+        return
       }
 
-      ExclusiveStartKey = msgs.LastEvaluatedKey
-    } while (ExclusiveStartKey)
+      const dbChannel: DbChannel = dbChannelSchema.parse(data.Item)
 
-    await db.send(new DeleteCommand({
-      TableName: tableName,
-      Key,
-      ConditionExpression: 'attribute_exists(pk)'
-    }))
+      if (authId !== dbChannel.ownerId) {
+        res.sendStatus(403)
+        return
+      }
 
-    res.sendStatus(204)
+      let ExclusiveStartKey: QueryCommandInput['ExclusiveStartKey']
+
+      do {
+        const msgs = await db.send(new QueryCommand({
+          TableName: tableName,
+          KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
+          ExpressionAttributeValues: {
+            ':pk': `CHANNEL#${channelId}`,
+            ':sk': "MSG#"
+          },
+          ProjectionExpression: 'pk, sk',
+          ...(ExclusiveStartKey && { ExclusiveStartKey })
+        }))
+
+        const dbMessageKeys: DbKey[] = dbKeyArraySchema.parse(msgs.Items ?? [])
+
+        for (let i = 0; i < dbMessageKeys.length; i += 25) {
+          const batch = dbMessageKeys.slice(i, i + 25).map(({ pk, sk }) => ({
+            DeleteRequest: {
+              Key: { pk, sk }
+            }
+          }))
+
+          await batchWrite(batch)
+        }
+
+        ExclusiveStartKey = msgs.LastEvaluatedKey
+      } while (ExclusiveStartKey)
+
+      await db.send(new DeleteCommand({
+        TableName: tableName,
+        Key,
+        ConditionExpression: 'attribute_exists(pk)'
+      }))
+
+      res.sendStatus(204)
+    } catch {
+      res.sendStatus(500)
+    }
   })
 
 export default router

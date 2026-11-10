@@ -1,12 +1,12 @@
 :root {
   color-scheme: dark;
 
-  --bg: #18181b;
+  --bg: #110d14;
   --aside-surface: linear-gradient(var(--surface-bright), var(--surface-dark));
   --aside-header: linear-gradient(var(--surface-dark), var(--surface-bright));
   --surface-bright: oklch(38.638% 0.04976 306.99);
   --surface-dark: oklch(28.119% 0.03309 294.353);
-  --border-col: #5b5c54;
+  --border-col: #37313a;
 
   /* --text: #15155e;
   --text-muted: #2222cd; */

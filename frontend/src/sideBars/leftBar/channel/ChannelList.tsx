@@ -6,6 +6,7 @@ import { Loader, Lock, Trash2 } from 'lucide-react'
 import { useCredentialStore } from '../../../stores/credentialStore.ts'
 import { useChannelDeletion } from '../../../hooks/channels/useChannelDeletion.ts'
 import { useState } from 'react'
+import useDismissable from '../../../hooks/sideEffects/useDismissable.ts'
 
 type ChannelListProps = {
   channels: Map<string, ChannelStoreData>
@@ -27,6 +28,16 @@ export default function ChannelList({
     }
     return ''
   }
+
+  const confirmingChannel = confirmDeletion
+    ? channels.get(confirmDeletion)
+    : undefined
+
+  const popupRef = useDismissable<HTMLDivElement>({
+    isOpen: Boolean(confirmDeletion) && !confirmingChannel?.loading,
+    onDismiss: () => setConfirmDeletion(null)
+  })
+
 
   const handleChannelClick = (channel: Channel) => {
     if (channel.authRequired && !token) {
@@ -90,7 +101,7 @@ export default function ChannelList({
               {isConfirmingDeletion && (
                 <>
                   {confirmDeletion && confirmDeletion === data.channel.channelId && (
-                    <div className="deletion-box relative">
+                    <div ref={popupRef} className="deletion-box relative">
                       <p>Delete {data.channel.channelName}?</p>
 
                       <div className="popup-buttons">

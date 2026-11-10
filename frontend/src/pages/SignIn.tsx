@@ -5,6 +5,8 @@ import { Loader } from 'lucide-react'
 import { NavLink, useLocation } from 'react-router'
 import { usePostAuthNavigation } from '../hooks/sideEffects/usePostAuthNavigation.ts'
 import { useAuthentication } from '../hooks/user/useAuthentication.ts'
+import type { AuthNavigationState } from '../types/apiData.types.ts'
+import { getAuthMessage } from '../utils/getAuthMessage.ts'
 
 type SignIn = {
   username: string
@@ -22,6 +24,8 @@ export default function SignIn() {
   const location = useLocation()
 
   const navigateAfterAuth = usePostAuthNavigation()
+  const state = location.state as AuthNavigationState | null
+  const authMessage = getAuthMessage(state)
 
   const handleSignIn = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -29,12 +33,15 @@ export default function SignIn() {
     const success = await signIn(input)
     if (!success) return
 
-    navigateAfterAuth()
+    await navigateAfterAuth()
   }
 
 
   return (
     <div className='form-box'>
+      <div className='auth-message'>
+        <p>{authMessage}</p>
+      </div>
 
       <form className='form'
         onSubmit={handleSignIn}
@@ -78,7 +85,7 @@ export default function SignIn() {
           <NavLink
             to="/register"
             className="register-nav"
-            state={location.state}
+            state={state}
           > Create one!</NavLink>
         </p>
       </form>

@@ -150,6 +150,109 @@
   border-bottom: 3px solid var(--border-col);
 }
 
+.relative-button {
+  position: relative;
+}
+
+.ai-delete-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  border-radius: 0 0.5rem 0.5rem 0;
+  outline: 2px solid transparent;
+  &.active {
+    outline-color: var(--icon-text-col);
+    cursor: default;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--focus-col);
+  }
+  &:hover {
+    background-color: var(--hover-col);
+  }
+  &:active {
+    background: var(--focus-col);
+  }
+}
+
+.absolute-popup {
+  position: absolute;
+  background: var(--dark-col);
+  padding: 1rem;
+  border-radius: 0.7rem;
+  top: -5px;
+  z-index: 1;
+  border: 2px solid var(--icon-text-col);
+  width: 100%;
+
+  p {
+    text-align: center;
+  }
+  .delete-buttons {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    
+    background: transparent;
+    border: 0;
+    border-radius: 0.5rem;
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+    
+    cursor: pointer;
+    transition: background-color 150ms ease,
+    outline 150ms ease;
+
+    &:focus-visible {
+      outline-color: var(--focus-col);
+      outline-offset: -2px;
+    }
+
+    &:hover {
+      background-color: var(--hover-col);
+    }
+    &:active {
+      background: var(--focus-col);
+    }
+
+    &.deleter {
+      &:hover {
+        background-color: rgb(141, 0, 0);
+      }
+      &:focus-visible {
+        outline-color: red;
+      }
+    }
+  }
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  outline: 2px solid var(--icon-text-col);
+  border-radius: 0.4rem;
+  padding: 0.7rem;
+
+  p {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 0.5rem;
+
+  button {
+    flex: 1;
+  }
+}
+
 
 
 .drop-down-button {
@@ -158,14 +261,12 @@
   gap: 0.75rem;
   
   width: 100%;
-  padding: 0.4rem 0.75rem;
-  color: inherit;
-  font: inherit;
-  text-align: left;
+  padding: 0.6rem 1.5rem 0.6rem 0.75rem;
 
   /* background: linear-gradient(to top, rgba(0, 0, 0, 0.318), rgba(0, 0, 0, 0)); */
   border: 0;
   border-radius: 0.5rem;
+  color: var(--icon-text-col);
 
   outline: 2px solid transparent;
   outline-offset: -2px;
@@ -187,5 +288,15 @@
   }
   &:active {
     background: var(--focus-col);
+  }
+
+  p {
+  color: var(--icon-text-col);
+  font: inherit;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
   }
 }

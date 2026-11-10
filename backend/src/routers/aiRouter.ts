@@ -1,15 +1,16 @@
-import { dbAiArraySchema, dbAiMetaArraySchema, reqAiMetaSchema, reqMessageSchema, reqSummarizeSchema, type AiMessage, type AiMetaData, type AiMetaInput, type AiResponse, type DbAiMessage, type DbAiMeta, type MessageInput, type SummarizeInput } from '@chappy/shared'
+import { dbAiArraySchema, dbAiMetaArraySchema, dbKeyArraySchema, reqAiMetaSchema, reqMessageSchema, reqSummarizeSchema, type AiMessage, type AiMetaData, type AiMetaInput, type AiResponse, type DbAiMessage, type DbAiMeta, type DbKey, type MessageInput, type SummarizeInput } from '@chappy/shared'
 import { sendRequest } from '../gemini/request.ts'
 import express, { Router } from 'express'
 import { authRequired } from '../middleware/express/authRequired.ts'
 import db, { tableName } from '../aws/aws.ts'
-import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
+import { DeleteCommand, GetCommand, PutCommand, QueryCommand, type QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 import type { AiIdParam } from '../types/db.types.ts'
 import { aiIdParser } from '../middleware/express/aiIdParser.ts'
 import { randomUUID, type UUID } from 'node:crypto'
 import type { Content } from '@google/genai'
 import { TransactWriteCommand } from '@aws-sdk/lib-dynamodb'
 import { summarizeInstruction } from '../gemini/config.ts'
+import { batchWrite } from '../utils/batchWrite.ts'
 
 const router: Router = express.Router()
 
@@ -92,6 +93,67 @@ router.post<{}, AiMetaData, AiMetaInput>('/chat', authRequired, express.json(), 
       createdAt: now,
       aiId
     })
+  } catch {
+    res.sendStatus(500)
+  }
+})
+
+router.delete<AiIdParam>('chat/:aiId', authRequired, aiIdParser, async (req, res) => {
+  const aiId = res.locals.aiId
+  const ownerId = res.locals.authenticatedUserId
+
+  try {
+    const metaData = await db.send(new GetCommand({
+      TableName: tableName,
+      Key: {
+        pk: `USER#${ownerId}`,
+        sk: `META#${aiId}`
+      }
+    }))
+
+    if (!metaData.Item) {
+      res.sendStatus(404)
+      return
+    }
+
+    let ExclusiveStartKey: QueryCommandInput['ExclusiveStartKey']
+
+    do {
+      const response = await db.send(new QueryCommand({
+        TableName: tableName,
+        KeyConditionExpression: 'pk = :pk AND begins_with(sk, :sk)',
+        ExpressionAttributeValues: {
+          ':pk': `USER#${aiId}`,
+          ':sk': 'AI#'
+        },
+        ProjectionExpression: 'pk, sk',
+        ...(ExclusiveStartKey && { ExclusiveStartKey })
+      }))
+
+      const dbKeys: DbKey[] = dbKeyArraySchema.parse(response.Items ?? [])
+
+      for (let i = 0; i < dbKeys.length; i += 25) {
+        const batch = dbKeys.slice(i, i + 25).map(({ pk, sk }) => ({
+          DeleteRequest: {
+            Key: { pk, sk }
+          }
+        }))
+        await batchWrite(batch)
+      }
+      ExclusiveStartKey = response.LastEvaluatedKey
+    } while (ExclusiveStartKey)
+
+    await db.send(new DeleteCommand({
+      TableName: tableName,
+      Key: {
+        pk: `USER#${ownerId}`,
+        sk: `META#${aiId}`,
+        ConditionExpression: 'attribute_exists(pk)'
+      }
+    }))
+
+    res.sendStatus(204)
+
   } catch {
     res.sendStatus(500)
   }

@@ -32,7 +32,12 @@ export default function Summary() {
 
   return (
     <div className='summary'>
-      {!error && summaryId && <div className='summary-text'>{summary} {duration}</div>}
+      {!error && summaryId &&
+        <div className='summary-text'>{summary}
+          {duration && <time>
+            {(duration / 1000).toFixed(1)}s
+          </time>}
+        </div>}
       {error && <p>{error}</p>}
       <div className='loading-reloading'>
         {loading && <Loader className='loader' size={50} />}

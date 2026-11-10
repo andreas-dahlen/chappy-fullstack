@@ -28,10 +28,10 @@ p {
   height: 100%;
   border-radius: 0 0.5rem 0.5rem 0;
   outline: 2px solid transparent;
-    &.active {
+    /* &.active {
     outline-color: var(--icon-text-col);
     cursor: default;
-  }
+  } */
   &:focus-visible {
     outline: 2px solid var(--focus-col);
   }

@@ -12,6 +12,13 @@
   overflow-y: auto;
   min-height: 0;
   max-height: 100%;
+  time {
+    display: block;
+    /* margin: 0.3rem 1rem 1rem 0; */
+    font-size: 0.8rem;
+    opacity: 0.55;
+    text-align: right;
+  }
 }
 
 .loading-reloading {

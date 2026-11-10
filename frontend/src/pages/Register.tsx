@@ -37,12 +37,12 @@ export default function Register() {
     const success = await registerUser(input)
     if (!success) return
 
-    navigateAfterAuth()
+    await navigateAfterAuth()
   }
 
 
   return (
-    <div className='form-box'>
+    <div className='form-box register-form'>
       <form className='form'
         onSubmit={handleRegistration}
       >

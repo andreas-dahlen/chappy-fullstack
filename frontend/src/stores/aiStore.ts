@@ -52,6 +52,7 @@ type AiStore = {
     data: Partial<AiStoreMessageData>
   ) => void
   setAiMessage: (aiId: UUID, data: AiMessage) => void
+  removeAiChat: (aiId: UUID) => void
 }
 
 export const useAiStore = create<AiStore>()(
@@ -143,6 +144,13 @@ export const useAiStore = create<AiStore>()(
         if (!existing) return
 
         existing.messageData.set(data.messageId, data)
+      })
+    },
+
+    removeAiChat: (aiId) => {
+      set(s => {
+        s.aiMessageData.delete(aiId)
+        s.aiMetaData.delete(aiId)
       })
     }
   })),

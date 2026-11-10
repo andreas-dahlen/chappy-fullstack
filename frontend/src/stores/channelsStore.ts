@@ -119,7 +119,7 @@ export const useChannelsStore = create<ChannelsStore>()(
       })
     },
 
-    removeChannel: (channelId: UUID) => {
+    removeChannel: (channelId) => {
       set(s => {
         s.channels.delete(channelId)
         s.channelMsgData.delete(channelId)
